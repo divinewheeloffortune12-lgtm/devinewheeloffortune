@@ -26,6 +26,7 @@ import { AdminAnnouncements } from "./pages/admin/Announcements";
 import { AdminSales } from "./pages/admin/Sales";
 import { AdminDeleted } from "./pages/admin/Deleted";
 import { AdminReports } from "./pages/admin/Reports";
+import { ServiceBookings } from "./pages/admin/ServiceBookings";
 import Profile from "./pages/Profile";
 import Contact from "./pages/Contact";
 import Faq from "./pages/Faq";
@@ -76,6 +77,7 @@ const App = () => (
               <Route path="reports" element={<AdminReports />} />
               <Route path="announcements" element={<AdminAnnouncements />} />
               <Route path="sales" element={<AdminSales />} />
+              <Route path="service-bookings" element={<ServiceBookings />} />
               <Route path="deleted" element={<AdminDeleted />} />
             </Route>
 

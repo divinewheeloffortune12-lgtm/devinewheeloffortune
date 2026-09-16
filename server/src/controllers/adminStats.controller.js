@@ -1,22 +1,27 @@
 const User = require('../models/User');
 const Product = require('../models/Product');
 const Order = require('../models/Order');
+const ServiceBooking = require('../models/ServiceBooking');
 
 exports.getStats = async (req, res, next) => {
   try {
     const totalUsers = await User.countDocuments();
     const totalProducts = await Product.countDocuments({ isDeleted: false });
     
-    // Fallback if Order doesn't exist yet
-    let totalSales = 0;
-    let recentSales = [];
-    try {
-      totalSales = await Order.countDocuments();
-      recentSales = await Order.find().sort({ createdAt: -1 }).limit(5).populate('user', 'name email').lean();
-    } catch (err) {
-      // Order model might not be fully implemented in phase 3 yet
-    }
+    // Fetch paid orders and calculate order revenue
+    const paidOrders = await Order.find({ paymentStatus: 'PAID' });
+    const orderRevenue = paidOrders.reduce((sum, order) => sum + order.totalAmount, 0);
+    const totalSales = paidOrders.length;
 
+    // Fetch paid bookings and calculate booking revenue
+    const paidBookings = await ServiceBooking.find({ paymentStatus: 'PAID' });
+    const bookingRevenue = paidBookings.reduce((sum, booking) => sum + booking.amount, 0);
+    const totalBookings = paidBookings.length;
+
+    const totalRevenue = orderRevenue + bookingRevenue;
+
+    const recentSales = await Order.find({ paymentStatus: 'PAID' }).sort({ createdAt: -1 }).limit(5).populate('user', 'name email').lean();
+    
     const recentUsers = await User.find().sort({ createdAt: -1 }).limit(5).select('name email role createdAt').lean();
     const topProducts = await Product.find({ isDeleted: false }).sort({ createdAt: -1 }).limit(5).select('name price stock category images').populate('category', 'name').lean();
 
@@ -27,7 +32,8 @@ exports.getStats = async (req, res, next) => {
           users: totalUsers,
           products: totalProducts,
           sales: totalSales,
-          revenue: 0 // Stub for future revenue calculation
+          bookings: totalBookings,
+          revenue: totalRevenue
         },
         recentUsers,
         recentSales,

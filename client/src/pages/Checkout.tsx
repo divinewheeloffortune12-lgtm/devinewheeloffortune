@@ -8,6 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import api from "@/lib/api";
+import { loadRazorpayScript } from "./Services";
+import { useNavigate } from "react-router-dom";
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -66,22 +69,93 @@ const Checkout = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handlePaymentSuccess = async (response: any) => {
+    try {
+      const verifyRes = await api.post('/api/orders/verify-payment', {
+        razorpay_order_id: response.razorpay_order_id,
+        razorpay_payment_id: response.razorpay_payment_id,
+        razorpay_signature: response.razorpay_signature
+      });
+      
+      if (verifyRes.data.success) {
+        toast({
+          title: "Order Successful",
+          description: "Thank you for your purchase. We'll send shipping details soon.",
+        });
+        clearCart();
+        navigate("/");
+      } else {
+        toast({ title: "Verification Failed", description: "Payment verification failed.", variant: "destructive" });
+      }
+    } catch (error) {
+      console.error(error);
+      toast({ title: "Error", description: "Payment verification failed.", variant: "destructive" });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    const res = await loadRazorpayScript();
+    if (!res) {
+      toast({ title: "Error", description: "Razorpay SDK failed to load. Are you online?", variant: "destructive" });
+      setIsSubmitting(false);
+      return;
+    }
 
-    toast({
-      title: "Order Request Submitted",
-      description:
-        "Thank you! We'll contact you shortly to complete your order.",
-    });
+    try {
+      const fullAddress = `${formData.address}, ${formData.city}, ${formData.postalCode}, ${formData.country}`;
+      
+      const orderResponse = await api.post('/api/orders/create', {
+        shippingAddress: fullAddress,
+        notes: formData.notes
+      });
 
-    clearCart();
-    setIsSubmitting(false);
-    navigate("/");
+      if (!orderResponse.data.success) {
+        toast({ title: "Error", description: "Failed to initiate checkout.", variant: "destructive" });
+        setIsSubmitting(false);
+        return;
+      }
+
+      const { razorpayOrderId, totalAmount, key } = orderResponse.data.data;
+
+      const options = {
+        key: key || import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: totalAmount * 100,
+        currency: "INR",
+        name: "Divine Wheel Of Fortune",
+        description: "Product Purchase",
+        order_id: razorpayOrderId,
+        handler: function (response: any) {
+          handlePaymentSuccess(response);
+        },
+        prefill: {
+          name: `${formData.firstName} ${formData.lastName}`,
+          email: formData.email,
+          contact: formData.phone
+        },
+        theme: {
+          color: "#9333ea",
+        },
+        modal: {
+          ondismiss: function () {
+            setIsSubmitting(false);
+            toast({ title: "Cancelled", description: "Payment was cancelled." });
+          }
+        }
+      };
+
+      const paymentObject = new window.Razorpay(options);
+      paymentObject.open();
+
+    } catch (error: any) {
+      console.error(error);
+      toast({ title: "Error", description: error?.response?.data?.error?.message || "An error occurred while checking out.", variant: "destructive" });
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -97,16 +171,15 @@ const Checkout = () => {
         </div>
       </div>
 
-      {/* Coming Soon Banner */}
+      {/* Banner */}
       <div className="bg-primary/5 border-b border-primary/10">
         <div className="container-full py-4">
           <div className="flex items-center gap-3 text-sm">
-            <AlertCircle className="w-5 h-5 text-primary" />
+            <CheckCircle2 className="w-5 h-5 text-primary" />
             <p>
-              <span className="font-medium">Online checkout coming soon.</span>{" "}
+              <span className="font-medium">Secure Checkout.</span>{" "}
               <span className="text-muted-foreground">
-                Please submit your order request below and we'll contact you to
-                complete your purchase.
+                Your payment is processed securely via Razorpay.
               </span>
             </p>
           </div>

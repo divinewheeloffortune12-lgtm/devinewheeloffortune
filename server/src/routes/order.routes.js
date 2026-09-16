@@ -2,6 +2,9 @@ const router = require('express').Router();
 const controller = require('../controllers/order.controller');
 const { requireUser } = require('../middleware/auth.middleware');
 
+// Public route for Razorpay webhook
+router.post('/webhook', controller.razorpayWebhook);
+
 router.use(requireUser); // Must be logged in
 
 router.post('/create', controller.createOrder);

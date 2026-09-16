@@ -51,9 +51,7 @@ exports.createOrder = async (req, res, next) => {
         priceAtPurchase: product.price
       });
       
-      // Decrement stock atomically
-      product.stock -= item.quantity;
-      await product.save({ session });
+      // Stock is validated but NOT decremented yet. It will be decremented upon payment verification.
     }
 
     // Generate unique order number
@@ -135,9 +133,22 @@ exports.verifyPayment = async (req, res, next) => {
     }
     
     // Payment is verified, update order status
-    const order = await Order.findOne({ razorpayOrderId: razorpay_order_id });
+    const order = await Order.findOne({ razorpayOrderId: razorpay_order_id }).populate('products.product');
     if (!order) {
       throw Object.assign(new Error('Order not found'), { statusCode: 404 });
+    }
+    
+    if (order.paymentStatus === 'PAID') {
+      return res.json({ success: true, message: 'Payment already verified', data: { orderId: order._id, orderNumber: order.orderNumber } });
+    }
+    
+    // Decrement stock for all products safely
+    for (const item of order.products) {
+      const product = item.product;
+      if (product) {
+        product.stock = Math.max(0, product.stock - item.quantity); // Prevent negative stock
+        await product.save();
+      }
     }
     
     order.paymentStatus = 'PAID';
@@ -145,14 +156,67 @@ exports.verifyPayment = async (req, res, next) => {
     order.razorpayPaymentId = razorpay_payment_id;
     await order.save();
     
-    res.json({
-      success: true,
-      message: 'Payment verified successfully',
-      data: { orderId: order._id, orderNumber: order.orderNumber }
-    });
-    
+    res.json({ success: true, message: 'Payment verified and order placed successfully', data: { orderId: order._id, orderNumber: order.orderNumber } });
   } catch (error) {
     next(error);
+  }
+};
+
+exports.razorpayWebhook = async (req, res, next) => {
+  try {
+    const crypto = require('crypto');
+    const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
+
+    const signature = req.headers['x-razorpay-signature'];
+    const body = JSON.stringify(req.body);
+
+    const expectedSignature = crypto.createHmac('sha256', secret)
+                                    .update(body)
+                                    .digest('hex');
+
+    if (expectedSignature !== signature) {
+      return res.status(400).send('Invalid signature');
+    }
+
+    const event = req.body.event;
+
+    if (event === 'payment.captured' || event === 'order.paid') {
+      const paymentEntity = req.body.payload.payment.entity;
+      const razorpay_order_id = paymentEntity.order_id;
+      const razorpay_payment_id = paymentEntity.id;
+
+      // Handle Order
+      const order = await Order.findOne({ razorpayOrderId: razorpay_order_id }).populate('products.product');
+      if (order && order.paymentStatus !== 'PAID') {
+        // Decrement stock
+        for (const item of order.products) {
+          const product = item.product;
+          if (product) {
+            product.stock = Math.max(0, product.stock - item.quantity);
+            await product.save();
+          }
+        }
+        order.paymentStatus = 'PAID';
+        order.status = 'CONFIRMED';
+        order.razorpayPaymentId = razorpay_payment_id;
+        await order.save();
+      }
+
+      // Handle Booking
+      const ServiceBooking = require('../models/ServiceBooking');
+      const booking = await ServiceBooking.findOne({ razorpayOrderId: razorpay_order_id });
+      if (booking && booking.paymentStatus !== 'PAID') {
+        booking.paymentStatus = 'PAID';
+        booking.status = 'CONFIRMED';
+        booking.razorpayPaymentId = razorpay_payment_id;
+        await booking.save();
+      }
+    }
+
+    res.status(200).json({ success: true });
+  } catch (error) {
+    console.error('Webhook Error:', error);
+    res.status(500).send('Internal Server Error');
   }
 };
 

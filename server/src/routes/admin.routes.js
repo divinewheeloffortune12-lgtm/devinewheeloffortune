@@ -1,5 +1,6 @@
 const express = require('express');
 const multer = require('multer');
+const adminBookingController = require('../controllers/adminBooking.controller');
 const { requireAdmin } = require('../middleware/auth.middleware');
 const categoryController = require('../controllers/adminCategory.controller');
 const feedbackController = require('../controllers/adminFeedback.controller');
@@ -60,5 +61,9 @@ router.delete('/feedback/:id', feedbackController.deleteMessage);
 router.get('/reports', (req, res) => res.json({ success: true, data: [] }));
 router.get('/announcements', (req, res) => res.json({ success: true, data: [] }));
 router.get('/sales', (req, res) => res.json({ success: true, data: [] }));
+
+// Service Bookings
+router.get('/bookings', adminBookingController.getAllBookings);
+router.put('/bookings/:id/status', adminBookingController.updateBookingStatus);
 
 module.exports = router;

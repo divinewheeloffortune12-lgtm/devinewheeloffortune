@@ -118,6 +118,10 @@ const AdminDashboard = () => {
             <LineChart className="w-5 h-5" />
             Sales
           </NavLink>
+          <NavLink to="/admin/service-bookings" className={getNavLinkClass}>
+            <Clock className="w-5 h-5" />
+            Bookings
+          </NavLink>
           <NavLink to="/admin/deleted" className={getNavLinkClass}>
             <Trash2 className="w-5 h-5" />
             Last Deleted

@@ -233,10 +233,10 @@ const Index = () => {
           </div>
         ) : shopCategories.length > 0 ? (
           <Carousel_003 
-            images={[...shopCategories, ...shopCategories].map((c: Category) => ({ src: c.image, alt: c.name, name: c.name, note: c.note }))} 
+            images={shopCategories.length >= 3 ? [...shopCategories, ...shopCategories].map((c: Category) => ({ src: c.image, alt: c.name, name: c.name, note: c.note })) : shopCategories.map((c: Category) => ({ src: c.image, alt: c.name, name: c.name, note: c.note }))} 
             showNavigation 
             showPagination 
-            loop 
+            loop={shopCategories.length >= 2} 
             autoplay 
             spaceBetween={40} 
           />

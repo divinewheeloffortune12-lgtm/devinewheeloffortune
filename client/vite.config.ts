@@ -26,5 +26,7 @@ export default defineConfig(({ mode }) => ({
   build: {
     modulePreload: false,
     chunkSizeWarningLimit: 1000,
+    sourcemap: true,
+    target: 'esnext'
   },
 }));

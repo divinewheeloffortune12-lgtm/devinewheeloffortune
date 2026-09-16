@@ -4,36 +4,36 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ScrollToTop } from "./components/ScrollToTop";
-import Index from "./pages/Index";
-import Shop from "./pages/Shop";
-import ProductPage from "./pages/ProductPage";
-import Cart from "./pages/Cart";
-import Checkout from "./pages/Checkout";
-
-
-
-
+import { lazy, Suspense } from 'react';
 import { GoogleOAuthProvider } from '@react-oauth/google';
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
-import AdminLogin from "./pages/AdminLogin";
-import AdminDashboard from "./pages/AdminDashboard";
-import { DashboardHome } from "./pages/admin/DashboardHome";
-import { AdminUsers } from "./pages/admin/Users";
-import { AdminProducts } from "./pages/admin/Products";
-import { AdminCategories } from "./pages/admin/Categories";
-import { AdminAnnouncements } from "./pages/admin/Announcements";
-import { AdminSales } from "./pages/admin/Sales";
-import { AdminDeleted } from "./pages/admin/Deleted";
-import { AdminReports } from "./pages/admin/Reports";
-import { ServiceBookings } from "./pages/admin/ServiceBookings";
-import Profile from "./pages/Profile";
-import Contact from "./pages/Contact";
-import Faq from "./pages/Faq";
-import Blog from "./pages/Blog";
-import Announcements from "./pages/Announcements";
-import Services from "./pages/Services";
-import NotFound from "./pages/NotFound";
+
+const Index = lazy(() => import("./pages/Index"));
+const Shop = lazy(() => import("./pages/Shop"));
+const ProductPage = lazy(() => import("./pages/ProductPage"));
+const Cart = lazy(() => import("./pages/Cart"));
+const Checkout = lazy(() => import("./pages/Checkout"));
+
+const Login = lazy(() => import("./pages/Login"));
+const Signup = lazy(() => import("./pages/Signup"));
+const AdminLogin = lazy(() => import("./pages/AdminLogin"));
+const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
+const DashboardHome = lazy(() => import("./pages/admin/DashboardHome").then(m => ({ default: m.DashboardHome })));
+const AdminUsers = lazy(() => import("./pages/admin/Users").then(m => ({ default: m.AdminUsers })));
+const AdminProducts = lazy(() => import("./pages/admin/Products").then(m => ({ default: m.AdminProducts })));
+const AdminCategories = lazy(() => import("./pages/admin/Categories").then(m => ({ default: m.AdminCategories })));
+const AdminAnnouncements = lazy(() => import("./pages/admin/Announcements").then(m => ({ default: m.AdminAnnouncements })));
+const AdminSales = lazy(() => import("./pages/admin/Sales").then(m => ({ default: m.AdminSales })));
+const AdminDeleted = lazy(() => import("./pages/admin/Deleted").then(m => ({ default: m.AdminDeleted })));
+const AdminReports = lazy(() => import("./pages/admin/Reports").then(m => ({ default: m.AdminReports })));
+const ServiceBookings = lazy(() => import("./pages/admin/ServiceBookings").then(m => ({ default: m.ServiceBookings })));
+
+const Profile = lazy(() => import("./pages/Profile"));
+const Contact = lazy(() => import("./pages/Contact"));
+const Faq = lazy(() => import("./pages/Faq"));
+const Blog = lazy(() => import("./pages/Blog"));
+const Announcements = lazy(() => import("./pages/Announcements"));
+const Services = lazy(() => import("./pages/Services"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
 

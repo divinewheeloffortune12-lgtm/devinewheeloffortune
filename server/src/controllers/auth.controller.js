@@ -183,15 +183,32 @@ exports.adminLogin = async (req, res) => {
     }
 
     const normalizedEmail = String(email).trim().toLowerCase();
-    const admin = await AdminUser.findOne({ email: normalizedEmail });
     
-    if (!admin) {
-      return res.status(401).json({ success: false, message: 'Invalid credentials' });
-    }
+    // First-time setup: If absolutely zero admins exist in the DB, create this one.
+    const adminCount = await AdminUser.countDocuments();
+    let admin;
+    
+    if (adminCount === 0) {
+      const salt = await bcrypt.genSalt(10);
+      const passwordHash = await bcrypt.hash(password.trim(), salt);
+      admin = await AdminUser.create({
+        email: normalizedEmail,
+        passwordHash,
+        role: 'super_admin',
+        status: 'active'
+      });
+      console.log(`First-time admin setup complete for: ${normalizedEmail}`);
+    } else {
+      admin = await AdminUser.findOne({ email: normalizedEmail });
+      
+      if (!admin) {
+        return res.status(401).json({ success: false, message: 'Invalid credentials' });
+      }
 
-    const isMatch = await bcrypt.compare(password, admin.passwordHash);
-    if (!isMatch) {
-      return res.status(401).json({ success: false, message: 'Invalid credentials' });
+      const isMatch = await bcrypt.compare(password.trim(), admin.passwordHash);
+      if (!isMatch) {
+        return res.status(401).json({ success: false, message: 'Invalid credentials' });
+      }
     }
 
     sendTokenResponse(admin, 'admin', 200, res);

@@ -35,6 +35,15 @@ const predefinedServices = [
   { name: "Past Life Regression - 55 Mins", price: 255555, duration: "55 mins" }
 ];
 
+const Category = require('./src/models/Category');
+
+const predefinedCategories = [
+  { name: "Mala", slug: "mala", note: "Sacred Meditation Beads", status: "active" },
+  { name: "Crystals", slug: "crystals", note: "Healing & Energy", status: "active" },
+  { name: "Bracelets", slug: "bracelets", note: "Spiritual Jewelry", status: "active" },
+  { name: "Rings", slug: "rings", note: "Astrological Rings", status: "active" }
+];
+
 async function seed() {
   try {
     if (!process.env.MONGODB_URI) {
@@ -43,8 +52,9 @@ async function seed() {
     }
     
     await mongoose.connect(process.env.MONGODB_URI);
-    console.log("Connected to DB for seeding services...");
+    console.log("Connected to DB for seeding...");
 
+    // Seed Services
     for (const srv of predefinedServices) {
       await Service.findOneAndUpdate(
         { name: srv.name }, 
@@ -52,8 +62,18 @@ async function seed() {
         { upsert: true, new: true }
       );
     }
-    
-    console.log("Services strictly verified and synchronized!");
+    console.log("Services synchronized!");
+
+    // Seed Categories
+    for (const cat of predefinedCategories) {
+      await Category.findOneAndUpdate(
+        { slug: cat.slug },
+        { $set: { name: cat.name, note: cat.note, status: cat.status } },
+        { upsert: true, new: true }
+      );
+    }
+    console.log("Categories synchronized!");
+
     process.exit(0);
   } catch (error) {
     console.error("Seeding failed:", error);

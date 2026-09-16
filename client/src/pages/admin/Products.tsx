@@ -69,10 +69,11 @@ export const AdminProducts = () => {
     try {
       const { data } = await api.get("/admin/products");
       setProducts(data.data);
-    } catch (error) {
+    } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Error fetching products",
+        description: error.response?.data?.message || "Please try again later."
       });
     } finally {
       setIsLoading(false);
@@ -81,10 +82,14 @@ export const AdminProducts = () => {
 
   const fetchCategories = async () => {
     try {
-      const { data } = await api.get("/categories");
+      const { data } = await api.get("/admin/categories");
       setCategories(data.data);
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Error fetching categories",
+        description: error.response?.data?.message || "Please try again later."
+      });
     }
   };
 
@@ -114,7 +119,7 @@ export const AdminProducts = () => {
       toast({
         variant: "destructive",
         title: "Failed to create product",
-        description: error.response?.data?.message
+        description: error.response?.data?.error?.message || error.response?.data?.message || "An unexpected error occurred"
       });
     } finally {
       setIsSubmitting(false);
@@ -127,8 +132,12 @@ export const AdminProducts = () => {
       await api.delete(`/admin/products/${id}`);
       toast({ title: "Product deleted" });
       fetchProducts();
-    } catch (error) {
-      toast({ variant: "destructive", title: "Failed to delete" });
+    } catch (error: any) {
+      toast({ 
+        variant: "destructive", 
+        title: "Failed to delete product",
+        description: error.response?.data?.message || "Please try again."
+      });
     }
   };
 

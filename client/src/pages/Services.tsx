@@ -147,9 +147,10 @@ const Services = () => {
       const paymentObject = new window.Razorpay(options);
       paymentObject.open();
 
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      toast.error("An error occurred while creating the booking.");
+      const backendMessage = error.response?.data?.error?.message || "An error occurred while creating the booking.";
+      toast.error(backendMessage);
       setIsProcessing(false);
     }
   };

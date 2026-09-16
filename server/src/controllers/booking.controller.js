@@ -47,7 +47,11 @@ exports.createBookingOrder = async (req, res, next) => {
       rzpOrder = await razorpay.orders.create(razorpayOptions);
     } catch (rzpError) {
       console.error('Razorpay Error:', rzpError);
-      throw Object.assign(new Error('Failed to initiate payment gateway'), { statusCode: 502 });
+      throw Object.assign(new Error('Unable to initiate payment gateway. Please verify payment configuration.'), { 
+        statusCode: 502, 
+        isOperational: true,
+        code: 'PAYMENT_GATEWAY_ERROR' 
+      });
     }
 
     // 3. Create Booking Record

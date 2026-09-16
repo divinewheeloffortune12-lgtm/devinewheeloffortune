@@ -114,12 +114,13 @@ app.get('/api/health', (req, res) => {
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || (err.name === 'ValidationError' ? 400 : 500);
-  if (process.env.NODE_ENV !== 'test') console.error(err);
+  if (process.env.NODE_ENV !== 'test' && statusCode >= 500) console.error(err);
+  
   res.status(statusCode).json({
     success: false,
     error: {
       code: err.code || 'INTERNAL_SERVER_ERROR',
-      message: statusCode >= 500 ? 'Something went wrong on the server' : err.message
+      message: (statusCode >= 500 && !err.isOperational) ? 'Something went wrong on the server' : err.message
     }
   });
 });

@@ -158,7 +158,20 @@ exports.logout = (req, res) => {
 };
 
 exports.getMe = async (req, res) => {
-  res.status(200).json({ success: true, data: req.user });
+  try {
+    const token = req.cookies && req.cookies.token;
+    if (!token) return res.status(200).json({ success: true, data: null });
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (decoded.type !== 'user') return res.status(200).json({ success: true, data: null });
+
+    const user = await User.findById(decoded.id).select('-passwordHash -googleId');
+    if (!user || user.status !== 'active') return res.status(200).json({ success: true, data: null });
+
+    res.status(200).json({ success: true, data: user });
+  } catch (error) {
+    res.status(200).json({ success: true, data: null });
+  }
 };
 
 exports.adminLogin = async (req, res) => {

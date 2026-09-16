@@ -1,14 +1,14 @@
 const express = require('express');
 const { check } = require('express-validator');
-const { 
-  register, 
-  login, 
-  logout, 
-  googleAuth, 
-  getMe, 
-  adminLogin, 
-  adminLogout, 
-  getAdminMe 
+const {
+  register,
+  login,
+  logout,
+  googleAuth,
+  getMe,
+  adminLogin,
+  adminLogout,
+  getAdminMe
 } = require('../controllers/auth.controller');
 const { requireUser, requireAdmin } = require('../middleware/auth.middleware');
 const { authLimiter, adminLoginLimiter } = require('../middleware/rateLimiter');
@@ -24,7 +24,7 @@ router.post('/register', authLimiter, [
 router.post('/login', authLimiter, login);
 router.post('/google', authLimiter, googleAuth);
 router.post('/logout', logout);
-router.get('/me', requireUser, getMe);
+router.get('/me', getMe);
 
 // Admin Routes
 router.post('/admin/login', adminLoginLimiter, adminLogin);

@@ -28,7 +28,7 @@ export const Header = () => {
   }, []);
 
   useEffect(() => { 
-    api.get('/auth/me').then(() => setSignedIn(true)).catch(() => setSignedIn(false)); 
+    api.get('/auth/me').then((res) => setSignedIn(!!res.data?.data)).catch(() => setSignedIn(false)); 
   }, [location.pathname]);
 
   const moreDropdown = [

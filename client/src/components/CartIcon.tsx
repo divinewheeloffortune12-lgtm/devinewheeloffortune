@@ -9,16 +9,17 @@ export const CartIcon = () => {
   return (
     <Link
       to="/cart"
-      className="relative p-2 text-white/90 hover:text-primary transition-colors duration-300 group"
+      className="relative flex items-center justify-center h-10 w-10 rounded-full hover:bg-primary/10 text-foreground/80 hover:text-primary transition-colors"
+      aria-label="Shopping Cart"
     >
-      <ShoppingBag className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
+      <ShoppingBag className="w-5 h-5" />
       <AnimatePresence>
         {itemCount > 0 && (
           <motion.span
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             exit={{ scale: 0 }}
-            className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-primary text-primary-foreground text-[10px] font-semibold rounded-full flex items-center justify-center"
+            className="absolute top-1.5 right-1.5 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center ring-2 ring-white"
           >
             {itemCount > 9 ? "9+" : itemCount}
           </motion.span>

@@ -8,13 +8,12 @@ import CurvedLoop from "@/components/CurvedLoop";
 import MarqueeSection from "@/components/MarqueeSection";
 
 import { ParallaxScrollFeatureSection } from "@/components/ui/parallax-scroll-feature-section";
-import { FeaturedProducts } from "@/components/ui/FeaturedProducts";
 import Carousel_003 from "@/components/ui/Carousel_003";
 import Aurora from "@/components/ui/Aurora";
 import FoldText from "@/components/ui/FoldText";
 import ClickSpark from "@/components/ui/ClickSpark";
+import { FeaturedProducts } from "@/components/FeaturedProducts";
 
-// Removed broken heroVideo import
 const services = [
   { title: "Tarot Card Reading", description: "Receive intuitive perspective on the questions and crossroads present in your life.", symbol: "✦" },
   { title: "Cord-Cutting Ritual", description: "A guided energetic ritual created to support release, renewal, and clearer boundaries.", symbol: "∞" },
@@ -35,15 +34,6 @@ const parallaxServices = services.map((service, index) => ({
   reverse: index % 2 !== 0
 }));
 
-const shopCategories = [
-  { name: "Rudraksha", image: "/images/rudraksha.png", note: "Sacred beads" },
-  { name: "Gemstones & Crystals", image: "/images/gemstones_crystals.png", note: "Earth-born energy" },
-  { name: "Malas", image: "/images/mala.png", note: "Prayer & practice" },
-  { name: "Sacred Books", image: "/images/sacred_book.png", note: "Wisdom for the path" },
-  { name: "Power Coins", image: "/images/power_coin.png", note: "Intention talismans" },
-];
-
-
 const faqs = [
   ["Which session length should I choose?", "A 30-minute session suits one focused question, 60 minutes allows deeper exploration, and 90 minutes offers the most spacious experience."],
   ["How are online sessions held?", "After booking, you receive the session details and a private video-call link. You can join from anywhere."],
@@ -59,9 +49,23 @@ const SectionHeading = ({ eyebrow, title, copy }: { eyebrow: string; title: stri
   </div>
 );
 
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+type Category = { _id: string; name: string; image: string; note: string };
+
 const Index = () => {
   const [duration, setDuration] = useState(60);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+
+  const { data: categoriesData, isLoading: categoriesLoading } = useQuery({
+    queryKey: ['categories'],
+    queryFn: async () => {
+      const response = await axios.get<Category[]>('http://localhost:5000/api/categories');
+      return response.data.data;
+    }
+  });
+
+  const shopCategories = categoriesData || [];
 
   return (
     <Layout>
@@ -164,20 +168,25 @@ const Index = () => {
           <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
             <SectionHeading eyebrow="Her story" title="Meet yourself at the turning point." />
             <div className="mt-8 grid gap-6 text-base leading-8 text-muted-foreground md:grid-cols-2">
-              <p>Nattasha Sharrma created Divine Wheel Of Fortune as a considered space for people seeking perspective, emotional clarity, and a more intentional relationship with their inner world.</p>
-              <p>Each session blends deep listening with symbolic and energetic practices, always shaped around your questions, comfort, and personal pace.</p>
+              <p>Nattasha Sharrma is the founder and guiding light behind Divine Wheel of Fortune, a trusted space for spiritual healing and intuitive guidance. With deep expertise across astrology, numerology, tarot and palm reading, and intuitive psychic work, she helps people find clarity in moments of confusion and direction in times of change.</p>
+              <p>Her practice goes beyond traditional readings, drawing on reiki healing, chakra balancing, past life regression, and ancestral healing to address the root of what truly holds people back, whether that's emotional blocks, money blocks, or unresolved patterns passed down through generations. Blending ancient wisdom with modern intuitive techniques, Natasha creates a safe, welcoming space where every seeker can heal, awaken, and reconnect with their higher self.</p>
             </div>
             <Button asChild variant="link" className="mt-8 h-auto p-0 text-primary"><Link to="/about">Discover Nattasha Sharrma’s story <ArrowRight /></Link></Button>
           </motion.div>
         </div>
       </section>
 
-      <div id="services">
+      <div id="services" className="pb-20 md:pb-32 flex flex-col">
         <ParallaxScrollFeatureSection 
           title="Ways to work together"
           description="Guidance for every season. Choose a focused 30-minute reading or make room for a deeper 60-minute session."
-          sections={parallaxServices}
+          sections={parallaxServices.slice(0, 4)}
         />
+        <div className="mt-4 md:mt-12 text-center pb-8 flex justify-center w-full">
+          <Button asChild size="lg" className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg h-14 px-8 text-base transition-transform hover:scale-105">
+            <Link to="/services">See More <ArrowRight className="ml-2 w-5 h-5" /></Link>
+          </Button>
+        </div>
       </div>
 
       <section className="relative overflow-hidden py-16 md:py-24 text-white">
@@ -206,7 +215,6 @@ const Index = () => {
         </div>
       </section>
 
-      <FeaturedProducts />
 
       <section id="shop" className="relative py-20 md:py-28 overflow-hidden bg-gradient-to-b from-sky-100/50 via-white to-sky-50/30">
         <div className="container-full relative z-10">
@@ -215,14 +223,26 @@ const Index = () => {
              <Button asChild variant="outline" className="rounded-none"><a href="#categories">Shop all <ArrowRight /></a></Button>
           </div>
         </div>
-        <Carousel_003 
-          images={[...shopCategories, ...shopCategories].map(c => ({ src: c.image, alt: c.name, name: c.name, note: c.note }))} 
-          showNavigation 
-          showPagination 
-          loop 
-          autoplay 
-          spaceBetween={40} 
-        />
+        {categoriesLoading ? (
+          <div className="container-full flex justify-center py-10">
+            <div className="animate-pulse flex space-x-4">
+              <div className="h-40 w-40 bg-slate-200 rounded-xl"></div>
+              <div className="h-40 w-40 bg-slate-200 rounded-xl"></div>
+              <div className="h-40 w-40 bg-slate-200 rounded-xl"></div>
+            </div>
+          </div>
+        ) : shopCategories.length > 0 ? (
+          <Carousel_003 
+            images={[...shopCategories, ...shopCategories].map((c: Category) => ({ src: c.image, alt: c.name, name: c.name, note: c.note }))} 
+            showNavigation 
+            showPagination 
+            loop 
+            autoplay 
+            spaceBetween={40} 
+          />
+        ) : (
+          <div className="container-full text-center text-muted-foreground">No categories available.</div>
+        )}
         <div className="container-full mt-14">
           <div className="flex items-center justify-center gap-3 border-t border-border pt-7 text-sm text-muted-foreground"><Globe2 className="h-5 w-5 text-primary" /> Shipping across India and to selected international destinations</div>
         </div>
@@ -231,36 +251,51 @@ const Index = () => {
       <section id="categories" className="py-20 md:py-32 bg-background">
         <div className="container-full">
           <SectionHeading eyebrow="Explore Collections" title="Sacred Offerings" copy="Browse our curated collections to find pieces that resonate with your spirit." />
-          <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {shopCategories.map((item, index) => (
-              <Link 
-                key={item.name} 
-                to="/products" 
-                className={`group relative overflow-hidden rounded-3xl block h-[450px] ${index === 0 ? 'md:col-span-2 lg:col-span-2' : ''} ${index === 3 ? 'md:col-span-2 lg:col-span-1' : ''} ${index === 4 ? 'md:col-span-2 lg:col-span-2' : ''}`}
-              >
-                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-500 z-10" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent z-10" />
-                <img 
-                  src={item.image} 
-                  alt={item.name}
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 p-8 z-20 flex flex-col justify-end">
-                  <p className="text-sm uppercase tracking-widest text-primary mb-2 font-medium transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
-                    {item.note}
-                  </p>
-                  <h3 className="text-3xl font-serif text-white transform group-hover:-translate-y-2 transition-transform duration-500">
-                    {item.name}
-                  </h3>
-                  <div className="h-0 overflow-hidden group-hover:h-12 transition-all duration-500 flex items-center mt-2">
-                    <span className="inline-flex items-center gap-2 text-sm text-white/90">
-                      Explore collection <ArrowRight className="w-4 h-4" />
-                    </span>
+          {categoriesLoading ? (
+            <div className="mt-16 text-center text-muted-foreground">Loading collections...</div>
+          ) : (
+            <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {shopCategories.map((item: Category, index: number) => (
+                <Link 
+                  key={item.name} 
+                  to={`/products?category=${item._id}`} 
+                  className={`group relative overflow-hidden rounded-3xl block h-[450px] ${index === 0 ? 'md:col-span-2 lg:col-span-2' : ''} ${index === 3 ? 'md:col-span-2 lg:col-span-1' : ''} ${index === 4 ? 'md:col-span-2 lg:col-span-2' : ''}`}
+                >
+                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-500 z-10" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent z-10" />
+                  <img 
+                    src={item.image} 
+                    alt={item.name}
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 p-8 z-20 flex flex-col justify-end">
+                    <p className="text-sm uppercase tracking-widest text-primary mb-2 font-medium transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+                      {item.note}
+                    </p>
+                    <h3 className="text-3xl font-serif text-white transform group-hover:-translate-y-2 transition-transform duration-500">
+                      {item.name}
+                    </h3>
+                    <div className="h-0 overflow-hidden group-hover:h-12 transition-all duration-500 flex items-center mt-2">
+                      <span className="inline-flex items-center gap-2 text-sm text-white/90">
+                        Explore collection <ArrowRight className="w-4 h-4" />
+                      </span>
+                    </div>
                   </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      <section className="py-20 md:py-32 bg-slate-50 border-t border-black/5">
+        <div className="container-full">
+          <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end mb-14">
+             <SectionHeading eyebrow="Featured Pieces" title="Latest Additions" copy="Explore the newest arrivals to our sacred shop." />
+             <Button asChild variant="outline" className="rounded-none"><Link to="/products">View all pieces <ArrowRight /></Link></Button>
           </div>
+          
+          <FeaturedProducts />
         </div>
       </section>
 
@@ -320,7 +355,6 @@ const Index = () => {
         </div>
       </section>
       
-
     </Layout>
   );
 };

@@ -1,0 +1,35 @@
+const mongoose = require('mongoose');
+const Product = require('../models/Product');
+
+const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const sortFields = { newest: { createdAt: -1 }, 'price-asc': { price: 1, _id: 1 }, 'price-desc': { price: -1, _id: 1 }, name: { name: 1, _id: 1 } };
+
+exports.listProducts = async (req, res, next) => {
+  try {
+    const page = Math.max(1, Number.parseInt(req.query.page, 10) || 1);
+    const limit = Math.min(48, Math.max(1, Number.parseInt(req.query.limit, 10) || 12));
+    const query = { isDeleted: false, availability: true };
+    if (req.query.category) {
+      if (!mongoose.isValidObjectId(req.query.category)) return res.status(400).json({ success: false, error: { code: 'INVALID_CATEGORY', message: 'Invalid category filter' } });
+      query.category = req.query.category;
+    }
+    if (typeof req.query.q === 'string' && req.query.q.trim()) {
+      const term = req.query.q.trim();
+      if (term.length > 80) return res.status(400).json({ success: false, error: { code: 'INVALID_SEARCH', message: 'Search must be 80 characters or fewer' } });
+      query.name = { $regex: escapeRegex(term), $options: 'i' };
+    }
+    const [products, total] = await Promise.all([
+      Product.find(query).select('name slug category price mrp discount stock description images availability createdAt').populate('category', 'name').sort(sortFields[req.query.sort] || sortFields.newest).skip((page - 1) * limit).limit(limit).lean(),
+      Product.countDocuments(query),
+    ]);
+    res.json({ success: true, data: products, pagination: { page, limit, total, totalPages: Math.ceil(total / limit) } });
+  } catch (error) { next(error); }
+};
+
+exports.getProductBySlug = async (req, res, next) => {
+  try {
+    const product = await Product.findOne({ slug: req.params.slug, isDeleted: false, availability: true }).populate('category', 'name').lean();
+    if (!product) return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Product not found' } });
+    return res.json({ success: true, data: product });
+  } catch (error) { return next(error); }
+};

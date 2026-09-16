@@ -1,0 +1,12 @@
+const router = require('express').Router();
+const { body } = require('express-validator');
+const { requireAdmin } = require('../middleware/auth.middleware');
+const controller = require('../controllers/announcement.controller');
+router.get('/', controller.listPublic);
+router.get('/admin', requireAdmin, controller.listAdmin);
+router.post('/admin', requireAdmin, [body('title').trim().isLength({ min: 3, max: 120 }), body('content').trim().isLength({ min: 3, max: 1000 }), body('type').optional().isIn(['info', 'sale', 'warning']), body('status').optional().isIn(['draft', 'published', 'archived'])], controller.create);
+router.put('/admin/:id', requireAdmin, controller.update);
+router.delete('/admin/:id', requireAdmin, controller.archive);
+router.put('/admin/:id', requireAdmin, [body('title').optional().trim().isLength({ min: 3, max: 120 }), body('content').optional().trim().isLength({ min: 3, max: 1000 }), body('type').optional().isIn(['info', 'sale', 'warning']), body('status').optional().isIn(['draft', 'published', 'archived'])], controller.update);
+router.delete('/admin/:id', requireAdmin, controller.delete);
+module.exports = router;

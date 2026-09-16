@@ -10,6 +10,12 @@ export default defineConfig(({ mode }) => ({
     hmr: {
       overlay: false,
     },
+    headers: {
+      "Cross-Origin-Opener-Policy": "same-origin-allow-popups"
+    },
+    proxy: {
+      "/api": { target: "http://localhost:5000", changeOrigin: true },
+    },
   },
   plugins: [react()],
   resolve: {

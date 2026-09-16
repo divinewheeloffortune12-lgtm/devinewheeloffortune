@@ -12,17 +12,19 @@ export default function Contact() {
   
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const form = new FormData(event.currentTarget);
+    const formElement = event.currentTarget;
+    const form = new FormData(formElement);
     try {
       setSending(true);
       const res = await api.post('/contact', Object.fromEntries(form));
       if (res.data?.success) {
-        event.currentTarget.reset();
+        formElement.reset();
         toast.success('Message received. Our team will reply as soon as possible.');
       } else {
         throw new Error(res.data?.message || 'Failed to send message');
       }
     } catch (error) {
+      console.error("Contact form error:", error);
       toast.error(getErrorMessage(error, 'Message not sent. Please try again shortly.'));
     } finally {
       setSending(false);

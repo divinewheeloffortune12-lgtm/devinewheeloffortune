@@ -29,10 +29,12 @@ const formSchema = z.object({
   slug: z.string().min(2),
   category: z.string().min(1),
   price: z.coerce.number().min(0),
-  mrp: z.coerce.number().min(0),
+  discount: z.coerce.number().min(0).max(100).default(0),
   stock: z.coerce.number().min(0),
   description: z.string().optional(),
   sizes: z.string().optional(),
+  tags: z.string().optional(),
+  isFeatured: z.boolean().default(false),
   availability: z.boolean().default(true),
 });
 
@@ -52,10 +54,12 @@ export const AdminProducts = () => {
       slug: "",
       category: "",
       price: 0,
-      mrp: 0,
+      discount: 0,
       stock: 0,
       description: "",
       sizes: "",
+      tags: "",
+      isFeatured: false,
       availability: true,
     },
   });
@@ -197,39 +201,66 @@ export const AdminProducts = () => {
                     </FormItem>
                   )} />
                 </div>
-
+                
                 <div className="grid grid-cols-3 gap-4">
                   <FormField control={form.control} name="price" render={({ field }) => (
                     <FormItem><FormLabel>Price (₹)</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem>
                   )} />
-                  <FormField control={form.control} name="mrp" render={({ field }) => (
-                    <FormItem><FormLabel>MRP (₹)</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem>
+                  <FormField control={form.control} name="discount" render={({ field }) => (
+                    <FormItem><FormLabel>Discount (%)</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem>
                   )} />
                   <FormField control={form.control} name="stock" render={({ field }) => (
                     <FormItem><FormLabel>Stock</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem>
                   )} />
                 </div>
 
+                <FormField control={form.control} name="tags" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Tags (comma separated)</FormLabel>
+                    <FormControl><Input placeholder="e.g. healing, new, trending" {...field} /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+
                 <FormField control={form.control} name="description" render={({ field }) => (
                   <FormItem><FormLabel>Description</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
 
-                <FormField control={form.control} name="availability" render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                    <div className="space-y-0.5">
-                      <FormLabel className="text-base">Availability</FormLabel>
-                      <div className="text-[0.8rem] text-muted-foreground">Is this product available for purchase?</div>
-                    </div>
-                    <FormControl>
-                      <input 
-                        type="checkbox" 
-                        className="w-5 h-5 accent-primary cursor-pointer"
-                        checked={field.value}
-                        onChange={field.onChange}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )} />
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField control={form.control} name="availability" render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                      <div className="space-y-0.5">
+                        <FormLabel className="text-base">Availability</FormLabel>
+                        <div className="text-[0.8rem] text-muted-foreground">Is this product available?</div>
+                      </div>
+                      <FormControl>
+                        <input 
+                          type="checkbox" 
+                          className="w-5 h-5 accent-primary cursor-pointer"
+                          checked={field.value}
+                          onChange={field.onChange}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )} />
+                  
+                  <FormField control={form.control} name="isFeatured" render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                      <div className="space-y-0.5">
+                        <FormLabel className="text-base">Featured</FormLabel>
+                        <div className="text-[0.8rem] text-muted-foreground">Highlight on homepage?</div>
+                      </div>
+                      <FormControl>
+                        <input 
+                          type="checkbox" 
+                          className="w-5 h-5 accent-primary cursor-pointer"
+                          checked={field.value}
+                          onChange={field.onChange}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )} />
+                </div>
                 
                 <div>
                   <FormLabel className="mb-2 block">Product Images (up to 5)</FormLabel>

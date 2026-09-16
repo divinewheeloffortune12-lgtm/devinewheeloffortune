@@ -13,13 +13,13 @@ const uploadImage = (buffer) => new Promise((resolve, reject) => {
 
 exports.createProduct = async (req, res) => {
   try {
-    const { name, slug, category, price, mrp, stock, description, sizes } = req.body;
+    const { name, slug, category, price, discount, stock, description, sizes, tags, isFeatured } = req.body;
 
     const parsedPrice = Number(price);
-    const parsedMrp = Number(mrp);
+    const parsedDiscount = discount ? Number(discount) : 0;
     const parsedStock = stock === undefined ? 0 : Number(stock);
-    if (!name || !slug || !mongoose.isValidObjectId(category) || !Number.isFinite(parsedPrice) || !Number.isFinite(parsedMrp) || !Number.isInteger(parsedStock) || parsedPrice < 0 || parsedMrp < parsedPrice || parsedStock < 0) {
-      return res.status(400).json({ success: false, message: 'Please provide all required fields' });
+    if (!name || !slug || !mongoose.isValidObjectId(category) || !Number.isFinite(parsedPrice) || !Number.isInteger(parsedStock) || parsedPrice < 0 || parsedStock < 0 || parsedDiscount < 0 || parsedDiscount > 100) {
+      return res.status(400).json({ success: false, message: 'Please provide all valid required fields' });
     }
     if (!req.files?.length) {
       return res.status(400).json({ success: false, message: 'At least one product image is required' });
@@ -38,6 +38,15 @@ exports.createProduct = async (req, res) => {
       }
     }
 
+    let parsedTags = [];
+    if (tags) {
+      try {
+        parsedTags = JSON.parse(tags);
+      } catch (e) {
+        parsedTags = typeof tags === 'string' ? tags.split(',').map(s => s.trim()).filter(Boolean) : [];
+      }
+    }
+
     const uploads = [];
     try {
       for (const file of req.files) uploads.push(await uploadImage(file.buffer));
@@ -53,10 +62,12 @@ exports.createProduct = async (req, res) => {
         slug,
         category,
         price: parsedPrice,
-        mrp: parsedMrp,
+        discount: parsedDiscount,
         stock: parsedStock,
         description,
         sizes: parsedSizes,
+        tags: parsedTags,
+        isFeatured: isFeatured === 'true' || isFeatured === true,
         images: uploads.map(({ secure_url }) => secure_url),
         imagePublicIds: uploads.map(({ public_id }) => public_id),
       });

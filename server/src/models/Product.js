@@ -20,11 +20,6 @@ const productSchema = new mongoose.Schema({
     required: true,
     min: 0,
   },
-  mrp: {
-    type: Number,
-    required: true,
-    min: 0,
-  },
   discount: {
     type: Number,
     default: 0,
@@ -43,6 +38,13 @@ const productSchema = new mongoose.Schema({
   sizes: [{
     type: String
   }],
+  tags: [{
+    type: String
+  }],
+  isFeatured: {
+    type: Boolean,
+    default: false
+  },
   images: [{
     type: String,
     required: true,
@@ -71,15 +73,5 @@ const productSchema = new mongoose.Schema({
 
 productSchema.index({ category: 1, isDeleted: 1, createdAt: -1 });
 productSchema.index({ availability: 1, stock: 1 });
-
-// Pre-save middleware to automatically calculate discount if missing or update it based on mrp/price
-productSchema.pre('save', function(next) {
-  if (this.mrp > 0 && this.price > 0 && this.mrp > this.price) {
-    this.discount = Math.round(((this.mrp - this.price) / this.mrp) * 100);
-  } else {
-    this.discount = 0;
-  }
-  next();
-});
 
 module.exports = mongoose.model('Product', productSchema);

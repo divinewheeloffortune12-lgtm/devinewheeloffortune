@@ -50,7 +50,7 @@ const Services = () => {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await api.get('/api/bookings/services');
+        const response = await api.get('/bookings/services');
         if (response.data.success) {
           setServices(response.data.data);
         }
@@ -70,7 +70,7 @@ const Services = () => {
 
   const handlePaymentSuccess = async (response: any) => {
     try {
-      const verifyRes = await api.post('/api/bookings/verify-payment', {
+      const verifyRes = await api.post('/bookings/verify-payment', {
         razorpay_order_id: response.razorpay_order_id,
         razorpay_payment_id: response.razorpay_payment_id,
         razorpay_signature: response.razorpay_signature
@@ -106,7 +106,7 @@ const Services = () => {
 
     try {
       // Create backend order
-      const orderResponse = await api.post('/api/bookings/create-order', {
+      const orderResponse = await api.post('/bookings/create-order', {
         customerName: formData.name,
         address: formData.address,
         serviceId: selectedService._id

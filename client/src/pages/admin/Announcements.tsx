@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import { api } from "@/lib/api";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -55,9 +55,7 @@ export const AdminAnnouncements = () => {
 
   const fetchAnnouncements = async () => {
     try {
-      const { data } = await axios.get("http://localhost:5000/api/announcements/admin", {
-        withCredentials: true
-      });
+      const { data } = await api.get("/announcements/admin");
       setAnnouncements(data.data);
     } catch (error) {
       toast({
@@ -96,14 +94,10 @@ export const AdminAnnouncements = () => {
       setIsSubmitting(true);
       
       if (editingId) {
-        await axios.put(`http://localhost:5000/api/announcements/admin/${editingId}`, values, {
-          withCredentials: true
-        });
+        await api.put(`/announcements/admin/${editingId}`, values);
         toast({ title: "Announcement updated successfully" });
       } else {
-        await axios.post("http://localhost:5000/api/announcements/admin", values, {
-          withCredentials: true
-        });
+        await api.post("/announcements/admin", values);
         toast({ title: "Announcement created successfully" });
       }
       
@@ -123,9 +117,7 @@ export const AdminAnnouncements = () => {
   const deleteAnnouncement = async (id: string) => {
     if (!confirm("Are you sure you want to delete this announcement?")) return;
     try {
-      await axios.delete(`http://localhost:5000/api/announcements/admin/${id}`, {
-        withCredentials: true
-      });
+      await api.delete(`/announcements/admin/${id}`);
       toast({ title: "Announcement deleted" });
       fetchAnnouncements();
     } catch (error) {

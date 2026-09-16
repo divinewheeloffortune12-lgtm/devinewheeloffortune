@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { api } from "@/lib/api";
 import { Link } from "react-router-dom";
 import { ArrowRight, ShoppingBag } from "lucide-react";
 
@@ -18,7 +18,7 @@ export const FeaturedProducts = () => {
   const { data: products, isLoading } = useQuery({
     queryKey: ['featured-products'],
     queryFn: async () => {
-      const response = await axios.get('http://localhost:5000/api/products?limit=4');
+      const response = await api.get('/products?limit=4');
       return response.data.data;
     }
   });

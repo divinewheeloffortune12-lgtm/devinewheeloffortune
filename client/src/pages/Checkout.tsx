@@ -71,7 +71,7 @@ const Checkout = () => {
 
   const handlePaymentSuccess = async (response: any) => {
     try {
-      const verifyRes = await api.post('/api/orders/verify-payment', {
+      const verifyRes = await api.post('/orders/verify-payment', {
         razorpay_order_id: response.razorpay_order_id,
         razorpay_payment_id: response.razorpay_payment_id,
         razorpay_signature: response.razorpay_signature
@@ -109,7 +109,7 @@ const Checkout = () => {
     try {
       const fullAddress = `${formData.address}, ${formData.city}, ${formData.postalCode}, ${formData.country}`;
       
-      const orderResponse = await api.post('/api/orders/create', {
+      const orderResponse = await api.post('/orders/create', {
         shippingAddress: fullAddress,
         notes: formData.notes
       });

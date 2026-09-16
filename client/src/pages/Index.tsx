@@ -50,7 +50,7 @@ const SectionHeading = ({ eyebrow, title, copy }: { eyebrow: string; title: stri
 );
 
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { api } from "@/lib/api";
 type Category = { _id: string; name: string; image: string; note: string };
 
 const Index = () => {
@@ -60,7 +60,7 @@ const Index = () => {
   const { data: categoriesData, isLoading: categoriesLoading } = useQuery({
     queryKey: ['categories'],
     queryFn: async () => {
-      const response = await axios.get<Category[]>('http://localhost:5000/api/categories');
+      const response = await api.get('/categories');
       return response.data.data;
     }
   });

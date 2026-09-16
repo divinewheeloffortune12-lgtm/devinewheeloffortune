@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import { api } from "@/lib/api";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -57,9 +57,7 @@ export const AdminCategories = () => {
 
   const fetchCategories = async () => {
     try {
-      const { data } = await axios.get("http://localhost:5000/api/admin/categories", {
-        withCredentials: true
-      });
+      const { data } = await api.get("/admin/categories");
       setCategories(data.data);
     } catch (error) {
       toast({
@@ -100,14 +98,10 @@ export const AdminCategories = () => {
       setIsSubmitting(true);
       
       if (editingId) {
-        await axios.patch(`http://localhost:5000/api/admin/categories/${editingId}`, values, {
-          withCredentials: true
-        });
+        await api.patch(`/admin/categories/${editingId}`, values);
         toast({ title: "Category updated successfully" });
       } else {
-        await axios.post("http://localhost:5000/api/admin/categories", values, {
-          withCredentials: true
-        });
+        await api.post("/admin/categories", values);
         toast({ title: "Category created successfully" });
       }
       
@@ -127,9 +121,7 @@ export const AdminCategories = () => {
   const deleteCategory = async (id: string) => {
     if (!confirm("Are you sure you want to permanently delete this category? All associated products will also be deleted.")) return;
     try {
-      await axios.delete(`http://localhost:5000/api/admin/categories/${id}`, {
-        withCredentials: true
-      });
+      await api.delete(`/admin/categories/${id}`);
       toast({ title: "Category and associated products deleted." });
       fetchCategories();
     } catch (error) {

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import { api } from "@/lib/api";
 import { Loader2, Receipt, TrendingUp } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -14,9 +14,7 @@ export const AdminSales = () => {
 
   const fetchSales = async () => {
     try {
-      const { data } = await axios.get("http://localhost:5000/api/admin/sales", {
-        withCredentials: true
-      });
+      const { data } = await api.get("/admin/sales");
       setSales(data.data || []);
     } catch (error) {
       toast({

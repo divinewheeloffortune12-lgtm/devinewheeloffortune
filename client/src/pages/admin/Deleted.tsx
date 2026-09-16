@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import { api } from "@/lib/api";
 import { Loader2, Trash2, ArchiveRestore } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
@@ -15,9 +15,7 @@ export const AdminDeleted = () => {
 
   const fetchDeleted = async () => {
     try {
-      const { data } = await axios.get("http://localhost:5000/api/admin/products/deleted/all", {
-        withCredentials: true
-      });
+      const { data } = await api.get("/admin/products/deleted/all");
       setProducts(data.data || []);
     } catch (error) {
       toast({

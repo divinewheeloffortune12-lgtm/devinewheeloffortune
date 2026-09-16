@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import { api } from "@/lib/api";
 import { Link } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
@@ -24,9 +24,7 @@ export const AdminReports = () => {
 
   const fetchMessages = async () => {
     try {
-      const { data } = await axios.get("http://localhost:5000/api/admin/feedback", {
-        withCredentials: true
-      });
+      const { data } = await api.get("/admin/feedback");
       setMessages(data.data);
     } catch (error) {
       toast({ variant: "destructive", title: "Error fetching reports" });
@@ -37,9 +35,7 @@ export const AdminReports = () => {
 
   const updateStatus = async (id: string, status: string) => {
     try {
-      await axios.patch(`http://localhost:5000/api/admin/feedback/${id}`, { status }, {
-        withCredentials: true
-      });
+      await api.patch(`/admin/feedback/${id}`, { status });
       toast({ title: `Marked as ${status}` });
       fetchMessages();
     } catch (error) {
@@ -50,9 +46,7 @@ export const AdminReports = () => {
   const deleteMessage = async (id: string) => {
     if (!confirm("Are you sure you want to permanently delete this report?")) return;
     try {
-      await axios.delete(`http://localhost:5000/api/admin/feedback/${id}`, {
-        withCredentials: true
-      });
+      await api.delete(`/admin/feedback/${id}`);
       toast({ title: "Report deleted successfully" });
       if (selectedMessage?._id === id) setIsDialogOpen(false);
       fetchMessages();

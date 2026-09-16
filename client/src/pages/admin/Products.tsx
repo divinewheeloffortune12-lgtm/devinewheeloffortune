@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import { api } from "@/lib/api";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -67,9 +67,7 @@ export const AdminProducts = () => {
 
   const fetchProducts = async () => {
     try {
-      const { data } = await axios.get("http://localhost:5000/api/admin/products", {
-        withCredentials: true
-      });
+      const { data } = await api.get("/admin/products");
       setProducts(data.data);
     } catch (error) {
       toast({
@@ -83,7 +81,7 @@ export const AdminProducts = () => {
 
   const fetchCategories = async () => {
     try {
-      const { data } = await axios.get("http://localhost:5000/api/categories");
+      const { data } = await api.get("/categories");
       setCategories(data.data);
     } catch (error) {
       console.error(error);
@@ -103,8 +101,7 @@ export const AdminProducts = () => {
         formData.append("images", file);
       });
 
-      await axios.post("http://localhost:5000/api/admin/products", formData, {
-        withCredentials: true,
+      await api.post("/admin/products", formData, {
         headers: { "Content-Type": "multipart/form-data" }
       });
       
@@ -127,9 +124,7 @@ export const AdminProducts = () => {
   const deleteProduct = async (id: string) => {
     if (!confirm("Are you sure you want to delete this product?")) return;
     try {
-      await axios.delete(`http://localhost:5000/api/admin/products/${id}`, {
-        withCredentials: true
-      });
+      await api.delete(`/admin/products/${id}`);
       toast({ title: "Product deleted" });
       fetchProducts();
     } catch (error) {

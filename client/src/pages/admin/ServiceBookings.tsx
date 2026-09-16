@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Loader2 } from "lucide-react";
-import api from "@/lib/api";
+import { api } from "@/lib/api";
 
 export const ServiceBookings = () => {
   const [bookings, setBookings] = useState<any[]>([]);
@@ -9,7 +9,7 @@ export const ServiceBookings = () => {
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        const { data } = await api.get("/api/admin/bookings");
+        const { data } = await api.get("/admin/bookings");
         if (data.success) {
           setBookings(data.data);
         }

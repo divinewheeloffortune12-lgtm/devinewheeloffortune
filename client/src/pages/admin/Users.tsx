@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import { api } from "@/lib/api";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Loader2, UserX, Clock, Eye } from "lucide-react";
@@ -22,9 +22,7 @@ export const AdminUsers = () => {
 
   const fetchUsers = async () => {
     try {
-      const { data } = await axios.get("http://localhost:5000/api/admin/users", {
-        withCredentials: true
-      });
+      const { data } = await api.get("/admin/users");
       setUsers(data.data);
     } catch (error) {
       toast({
@@ -39,9 +37,7 @@ export const AdminUsers = () => {
 
   const toggleStatus = async (id: string, newStatus: string) => {
     try {
-      await axios.patch(`http://localhost:5000/api/admin/users/${id}/status`, { status: newStatus }, {
-        withCredentials: true
-      });
+      await api.patch(`/admin/users/${id}/status`, { status: newStatus });
       toast({
         title: "Status updated",
         description: `User is now ${newStatus.replace('_', ' ')}.`

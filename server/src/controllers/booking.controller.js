@@ -21,9 +21,9 @@ exports.getAllServices = async (req, res, next) => {
 
 exports.createBookingOrder = async (req, res, next) => {
   try {
-    const { customerName, serviceId, address } = req.body;
+    const { customerName, mobile, serviceId, address } = req.body;
     
-    if (!customerName || !serviceId || !address) {
+    if (!customerName || !mobile || !serviceId || !address) {
       throw Object.assign(new Error('Missing required booking information'), { statusCode: 400 });
     }
 
@@ -57,6 +57,7 @@ exports.createBookingOrder = async (req, res, next) => {
     // 3. Create Booking Record
     const booking = new ServiceBooking({
       customerName,
+      mobile,
       service: service._id,
       address,
       amount,

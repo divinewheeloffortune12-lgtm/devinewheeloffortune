@@ -2,7 +2,9 @@ const ServiceBooking = require('../models/ServiceBooking');
 
 exports.getAllBookings = async (req, res, next) => {
   try {
-    const bookings = await ServiceBooking.find().populate('service', 'name price').sort({ createdAt: -1 });
+    const bookings = await ServiceBooking.find({ paymentStatus: 'PAID' })
+      .populate('service', 'name price')
+      .sort({ createdAt: -1 });
     res.json({ success: true, data: bookings });
   } catch (error) {
     next(error);

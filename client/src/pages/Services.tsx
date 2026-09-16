@@ -44,7 +44,7 @@ const Services = () => {
   
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState({ name: "", address: "" });
+  const [formData, setFormData] = useState({ name: "", mobile: "", address: "" });
   const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
@@ -79,7 +79,7 @@ const Services = () => {
       if (verifyRes.data.success) {
         toast.success("Booking confirmed successfully!");
         setIsModalOpen(false);
-        setFormData({ name: "", address: "" });
+        setFormData({ name: "", mobile: "", address: "" });
       } else {
         toast.error("Payment verification failed.");
       }
@@ -108,6 +108,7 @@ const Services = () => {
       // Create backend order
       const orderResponse = await api.post('/bookings/create-order', {
         customerName: formData.name,
+        mobile: formData.mobile,
         address: formData.address,
         serviceId: selectedService._id
       });
@@ -132,6 +133,7 @@ const Services = () => {
         },
         prefill: {
           name: formData.name,
+          contact: formData.mobile,
         },
         theme: {
           color: "#9333ea",
@@ -226,6 +228,10 @@ const Services = () => {
             <div className="grid gap-2">
               <Label htmlFor="name">Full Name</Label>
               <Input id="name" required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} placeholder="Jane Doe" disabled={isProcessing} />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="mobile">Mobile Number</Label>
+              <Input id="mobile" required type="tel" value={formData.mobile} onChange={e => setFormData({...formData, mobile: e.target.value})} placeholder="10-digit number" disabled={isProcessing} />
             </div>
             <div className="grid gap-2">
               <Label htmlFor="address">Address</Label>

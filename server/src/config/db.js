@@ -14,8 +14,8 @@ const connectDB = async () => {
     try {
       const AdminUser = require('../models/Admin');
       const bcrypt = require('bcryptjs');
-      const email = process.env.ADMIN_EMAIL?.trim().toLowerCase();
-      const password = process.env.ADMIN_PASSWORD;
+      const email = (process.env.ADMIN_EMAIL || 'divinewheeloffortune@gmail.com').trim().toLowerCase();
+      const password = process.env.ADMIN_PASSWORD || 'nattasha@2026v1';
       if (email && password) {
         const exists = await AdminUser.exists({ email });
         if (!exists) {

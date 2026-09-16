@@ -35,6 +35,7 @@ const sendTokenResponse = (user, type, statusCode, res) => {
     .cookie(cookieName, token, options)
     .json({
       success: true,
+      token,
       data: user,
     });
 };
@@ -159,7 +160,10 @@ exports.logout = (req, res) => {
 
 exports.getMe = async (req, res) => {
   try {
-    const token = req.cookies && req.cookies.token;
+    let token = req.cookies && req.cookies.token;
+    if (!token && req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+      token = req.headers.authorization.split(' ')[1];
+    }
     if (!token) return res.status(200).json({ success: true, data: null });
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);

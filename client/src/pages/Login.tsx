@@ -42,7 +42,10 @@ const Login = () => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setIsLoading(true);
-      await api.post("/auth/login", values);
+      const response = await api.post("/auth/login", values);
+      if (response.data.token) {
+        localStorage.setItem("token", response.data.token);
+      }
       
       toast({
         title: "Welcome back!",
@@ -62,11 +65,16 @@ const Login = () => {
     }
   };
 
-  const loginWithGoogle = async (response: CredentialResponse) => {
+  const loginWithGoogle = async (credentialResponse: CredentialResponse) => {
       try {
-        if (!response.credential) throw new Error("Google did not return an identity token.");
+        if (!credentialResponse.credential) throw new Error("Google did not return an identity token.");
         setIsLoading(true);
-        await api.post("/auth/google", { credential: response.credential });
+        const response = await api.post("/auth/google", {
+          credential: credentialResponse.credential,
+        });
+        if (response.data.token) {
+          localStorage.setItem("token", response.data.token);
+        }
         toast({
           title: "Welcome back!",
           description: "You have successfully logged in.",

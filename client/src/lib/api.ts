@@ -8,6 +8,15 @@ export const api = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
+api.interceptors.request.use((config) => {
+  // Check for admin token first (for admin routes), then fall back to normal user token
+  const token = localStorage.getItem("admin_token") || localStorage.getItem("token");
+  if (token && config.headers) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 export const getErrorMessage = (error: unknown, fallback: string) =>
   axios.isAxiosError(error)
     ? error.response?.data?.message || error.response?.data?.error?.message || fallback

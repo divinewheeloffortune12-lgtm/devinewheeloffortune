@@ -55,6 +55,7 @@ const AdminDashboard = () => {
   const handleLogout = async () => {
     try {
       await api.post("/auth/admin/logout");
+      localStorage.removeItem("admin_token");
       toast({
         title: "Logged out",
         description: "You have been logged out successfully.",

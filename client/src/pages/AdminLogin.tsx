@@ -41,7 +41,11 @@ const AdminLogin = () => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setIsLoading(true);
-      await api.post("/auth/admin/login", values);
+      const response = await api.post("/auth/admin/login", values);
+      
+      if (response.data.token) {
+        localStorage.setItem("admin_token", response.data.token);
+      }
       
       toast({
         title: "Admin Authenticated",

@@ -2,6 +2,7 @@ import { useRef } from "react"
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { ArrowDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Link } from "react-router-dom"
 
 export interface ParallaxSection {
     id: number | string;
@@ -37,7 +38,7 @@ const SectionItem = ({ section }: { section: ParallaxSection }) => {
                 </p>
                 <div className="mt-8">
                     <Button asChild size="lg" variant="outline" className="rounded-none border-primary text-primary hover:bg-primary hover:text-primary-foreground">
-                        <a href="#book">Book Now</a>
+                        <Link to="/services" state={{ preselectService: section.title }}>Book Now</Link>
                     </Button>
                 </div>
             </motion.div>

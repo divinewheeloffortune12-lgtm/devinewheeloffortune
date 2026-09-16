@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -46,6 +47,7 @@ const Services = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({ name: "", mobile: "", address: "" });
   const [isProcessing, setIsProcessing] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -62,6 +64,19 @@ const Services = () => {
     };
     fetchServices();
   }, []);
+
+  useEffect(() => {
+    if (services.length > 0 && location.state?.preselectService) {
+      const query = location.state.preselectService.toLowerCase();
+      const matched = services.find(s => s.name.toLowerCase().includes(query) || query.includes(s.name.toLowerCase()));
+      if (matched) {
+        setSelectedService(matched);
+        setIsModalOpen(true);
+        // Clear state so it doesn't reopen on refresh
+        window.history.replaceState({}, document.title);
+      }
+    }
+  }, [services, location.state]);
 
   const handleBookClick = (service: Service) => {
     setSelectedService(service);

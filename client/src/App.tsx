@@ -31,6 +31,8 @@ const Profile = lazy(() => import("./pages/Profile"));
 const Contact = lazy(() => import("./pages/Contact"));
 const Faq = lazy(() => import("./pages/Faq"));
 const Blog = lazy(() => import("./pages/Blog"));
+const BlogPost = lazy(() => import("./pages/BlogPost"));
+const About = lazy(() => import("./pages/About"));
 const Announcements = lazy(() => import("./pages/Announcements"));
 const Services = lazy(() => import("./pages/Services"));
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -48,38 +50,42 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <ScrollToTop />
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/products" element={<Shop />} />
-            <Route path="/product/:slug" element={<ProductPage />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/checkout" element={<Checkout />} />
-            
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/faq" element={<Faq />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/announcements" element={<Announcements />} />
-            <Route path="/services" element={<Services />} />
-            
-            <Route path="/admin/login" element={<AdminLogin />} />
-            <Route path="/admin" element={<AdminDashboard />}>
-              <Route index element={<DashboardHome />} />
-              <Route path="products" element={<AdminProducts />} />
-              <Route path="categories" element={<AdminCategories />} />
-              <Route path="users" element={<AdminUsers />} />
-              <Route path="reports" element={<AdminReports />} />
-              <Route path="announcements" element={<AdminAnnouncements />} />
-              <Route path="sales" element={<AdminSales />} />
-              <Route path="service-bookings" element={<ServiceBookings />} />
-              <Route path="deleted" element={<AdminDeleted />} />
-            </Route>
+          <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-slate-50"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/products" element={<Shop />} />
+              <Route path="/product/:slug" element={<ProductPage />} />
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/checkout" element={<Checkout />} />
+              
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/faq" element={<Faq />} />
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/blog/:slug" element={<BlogPost />} />
+              <Route path="/announcements" element={<Announcements />} />
+              <Route path="/services" element={<Services />} />
+              
+              <Route path="/admin/login" element={<AdminLogin />} />
+              <Route path="/admin" element={<AdminDashboard />}>
+                <Route index element={<DashboardHome />} />
+                <Route path="products" element={<AdminProducts />} />
+                <Route path="categories" element={<AdminCategories />} />
+                <Route path="users" element={<AdminUsers />} />
+                <Route path="reports" element={<AdminReports />} />
+                <Route path="announcements" element={<AdminAnnouncements />} />
+                <Route path="sales" element={<AdminSales />} />
+                <Route path="service-bookings" element={<ServiceBookings />} />
+                <Route path="deleted" element={<AdminDeleted />} />
+              </Route>
 
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Suspense>
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>

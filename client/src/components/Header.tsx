@@ -54,9 +54,9 @@ export const Header = () => {
 
             {/* Desktop Navigation - Left Aligned */}
             <div className="hidden lg:flex items-center gap-10">
-              <a href={homeHref("/#top")} className="flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-wider text-foreground/80 transition-all hover:text-primary">
+              <Link to="/" className="flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-wider text-foreground/80 transition-all hover:text-primary">
                 <Home className="w-4 h-4 opacity-70" /> Home
-              </a>
+              </Link>
               
               {/* Category Mega Menu */}
               <div className="group py-4">
@@ -81,15 +81,15 @@ export const Header = () => {
                 </div>
               </div>
 
-              <a href="/products" className="flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-wider text-foreground/80 transition-all hover:text-primary">
+              <Link to="/products" className="flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-wider text-foreground/80 transition-all hover:text-primary">
                 <ShoppingBag className="w-4 h-4 opacity-70" /> Shop
-              </a>
-              <a href={homeHref("/#about")} className="flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-wider text-foreground/80 transition-all hover:text-primary">
+              </Link>
+              <Link to="/about" className="flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-wider text-foreground/80 transition-all hover:text-primary">
                 <Info className="w-4 h-4 opacity-70" /> About
-              </a>
-              <a href="/contact" className="flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-wider text-foreground/80 transition-all hover:text-primary">
+              </Link>
+              <Link to="/contact" className="flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-wider text-foreground/80 transition-all hover:text-primary">
                 <Phone className="w-4 h-4 opacity-70" /> Contact
-              </a>
+              </Link>
               
               {/* More Dropdown */}
               <div className="relative group py-4">
@@ -98,13 +98,23 @@ export const Header = () => {
                 </button>
                 <div className="absolute top-full left-0 w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top scale-95 group-hover:scale-100 bg-white shadow-xl rounded-xl border border-black/5 py-2 overflow-hidden z-50">
                   {moreDropdown.map((subItem) => (
-                    <a 
-                      key={subItem.label} 
-                      href={subItem.href.startsWith('/#') ? homeHref(subItem.href) : subItem.href} 
-                      className="block px-5 py-2.5 text-[11px] font-medium uppercase tracking-wider text-foreground/70 hover:bg-gray-50 hover:text-primary transition-colors"
-                    >
-                      {subItem.label}
-                    </a>
+                    subItem.href.startsWith('/#') ? (
+                      <a 
+                        key={subItem.label} 
+                        href={homeHref(subItem.href)} 
+                        className="block px-5 py-2.5 text-[11px] font-medium uppercase tracking-wider text-foreground/70 hover:bg-gray-50 hover:text-primary transition-colors"
+                      >
+                        {subItem.label}
+                      </a>
+                    ) : (
+                      <Link 
+                        key={subItem.label} 
+                        to={subItem.href} 
+                        className="block px-5 py-2.5 text-[11px] font-medium uppercase tracking-wider text-foreground/70 hover:bg-gray-50 hover:text-primary transition-colors"
+                      >
+                        {subItem.label}
+                      </Link>
+                    )
                   ))}
                 </div>
               </div>
@@ -133,9 +143,9 @@ export const Header = () => {
                 <CartIcon />
               </div>
 
-              <a href={homeHref("/#book")} aria-label="Book a Session" className="flex items-center justify-center h-10 w-10 rounded-full hover:bg-primary/10 text-foreground/80 hover:text-primary transition-colors">
+              <Link to="/services" aria-label="Book a Session" className="flex items-center justify-center h-10 w-10 rounded-full hover:bg-primary/10 text-foreground/80 hover:text-primary transition-colors">
                 <CalendarClock className="h-5 w-5" />
-              </a>
+              </Link>
 
               <Button variant="ghost" size="icon" className="lg:hidden h-10 w-10 rounded-full text-foreground hover:text-primary hover:bg-primary/10 ml-1" onClick={() => setOpen(!open)} aria-label={open ? "Close menu" : "Open menu"}>
                 {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -172,17 +182,17 @@ export const Header = () => {
                   </div>
                   <div className="flex-1 overflow-y-auto px-2 py-4">
                   
-                  <a href={homeHref("/#top")} onClick={() => setOpen(false)} className="flex items-center gap-3 px-5 py-3.5 text-sm font-semibold text-foreground/80 hover:bg-black/5 hover:text-primary rounded-lg">Home</a>
+                  <Link to="/" onClick={() => setOpen(false)} className="flex items-center gap-3 px-5 py-3.5 text-sm font-semibold text-foreground/80 hover:bg-black/5 hover:text-primary rounded-lg">Home</Link>
                   <a href={homeHref("/#categories")} onClick={() => setOpen(false)} className="flex items-center gap-3 px-5 py-3.5 text-sm font-semibold text-foreground/80 hover:bg-black/5 hover:text-primary rounded-lg">Category</a>
-                  <a href="/products" onClick={() => setOpen(false)} className="flex items-center gap-3 px-5 py-3.5 text-sm font-semibold text-foreground/80 hover:bg-black/5 hover:text-primary rounded-lg">Shop</a>
-                  <a href={homeHref("/#about")} onClick={() => setOpen(false)} className="flex items-center gap-3 px-5 py-3.5 text-sm font-semibold text-foreground/80 hover:bg-black/5 hover:text-primary rounded-lg">About</a>
-                  <a href="/contact" onClick={() => setOpen(false)} className="flex items-center gap-3 px-5 py-3.5 text-sm font-semibold text-foreground/80 hover:bg-black/5 hover:text-primary rounded-lg">Contact</a>
+                  <Link to="/products" onClick={() => setOpen(false)} className="flex items-center gap-3 px-5 py-3.5 text-sm font-semibold text-foreground/80 hover:bg-black/5 hover:text-primary rounded-lg">Shop</Link>
+                  <Link to="/about" onClick={() => setOpen(false)} className="flex items-center gap-3 px-5 py-3.5 text-sm font-semibold text-foreground/80 hover:bg-black/5 hover:text-primary rounded-lg">About</Link>
+                  <Link to="/contact" onClick={() => setOpen(false)} className="flex items-center gap-3 px-5 py-3.5 text-sm font-semibold text-foreground/80 hover:bg-black/5 hover:text-primary rounded-lg">Contact</Link>
 
                   <div className="border-t border-black/5 mt-4 pt-6 px-5 flex flex-col gap-4">
-                    <a href={homeHref("/#book")} onClick={() => setOpen(false)} className="flex items-center gap-3 px-5 py-3.5 text-sm font-semibold text-foreground/80 hover:bg-black/5 hover:text-primary rounded-lg">
+                    <Link to="/services" onClick={() => setOpen(false)} className="flex items-center gap-3 px-5 py-3.5 text-sm font-semibold text-foreground/80 hover:bg-black/5 hover:text-primary rounded-lg">
                       <CalendarClock className="h-5 w-5 opacity-70" />
                       Book a Session
-                    </a>
+                    </Link>
                     <Link to="/profile" onClick={() => setOpen(false)} className="flex items-center gap-3 px-5 py-3.5 text-sm font-semibold text-foreground/80 hover:bg-black/5 hover:text-primary rounded-lg"><UserRound className="h-5 w-5 opacity-70" /> My Profile</Link>
                     {!signedIn && (
                       <>

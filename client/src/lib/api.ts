@@ -10,3 +10,5 @@ export const getErrorMessage = (error: unknown, fallback: string) =>
   axios.isAxiosError(error)
     ? error.response?.data?.message || error.response?.data?.error?.message || fallback
     : fallback;
+
+export default api;

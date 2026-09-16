@@ -57,10 +57,35 @@ router.get('/feedback', feedbackController.list);
 router.patch('/feedback/:id', feedbackController.updateStatus);
 router.delete('/feedback/:id', feedbackController.deleteMessage);
 
+const Order = require('../models/Order');
+
+// Sales & Orders
+router.get('/sales', async (req, res) => {
+  try {
+    const orders = await Order.find()
+      .populate('user', 'name email')
+      .sort({ createdAt: -1 })
+      .lean();
+    res.json({ success: true, data: orders });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+router.put('/sales/:id/status', async (req, res) => {
+  try {
+    const { status } = req.body;
+    const order = await Order.findByIdAndUpdate(req.params.id, { status }, { new: true });
+    if (!order) return res.status(404).json({ success: false, message: 'Order not found' });
+    res.json({ success: true, data: order });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
 // Stubs for future modules
 router.get('/reports', (req, res) => res.json({ success: true, data: [] }));
 router.get('/announcements', (req, res) => res.json({ success: true, data: [] }));
-router.get('/sales', (req, res) => res.json({ success: true, data: [] }));
 
 // Service Bookings
 router.get('/bookings', adminBookingController.getAllBookings);

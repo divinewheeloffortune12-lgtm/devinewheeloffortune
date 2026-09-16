@@ -5,7 +5,7 @@ import * as z from "zod";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2, ShieldCheck, MapPin, User, Lock, Package, CreditCard } from "lucide-react";
+import { Loader2, ShieldCheck, MapPin, User, Lock, Package, CreditCard, Receipt, Download } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -137,6 +137,35 @@ export const Profile = () => {
     }
   };
 
+  const printInvoice = (order: Order) => {
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+    const itemsHtml = order.products.map(p => `<tr><td style="padding: 10px; border-bottom: 1px solid #eee;">${p.product?.name || 'Item'}</td><td style="padding: 10px; border-bottom: 1px solid #eee;">${p.quantity}</td></tr>`).join('');
+    const html = `
+      <html>
+        <head>
+          <title>Invoice #${order.orderNumber}</title>
+          <style>body{font-family:sans-serif;padding:40px;color:#333;}</style>
+        </head>
+        <body>
+          <h1 style="color:#d4af37">Divine Wheel Of Fortune</h1>
+          <p><strong>Order Number:</strong> ${order.orderNumber}</p>
+          <p><strong>Date:</strong> ${new Date(order.createdAt).toLocaleDateString()}</p>
+          <p><strong>Status:</strong> ${order.paymentStatus}</p>
+          <table style="width:100%; border-collapse: collapse; margin-top: 20px;">
+            <tr style="background:#f9f9f9;"><th style="text-align:left; padding: 10px;">Item</th><th style="text-align:left; padding: 10px;">Quantity</th></tr>
+            ${itemsHtml}
+          </table>
+          <h2 style="margin-top: 20px; text-align: right;">Total: ₹${order.totalAmount.toLocaleString("en-IN")}</h2>
+        </body>
+      </html>
+    `;
+    printWindow.document.write(html);
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
+  };
+
   if (isLoading) {
     return (
       <Layout>
@@ -258,9 +287,51 @@ export const Profile = () => {
         </div>
 
         <section className="mt-8 bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-100">
-          <h2 className="text-xl font-medium text-slate-900 flex items-center gap-2"><Package className="w-5 h-5 text-slate-400" /> My Orders</h2>
-          {orders.length === 0 ? <p className="mt-4 text-sm text-slate-500">You have not placed any orders yet.</p> : <div className="mt-5 space-y-3">{orders.map((order) => <div key={order._id} className="rounded-xl border border-slate-100 p-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"><div><p className="font-medium text-slate-900">{order.orderNumber}</p><p className="text-sm text-slate-500">{new Date(order.createdAt).toLocaleDateString()} · {order.products.map((item) => `${item.product?.name || "Product"} × ${item.quantity}`).join(", ")}</p></div><div className="text-sm sm:text-right"><p className="font-medium">₹{order.totalAmount.toLocaleString("en-IN")}</p><p className="text-slate-500">{order.status} · {order.paymentStatus}</p></div></div>)}</div>}
-          <p className="mt-5 text-xs text-slate-500 flex items-center gap-2"><CreditCard className="w-4 h-4" /> Payment card details are never stored or displayed for your security.</p>
+          <h2 className="text-xl font-medium text-slate-900 flex items-center gap-2"><Receipt className="w-5 h-5 text-slate-400" /> Bills & Order History</h2>
+          {orders.length === 0 ? <p className="mt-4 text-sm text-slate-500">You have not placed any orders yet.</p> : (
+            <div className="mt-5 space-y-4">
+              {orders.map((order) => (
+                <div key={order._id} className="rounded-xl border border-slate-100 p-5 flex flex-col gap-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-slate-50 pb-4">
+                    <div>
+                      <p className="font-semibold text-slate-900 text-lg">Bill / Order #{order.orderNumber}</p>
+                      <p className="text-sm text-slate-500 mt-1">Placed on {new Date(order.createdAt).toLocaleDateString()}</p>
+                    </div>
+                    <div className="text-sm sm:text-right mt-2 sm:mt-0">
+                      <p className="font-semibold text-lg text-slate-900">₹{order.totalAmount.toLocaleString("en-IN")}</p>
+                      <p className="text-slate-500 text-xs uppercase tracking-wider mt-1">{order.paymentStatus}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex flex-col md:flex-row justify-between gap-4 items-start md:items-center">
+                    <div className="flex-1 text-sm text-slate-700">
+                      <p className="font-medium mb-1">Items Bought:</p>
+                      <ul className="list-disc list-inside space-y-0.5">
+                        {order.products.map((item, idx) => (
+                          <li key={idx}>{item.product?.name || "Unknown Product"} × {item.quantity}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    
+                    <div className="bg-slate-50 px-4 py-3 rounded-lg border border-slate-100 min-w-[200px]">
+                      <p className="text-xs uppercase tracking-widest text-slate-500 mb-1">Tracking Status</p>
+                      <p className={`font-semibold mb-3 ${
+                        order.status === 'CANCELLED' ? 'text-red-600' : 
+                        order.status === 'DELIVERED' ? 'text-emerald-600' : 
+                        'text-amber-600'
+                      }`}>
+                        {order.status === 'CANCELLED' ? 'Cancelled' : 
+                         order.status === 'DELIVERED' ? 'Successfully Delivered' : 
+                         'Pending / Processing'}
+                      </p>
+                      <Button variant="outline" size="sm" onClick={() => printInvoice(order)} className="w-full text-xs h-8"><Download className="w-3 h-3 mr-2" /> Download Bill</Button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          <p className="mt-6 pt-4 border-t border-slate-50 text-xs text-slate-500 flex items-center gap-2"><CreditCard className="w-4 h-4" /> Payment card details are never stored or displayed for your security.</p>
         </section>
       </main>
     </Layout>

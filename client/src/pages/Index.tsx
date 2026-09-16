@@ -77,7 +77,7 @@ const Index = () => {
         <div className="absolute inset-0 bg-black/20" />
         <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-background to-transparent" />
         
-        <div className="container-full relative flex min-h-[88svh] items-end pb-8 pt-32 md:pb-12 z-10">
+        <div className="container-full relative flex min-h-[88svh] items-end justify-end pb-8 pt-32 md:pb-12 z-10">
           <motion.div 
             initial="hidden"
             animate="visible"
@@ -85,22 +85,22 @@ const Index = () => {
               hidden: { opacity: 0 },
               visible: { opacity: 1, transition: { staggerChildren: 0.2 } }
             }}
-            className="max-w-3xl text-white drop-shadow-2xl"
+            className="max-w-2xl text-white drop-shadow-2xl flex flex-col items-end text-right"
           >
             <motion.p 
               variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } } }}
-              className="mb-5 text-xs font-semibold uppercase tracking-widest text-primary-foreground/90 drop-shadow-md flex items-center gap-3"
+              className="mb-5 text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-primary-foreground/90 drop-shadow-md flex items-center gap-2 sm:gap-3"
             >
               <span>Intuitive guidance</span>
-              <Star className="w-3 h-3 text-primary/70 fill-current" />
+              <Star className="w-2 h-2 sm:w-3 sm:h-3 text-primary/70 fill-current" />
               <span>Energy work</span>
-              <Star className="w-3 h-3 text-primary/70 fill-current" />
+              <Star className="w-2 h-2 sm:w-3 sm:h-3 text-primary/70 fill-current" />
               <span>Sacred living</span>
             </motion.p>
             
             <motion.h1 
               variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } } }}
-              className="text-4xl leading-[0.95] md:text-6xl lg:text-7xl text-white font-serif tracking-tight drop-shadow-xl flex flex-col"
+              className="text-3xl sm:text-4xl leading-[0.95] md:text-5xl lg:text-6xl text-white font-serif tracking-tight drop-shadow-xl flex flex-col items-end"
             >
               <FoldText 
                 text="Divine Wheel" 
@@ -130,17 +130,17 @@ const Index = () => {
             
             <motion.p 
               variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } } }}
-              className="mt-7 max-w-xl text-base leading-7 text-white/90 md:text-lg drop-shadow-md"
+              className="mt-6 max-w-lg text-sm sm:text-base leading-6 sm:leading-7 text-white/90 drop-shadow-md"
             >
               A quiet space with Nattasha Sharrma for insight, healing, and deeper connection to your own inner wisdom.
             </motion.p>
             
             <motion.div 
               variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } } }}
-              className="mt-9 grid grid-cols-2 sm:flex sm:flex-row gap-3 w-full sm:w-auto max-w-md sm:max-w-none"
+              className="mt-8 flex flex-col sm:flex-row gap-3 w-full sm:w-auto justify-end"
             >
-              <Button asChild size="lg" className="h-12 rounded-none bg-background px-2 sm:px-7 text-foreground hover:bg-background/90 shadow-xl text-xs sm:text-base"><a href="#book" className="flex items-center justify-center">Book a session <ArrowRight className="hidden sm:block ml-2 w-4 h-4" /></a></Button>
-              <Button asChild size="lg" variant="outline" className="h-12 rounded-none border-primary-foreground/60 bg-black/20 backdrop-blur-md px-2 sm:px-7 text-primary-foreground hover:bg-primary-foreground/20 hover:text-primary-foreground shadow-xl text-xs sm:text-base"><a href="#services" className="flex items-center justify-center">Explore services</a></Button>
+              <Button asChild size="lg" className="h-12 rounded-none bg-background px-4 sm:px-7 text-foreground hover:bg-background/90 shadow-xl text-xs sm:text-base"><a href="#book" className="flex items-center justify-center">Book a session <ArrowRight className="hidden sm:block ml-2 w-4 h-4" /></a></Button>
+              <Button asChild size="lg" variant="outline" className="h-12 rounded-none border-primary-foreground/60 bg-black/20 backdrop-blur-md px-4 sm:px-7 text-primary-foreground hover:bg-primary-foreground/20 hover:text-primary-foreground shadow-xl text-xs sm:text-base"><a href="#services" className="flex items-center justify-center">Explore services</a></Button>
             </motion.div>
           </motion.div>
         </div>

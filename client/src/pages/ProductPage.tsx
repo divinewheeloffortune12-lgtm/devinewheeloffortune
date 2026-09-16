@@ -50,7 +50,9 @@ export default function ProductPage() {
       await api.post('/cart/items', { productId: product._id, quantity: 1, size: selectedSize }); 
       toast({ title: 'Added to bag' }); 
     } catch (error) { 
-      if (isAxiosError(error) && error.response?.status === 401) return setAuthPrompt(true); 
+      if (isAxiosError(error) && (error.response?.status === 401 || error.response?.status === 403)) {
+        return setAuthPrompt(true); 
+      }
       toast({ variant: 'destructive', title: 'Could not add product', description: getErrorMessage(error, 'Please try again.') }); 
     } 
   };
@@ -175,9 +177,30 @@ export default function ProductPage() {
               </div>
             </div>
             
-            <Button onClick={add} disabled={product.stock < 1} className="mt-10 w-full rounded-full h-14 text-sm font-semibold tracking-wide uppercase shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 transition-all duration-300">
-              {product.stock < 1 ? 'Currently unavailable' : <><ShoppingBag className="mr-2 w-5 h-5"/> Add to Bag — ₹{product.price.toLocaleString('en-IN')}</>}
-            </Button>
+            <div className="mt-10 grid sm:grid-cols-2 gap-4">
+              <Button onClick={add} disabled={product.stock < 1} variant="outline" className="w-full rounded-full h-14 text-sm font-semibold tracking-wide uppercase transition-all duration-300">
+                {product.stock < 1 ? 'Unavailable' : <><ShoppingBag className="mr-2 w-5 h-5"/> Add to Bag</>}
+              </Button>
+              <Button 
+                onClick={async () => {
+                  if (!product) return;
+                  if (product.stock < 1) return;
+                  try {
+                    await api.post('/cart/items', { productId: product._id, quantity: 1, size: selectedSize });
+                    window.location.href = '/checkout';
+                  } catch (error) {
+                    if (isAxiosError(error) && (error.response?.status === 401 || error.response?.status === 403)) {
+                      return setAuthPrompt(true);
+                    }
+                    toast({ variant: 'destructive', title: 'Could not process request', description: getErrorMessage(error, 'Please try again.') });
+                  }
+                }} 
+                disabled={product.stock < 1} 
+                className="w-full rounded-full h-14 text-sm font-semibold tracking-wide uppercase shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 transition-all duration-300"
+              >
+                {product.stock < 1 ? 'Out of stock' : `Buy Now — ₹${product.price.toLocaleString('en-IN')}`}
+              </Button>
+            </div>
           </section>
         </div>
       </main>

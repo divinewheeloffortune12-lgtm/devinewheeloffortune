@@ -25,9 +25,29 @@ const Checkout = () => {
     address: "",
     city: "",
     postalCode: "",
-    country: "",
+    country: "India",
     notes: "",
   });
+
+  useEffect(() => {
+    api.get("/profile").then(({ data }) => {
+      if (data?.data) {
+        const u = data.data;
+        const nameParts = (u.name || "").split(" ");
+        setFormData(prev => ({
+          ...prev,
+          firstName: nameParts[0] || "",
+          lastName: nameParts.slice(1).join(" ") || "",
+          email: u.email || "",
+          phone: u.mobile || "",
+          address: u.address?.addressLine1 || "",
+          city: u.address?.city || "",
+          postalCode: u.address?.pincode || "",
+          country: u.address?.country || "India",
+        }));
+      }
+    }).catch(() => undefined);
+  }, []);
 
   const subtotal = getSubtotal();
   const shipping = subtotal > 500 ? 0 : 25;
@@ -414,7 +434,7 @@ const Checkout = () => {
                           Qty: {item.quantity}
                         </p>
                         <p className="text-sm mt-1">
-                          ${(item.product.price * item.quantity).toLocaleString()}
+                          ₹{(item.product.price * item.quantity).toLocaleString('en-IN')}
                         </p>
                       </div>
                     </div>
@@ -424,12 +444,12 @@ const Checkout = () => {
                 <div className="border-t border-border pt-4 space-y-3 mb-6">
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Subtotal</span>
-                    <span>${subtotal.toLocaleString()}</span>
+                    <span>₹{subtotal.toLocaleString('en-IN')}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Shipping</span>
                     <span>
-                      {shipping === 0 ? "Complimentary" : `$${shipping}`}
+                      {shipping === 0 ? "Complimentary" : `₹${shipping.toLocaleString('en-IN')}`}
                     </span>
                   </div>
                 </div>
@@ -437,7 +457,7 @@ const Checkout = () => {
                 <div className="border-t border-border pt-4">
                   <div className="flex justify-between font-serif text-xl">
                     <span>Total</span>
-                    <span>${total.toLocaleString()}</span>
+                    <span>₹{total.toLocaleString('en-IN')}</span>
                   </div>
                 </div>
 

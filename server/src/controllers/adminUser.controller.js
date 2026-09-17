@@ -19,7 +19,7 @@ exports.getUsers = async (req, res) => {
       .select('-passwordHash -googleId')
       .skip(skip)
       .limit(limit)
-      .sort({ createdAt: -1 });
+      .sort({ updatedAt: -1 });
 
     const total = await User.countDocuments(query);
 

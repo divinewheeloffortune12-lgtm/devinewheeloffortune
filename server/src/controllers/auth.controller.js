@@ -54,6 +54,15 @@ exports.register = async (req, res) => {
     // Check if user already exists
     let user = await User.findOne({ email: normalizedEmail });
     if (user) {
+      if (user.status === 'deleted') {
+        const salt = await bcrypt.genSalt(10);
+        user.passwordHash = await bcrypt.hash(password, salt);
+        user.name = name;
+        user.status = 'active';
+        user.authProvider = 'local';
+        await user.save();
+        return sendTokenResponse(user, 'user', 201, res);
+      }
       if (user.authProvider === 'google') {
          return res.status(400).json({ success: false, message: 'Account already exists. Please login with Google.' });
       }
@@ -86,7 +95,7 @@ exports.login = async (req, res) => {
     }
 
     const user = await User.findOne({ email: String(email).trim().toLowerCase() }).select('+passwordHash');
-    if (!user) {
+    if (!user || user.status === 'deleted') {
       return res.status(401).json({ success: false, message: 'Account not found. Please register first.' });
     }
 
@@ -131,8 +140,15 @@ exports.googleAuth = async (req, res) => {
       user = await User.findOne({ email: normalizedEmail });
 
       if (user) {
-        // If user exists but is local, link the googleId
-        if (!user.googleId) {
+        if (user.status === 'deleted') {
+          user.status = 'active';
+          user.name = name;
+          user.googleId = googleId;
+          user.authProvider = user.authProvider === 'local' ? 'both' : 'google';
+          user.emailVerified = email_verified || user.emailVerified;
+          await user.save();
+        } else if (!user.googleId) {
+          // If user exists but is local, link the googleId
           user.googleId = googleId;
           user.authProvider = 'both';
           user.emailVerified = email_verified || user.emailVerified;

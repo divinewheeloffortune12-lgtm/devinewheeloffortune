@@ -14,6 +14,7 @@ export const AdminUsers = () => {
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [activeTab, setActiveTab] = useState("active");
   const { toast } = useToast();
 
   useEffect(() => {
@@ -97,7 +98,30 @@ export const AdminUsers = () => {
         </Button>
       </div>
 
-      {users.length === 0 ? (
+      <div className="flex gap-4 border-b border-slate-200">
+        <button
+          onClick={() => setActiveTab("active")}
+          className={`pb-3 text-sm font-medium transition-colors ${
+            activeTab === "active"
+              ? "border-b-2 border-primary text-primary"
+              : "text-slate-500 hover:text-slate-700"
+          }`}
+        >
+          Active / Blocked
+        </button>
+        <button
+          onClick={() => setActiveTab("deleted")}
+          className={`pb-3 text-sm font-medium transition-colors ${
+            activeTab === "deleted"
+              ? "border-b-2 border-primary text-primary"
+              : "text-slate-500 hover:text-slate-700"
+          }`}
+        >
+          Deleted Users
+        </button>
+      </div>
+
+      {users.filter(u => activeTab === "active" ? u.status !== 'deleted' : u.status === 'deleted').length === 0 ? (
         <div className="bg-white rounded-2xl p-10 text-center border border-slate-100 shadow-sm flex flex-col items-center">
           <div className="h-16 w-16 bg-slate-50 text-slate-400 rounded-full flex items-center justify-center mb-4">
             <UserX className="w-8 h-8" />
@@ -117,7 +141,7 @@ export const AdminUsers = () => {
               </tr>
             </thead>
             <tbody>
-              {users.map((user: any) => {
+              {users.filter((u: any) => activeTab === "active" ? u.status !== 'deleted' : u.status === 'deleted').map((user: any) => {
                 const tempBlocked = isBlocked24h(user);
                 return (
                   <tr key={user._id} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50 transition-colors">

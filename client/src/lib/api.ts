@@ -9,8 +9,10 @@ export const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  // Check for admin token first (for admin routes), then fall back to normal user token
-  const token = localStorage.getItem("admin_token") || localStorage.getItem("token");
+  // Check if it's an admin route
+  const isAdminRoute = config.url?.startsWith('/admin') || config.url?.startsWith('/auth/admin');
+  const token = isAdminRoute ? localStorage.getItem("admin_token") : localStorage.getItem("token");
+  
   if (token && config.headers) {
     config.headers.Authorization = `Bearer ${token}`;
   }

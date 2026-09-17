@@ -48,11 +48,14 @@ const Signup = () => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setIsLoading(true);
-      await api.post("/auth/register", {
+      const response = await api.post("/auth/register", {
         name: values.name,
         email: values.email,
         password: values.password
       });
+      if (response.data.token) {
+        localStorage.setItem("token", response.data.token);
+      }
       
       toast({
         title: "Account created!",
@@ -75,7 +78,10 @@ const Signup = () => {
       try {
         if (!response.credential) throw new Error("Google did not return an identity token.");
         setIsLoading(true);
-        await api.post("/auth/google", { credential: response.credential });
+        const apiResponse = await api.post("/auth/google", { credential: response.credential });
+        if (apiResponse.data.token) {
+          localStorage.setItem("token", apiResponse.data.token);
+        }
         toast({
           title: "Account created!",
           description: "You have successfully signed up.",

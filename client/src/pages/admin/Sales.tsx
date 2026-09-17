@@ -1,21 +1,37 @@
 import { useState, useEffect } from "react";
 import { api } from "@/lib/api";
-import { Loader2, Receipt, TrendingUp } from "lucide-react";
+import { Loader2, Receipt, TrendingUp, ChevronLeft, ChevronRight, Package, Truck, CheckCircle2, XCircle } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export const AdminSales = () => {
-  const [sales, setSales] = useState([]);
+  const [sales, setSales] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalOrders, setTotalOrders] = useState(0);
+  const [totalRevenue, setTotalRevenue] = useState(0);
+  const [selectedOrder, setSelectedOrder] = useState<any>(null);
+  const [isUpdating, setIsUpdating] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
-    fetchSales();
-  }, []);
+    fetchSales(page);
+  }, [page]);
 
-  const fetchSales = async () => {
+  const fetchSales = async (pageNum: number) => {
+    setIsLoading(true);
     try {
-      const { data } = await api.get("/admin/sales");
-      setSales(data.data || []);
+      const { data } = await api.get(`/admin/sales?page=${pageNum}&limit=10`);
+      setSales(data.data.sales || []);
+      setTotalPages(data.data.pages || 1);
+      setTotalOrders(data.data.total || 0);
+      
+      // We might need a separate call for total revenue, or just use what we have.
+      // Assuming backend sends total revenue or we calculate it.
+      // For now, let's fetch stats for the revenue if needed.
     } catch (error) {
       toast({
         variant: "destructive",
@@ -26,7 +42,45 @@ export const AdminSales = () => {
     }
   };
 
-  if (isLoading) {
+  useEffect(() => {
+    // Fetch total revenue separately for the dashboard card
+    api.get("/admin/stats").then(({ data }) => {
+      setTotalRevenue(data.data.revenue || 0);
+      setTotalOrders(data.data.orders || 0);
+    }).catch(() => undefined);
+  }, []);
+
+  const handleStatusUpdate = async (orderId: string, newStatus: string) => {
+    setIsUpdating(true);
+    try {
+      await api.patch(`/admin/orders/${orderId}/status`, { status: newStatus });
+      toast({ title: "Status updated successfully" });
+      setSales(sales.map(s => s._id === orderId ? { ...s, status: newStatus } : s));
+      if (selectedOrder && selectedOrder._id === orderId) {
+        setSelectedOrder({ ...selectedOrder, status: newStatus });
+      }
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Failed to update status",
+        description: error.response?.data?.error?.message || "An error occurred"
+      });
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'PENDING': return <Package className="w-4 h-4 text-amber-500" />;
+      case 'SHIPPED': return <Truck className="w-4 h-4 text-blue-500" />;
+      case 'DELIVERED': return <CheckCircle2 className="w-4 h-4 text-emerald-500" />;
+      case 'CANCELLED': return <XCircle className="w-4 h-4 text-red-500" />;
+      default: return <Package className="w-4 h-4 text-slate-500" />;
+    }
+  };
+
+  if (isLoading && sales.length === 0) {
     return <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>;
   }
 
@@ -34,14 +88,14 @@ export const AdminSales = () => {
     <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500">
       <div>
         <h2 className="text-3xl font-serif text-slate-800 font-medium tracking-tight">Sales & Orders</h2>
-        <p className="text-slate-500 mt-1 text-sm">View transaction history and order details.</p>
+        <p className="text-slate-500 mt-1 text-sm">View transaction history and manage order fulfillment.</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between">
           <div>
             <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1">Total Orders</p>
-            <h3 className="text-3xl font-semibold text-slate-800">{sales.length}</h3>
+            <h3 className="text-3xl font-semibold text-slate-800">{totalOrders}</h3>
           </div>
           <div className="h-12 w-12 bg-blue-50 text-blue-500 rounded-xl flex items-center justify-center">
             <Receipt className="w-6 h-6" />
@@ -49,9 +103,9 @@ export const AdminSales = () => {
         </div>
         <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between">
           <div>
-            <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1">Revenue</p>
+            <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1">Total Revenue</p>
             <h3 className="text-3xl font-semibold text-slate-800">
-              ₹{sales.reduce((acc: number, curr: any) => acc + (curr.totalAmount || 0), 0).toLocaleString()}
+              ₹{totalRevenue.toLocaleString("en-IN")}
             </h3>
           </div>
           <div className="h-12 w-12 bg-emerald-50 text-emerald-500 rounded-xl flex items-center justify-center">
@@ -60,43 +114,156 @@ export const AdminSales = () => {
         </div>
       </div>
 
-      {sales.length === 0 ? (
-        <div className="bg-white rounded-2xl p-10 text-center border border-slate-100 shadow-sm">
-          <p className="text-slate-500">No sales records found.</p>
-        </div>
-      ) : (
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-          <table className="w-full text-left text-sm text-slate-600">
-            <thead className="bg-slate-50/50 text-slate-800 border-b border-slate-100">
-              <tr>
-                <th className="p-4 font-semibold">Order ID</th>
-                <th className="p-4 font-semibold">Customer</th>
-                <th className="p-4 font-semibold">Amount</th>
-                <th className="p-4 font-semibold">Status</th>
-                <th className="p-4 font-semibold">Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {sales.map((s: any) => (
-                <tr key={s._id} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50 transition-colors">
-                  <td className="p-4 font-medium text-slate-800">#{s._id.slice(-6).toUpperCase()}</td>
-                  <td className="p-4">{s.user?.name || "Unknown"}</td>
-                  <td className="p-4 font-medium text-slate-800">₹{s.totalAmount?.toLocaleString()}</td>
-                  <td className="p-4">
-                    <span className={`px-2.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wider ${
-                      s.status === 'completed' ? 'bg-emerald-100 text-emerald-700' :
-                      s.status === 'pending' ? 'bg-orange-100 text-orange-700' : 'bg-slate-100 text-slate-700'
-                    }`}>
-                      {s.status || 'Pending'}
-                    </span>
-                  </td>
-                  <td className="p-4 text-slate-500">{new Date(s.createdAt).toLocaleDateString()}</td>
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+        {sales.length === 0 ? (
+          <div className="p-10 text-center text-slate-500">No sales records found.</div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm text-slate-600">
+              <thead className="bg-slate-50/50 text-slate-800 border-b border-slate-100">
+                <tr>
+                  <th className="p-4 font-semibold whitespace-nowrap">Order ID</th>
+                  <th className="p-4 font-semibold whitespace-nowrap">Customer</th>
+                  <th className="p-4 font-semibold whitespace-nowrap">Amount</th>
+                  <th className="p-4 font-semibold whitespace-nowrap">Payment</th>
+                  <th className="p-4 font-semibold whitespace-nowrap">Status</th>
+                  <th className="p-4 font-semibold whitespace-nowrap">Date</th>
+                  <th className="p-4 font-semibold whitespace-nowrap text-right">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+              </thead>
+              <tbody>
+                {sales.map((s: any) => (
+                  <tr key={s._id} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50 transition-colors">
+                    <td className="p-4 font-medium text-slate-800">#{s.orderNumber || s._id.slice(-6).toUpperCase()}</td>
+                    <td className="p-4">
+                      <div className="font-medium text-slate-800">{s.user?.name || "Unknown"}</div>
+                      <div className="text-xs text-slate-500">{s.user?.email || ""}</div>
+                    </td>
+                    <td className="p-4 font-medium text-slate-800">₹{s.totalAmount?.toLocaleString("en-IN")}</td>
+                    <td className="p-4">
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
+                        s.paymentStatus === 'PAID' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
+                      }`}>
+                        {s.paymentStatus || 'PENDING'}
+                      </span>
+                    </td>
+                    <td className="p-4">
+                      <div className="flex items-center gap-2">
+                        {getStatusIcon(s.status)}
+                        <span className="text-xs font-semibold uppercase tracking-wider">{s.status || 'PENDING'}</span>
+                      </div>
+                    </td>
+                    <td className="p-4 text-slate-500">{new Date(s.createdAt).toLocaleDateString()}</td>
+                    <td className="p-4 text-right">
+                      <Button variant="ghost" size="sm" onClick={() => setSelectedOrder(s)} className="text-primary hover:text-primary hover:bg-primary/10">View Details</Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+        
+        {totalPages > 1 && (
+          <div className="p-4 border-t border-slate-100 flex items-center justify-between bg-slate-50/30">
+            <span className="text-sm text-slate-500">Page {page} of {totalPages}</span>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}><ChevronLeft className="w-4 h-4 mr-1" /> Prev</Button>
+              <Button variant="outline" size="sm" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}>Next <ChevronRight className="w-4 h-4 ml-1" /></Button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <Dialog open={!!selectedOrder} onOpenChange={(open) => !open && setSelectedOrder(null)}>
+        <DialogContent className="sm:max-w-xl">
+          <DialogHeader>
+            <DialogTitle className="font-serif text-2xl flex items-center gap-3">
+              Order #{selectedOrder?.orderNumber || selectedOrder?._id.slice(-6).toUpperCase()}
+              <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
+                selectedOrder?.paymentStatus === 'PAID' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
+              }`}>
+                {selectedOrder?.paymentStatus || 'PENDING'}
+              </span>
+            </DialogTitle>
+          </DialogHeader>
+          
+          {selectedOrder && (
+            <div className="space-y-6 pt-4">
+              <div className="grid grid-cols-2 gap-6 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                <div>
+                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1">Customer</p>
+                  <p className="font-medium text-slate-800">{selectedOrder.user?.name || "Unknown"}</p>
+                  <p className="text-sm text-slate-600">{selectedOrder.user?.email}</p>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1">Order Date</p>
+                  <p className="font-medium text-slate-800">{new Date(selectedOrder.createdAt).toLocaleString()}</p>
+                </div>
+              </div>
+
+              <div>
+                <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-2 border-b border-slate-100 pb-2">Shipping Address</p>
+                <p className="text-sm text-slate-700 leading-relaxed">{selectedOrder.shippingAddress || "No address provided."}</p>
+              </div>
+
+              {selectedOrder.notes && (
+                <div>
+                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-2 border-b border-slate-100 pb-2">Order Notes</p>
+                  <p className="text-sm text-amber-700 bg-amber-50 p-3 rounded-lg border border-amber-100">{selectedOrder.notes}</p>
+                </div>
+              )}
+
+              <div>
+                <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-2 border-b border-slate-100 pb-2">Order Items</p>
+                <div className="space-y-3">
+                  {selectedOrder.products?.map((item: any, idx: number) => (
+                    <div key={idx} className="flex justify-between items-center text-sm">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-slate-100 rounded overflow-hidden">
+                          {item.product?.images?.[0] ? <img src={item.product.images[0]} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-slate-400"><Package className="w-5 h-5" /></div>}
+                        </div>
+                        <div>
+                          <p className="font-medium text-slate-800">{item.product?.name || "Unknown Product"}</p>
+                          <p className="text-xs text-slate-500">Qty: {item.quantity}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center">
+                  <span className="font-medium text-slate-600">Total Amount</span>
+                  <span className="text-lg font-bold text-slate-900">₹{selectedOrder.totalAmount?.toLocaleString("en-IN")}</span>
+                </div>
+              </div>
+
+              <div className="bg-primary/5 p-4 rounded-xl border border-primary/10">
+                <p className="text-xs font-semibold text-primary uppercase tracking-widest mb-3">Update Order Status</p>
+                <div className="flex gap-3">
+                  <Select 
+                    value={selectedOrder.status || 'PENDING'} 
+                    onValueChange={(val) => handleStatusUpdate(selectedOrder._id, val)}
+                    disabled={isUpdating}
+                  >
+                    <SelectTrigger className="w-full bg-white">
+                      <SelectValue placeholder="Select status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="PENDING">Pending Processing</SelectItem>
+                      <SelectItem value="SHIPPED">Shipped / Dispatched</SelectItem>
+                      <SelectItem value="DELIVERED">Successfully Delivered</SelectItem>
+                      <SelectItem value="CANCELLED">Cancelled</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <p className="text-[10px] text-muted-foreground mt-2">Updating the status will immediately reflect on the user's profile.</p>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
+
+export default AdminSales;

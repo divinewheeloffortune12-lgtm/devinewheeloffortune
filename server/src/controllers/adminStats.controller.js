@@ -8,17 +8,65 @@ exports.getStats = async (req, res, next) => {
     const totalUsers = await User.countDocuments();
     const totalProducts = await Product.countDocuments({ isDeleted: false });
     
-    // Fetch paid orders and calculate order revenue
-    const paidOrders = await Order.find({ paymentStatus: 'PAID' });
-    const orderRevenue = paidOrders.reduce((sum, order) => sum + order.totalAmount, 0);
-    const totalSales = paidOrders.length;
+    // Efficient aggregation for total revenue and orders
+    const orderStats = await Order.aggregate([
+      { $match: { paymentStatus: 'PAID' } },
+      { $group: { _id: null, revenue: { $sum: '$totalAmount' }, count: { $sum: 1 } } }
+    ]);
+    
+    const bookingStats = await ServiceBooking.aggregate([
+      { $match: { paymentStatus: 'PAID' } },
+      { $group: { _id: null, revenue: { $sum: '$amount' }, count: { $sum: 1 } } }
+    ]);
 
-    // Fetch paid bookings and calculate booking revenue
-    const paidBookings = await ServiceBooking.find({ paymentStatus: 'PAID' });
-    const bookingRevenue = paidBookings.reduce((sum, booking) => sum + booking.amount, 0);
-    const totalBookings = paidBookings.length;
+    const orderRevenue = orderStats[0]?.revenue || 0;
+    const totalSales = orderStats[0]?.count || 0;
+    
+    const bookingRevenue = bookingStats[0]?.revenue || 0;
+    const totalBookings = bookingStats[0]?.count || 0;
 
     const totalRevenue = orderRevenue + bookingRevenue;
+
+    // Monthly revenue trend (last 6 months)
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 5);
+    sixMonthsAgo.setDate(1);
+    sixMonthsAgo.setHours(0, 0, 0, 0);
+
+    const monthlyOrders = await Order.aggregate([
+      { $match: { paymentStatus: 'PAID', createdAt: { $gte: sixMonthsAgo } } },
+      { $group: { 
+          _id: { month: { $month: '$createdAt' }, year: { $year: '$createdAt' } }, 
+          revenue: { $sum: '$totalAmount' } 
+      } }
+    ]);
+
+    const monthlyBookings = await ServiceBooking.aggregate([
+      { $match: { paymentStatus: 'PAID', createdAt: { $gte: sixMonthsAgo } } },
+      { $group: { 
+          _id: { month: { $month: '$createdAt' }, year: { $year: '$createdAt' } }, 
+          revenue: { $sum: '$amount' } 
+      } }
+    ]);
+
+    // Format chart data
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const chartData = [];
+    
+    for (let i = 0; i < 6; i++) {
+      const d = new Date();
+      d.setMonth(d.getMonth() - (5 - i));
+      const m = d.getMonth() + 1;
+      const y = d.getFullYear();
+      
+      const ordRev = monthlyOrders.find(o => o._id.month === m && o._id.year === y)?.revenue || 0;
+      const bkgRev = monthlyBookings.find(b => b._id.month === m && b._id.year === y)?.revenue || 0;
+      
+      chartData.push({
+        name: monthNames[m - 1],
+        revenue: ordRev + bkgRev
+      });
+    }
 
     const recentSales = await Order.find({ paymentStatus: 'PAID' }).sort({ createdAt: -1 }).limit(5).populate('user', 'name email').lean();
     
@@ -35,6 +83,7 @@ exports.getStats = async (req, res, next) => {
           bookings: totalBookings,
           revenue: totalRevenue
         },
+        chartData,
         recentUsers,
         recentSales,
         topProducts

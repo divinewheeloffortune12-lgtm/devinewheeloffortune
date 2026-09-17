@@ -229,11 +229,11 @@ const Index = () => {
             <div className="mt-16 text-center text-muted-foreground">Loading collections...</div>
           ) : (
             <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {shopCategories.map((item: Category, index: number) => (
+              {shopCategories.map((item: Category) => (
                 <Link 
                   key={item.name} 
                   to={`/products?category=${item._id}`} 
-                  className={`group relative overflow-hidden rounded-3xl block h-[450px] ${index === 0 ? 'md:col-span-2 lg:col-span-2' : ''} ${index === 3 ? 'md:col-span-2 lg:col-span-1' : ''} ${index === 4 ? 'md:col-span-2 lg:col-span-2' : ''}`}
+                  className="group relative overflow-hidden rounded-3xl block h-[320px]"
                 >
                   <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-500 z-10" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent z-10" />

@@ -3,17 +3,6 @@ import { Users, Package, ShoppingBag, ArrowUpRight, Loader2, TrendingUp, IndianR
 import { api } from "@/lib/api";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
-// Mock data for the chart to show revenue trend
-const chartData = [
-  { name: 'Jan', revenue: 0 },
-  { name: 'Feb', revenue: 0 },
-  { name: 'Mar', revenue: 0 },
-  { name: 'Apr', revenue: 0 },
-  { name: 'May', revenue: 0 },
-  { name: 'Jun', revenue: 0 },
-  { name: 'Jul', revenue: 0 },
-];
-
 export const DashboardHome = () => {
   const [stats, setStats] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -36,6 +25,8 @@ export const DashboardHome = () => {
     return <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>;
   }
 
+  const chartData = stats?.chartData || [];
+
   return (
     <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500">
       <div>
@@ -49,7 +40,6 @@ export const DashboardHome = () => {
             <div className="h-10 w-10 bg-blue-50 text-blue-500 rounded-xl flex items-center justify-center">
               <Users className="w-5 h-5" />
             </div>
-            <span className="flex items-center text-xs font-medium text-emerald-500 bg-emerald-50 px-2 py-1 rounded-full"><TrendingUp className="w-3 h-3 mr-1"/> +12%</span>
           </div>
           <div>
             <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1">Total Users</p>
@@ -86,18 +76,17 @@ export const DashboardHome = () => {
             <div className="h-10 w-10 bg-emerald-50 text-emerald-500 rounded-xl flex items-center justify-center">
               <IndianRupee className="w-5 h-5" />
             </div>
-            <span className="flex items-center text-xs font-medium text-emerald-500 bg-emerald-50 px-2 py-1 rounded-full"><TrendingUp className="w-3 h-3 mr-1"/> +8%</span>
           </div>
           <div>
-            <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1">Revenue</p>
-            <h3 className="text-3xl font-semibold text-slate-800">₹{stats?.totals?.revenue?.toLocaleString() || "0"}</h3>
+            <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1">Total Revenue</p>
+            <h3 className="text-3xl font-semibold text-slate-800">₹{stats?.totals?.revenue?.toLocaleString("en-IN") || "0"}</h3>
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-100 shadow-sm p-6 flex flex-col">
-          <h3 className="font-semibold text-slate-800 mb-6">Revenue Overview</h3>
+          <h3 className="font-semibold text-slate-800 mb-6">Revenue Overview (Last 6 Months)</h3>
           <div className="flex-1 min-h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
@@ -109,10 +98,11 @@ export const DashboardHome = () => {
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} dy={10} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} dx={-10} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} dx={-10} tickFormatter={(val) => `₹${val}`} />
                 <Tooltip 
                   contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)' }}
                   itemStyle={{ color: '#0f172a', fontWeight: 500 }}
+                  formatter={(value: any) => [`₹${value.toLocaleString()}`, "Revenue"]}
                 />
                 <Area type="monotone" dataKey="revenue" stroke="#8b5cf6" strokeWidth={3} fillOpacity={1} fill="url(#colorRevenue)" />
               </AreaChart>
@@ -145,3 +135,5 @@ export const DashboardHome = () => {
     </div>
   );
 };
+
+export default DashboardHome;

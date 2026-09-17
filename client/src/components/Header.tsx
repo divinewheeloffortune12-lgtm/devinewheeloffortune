@@ -11,6 +11,7 @@ export const Header = () => {
   const [announcementCount, setAnnouncementCount] = useState(0);
   const [signedIn, setSignedIn] = useState(false);
   const [categories, setCategories] = useState<any[]>([]);
+  const [services, setServices] = useState<any[]>([]);
   const location = useLocation();
   const homeHref = (anchor: string) => location.pathname === "/" ? anchor.replace("/", "") : anchor;
 
@@ -24,11 +25,22 @@ export const Header = () => {
       if (live && data?.data) setCategories(data.data);
     }).catch(() => undefined);
     
+    api.get('/bookings/services').then(({ data }) => {
+      if (live && data?.data) setServices(data.data);
+    }).catch(() => undefined);
+    
     return () => { live = false; }; 
   }, []);
 
   useEffect(() => { 
-    api.get('/auth/me').then((res) => setSignedIn(!!res.data?.data)).catch(() => setSignedIn(false)); 
+    const token = localStorage.getItem("token") || localStorage.getItem("admin_token");
+    if (!token) {
+      setSignedIn(false);
+      return;
+    }
+    api.get('/auth/me')
+       .then((res) => setSignedIn(!!res.data?.data))
+       .catch(() => setSignedIn(false)); 
   }, [location.pathname]);
 
   const moreDropdown = [
@@ -76,6 +88,31 @@ export const Header = () => {
                     ))}
                     {categories.length === 0 && (
                       <p className="text-sm text-slate-500 col-span-4 py-4 text-center">No categories found.</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Services Mega Menu */}
+              <div className="group py-4">
+                <Link to="/services" className="flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-wider text-foreground/80 transition-all hover:text-primary">
+                  <CalendarClock className="w-4 h-4 opacity-70" /> Services <ChevronDown className="w-3 h-3 transition-transform group-hover:rotate-180" />
+                </Link>
+                <div className="absolute top-full left-0 w-full opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 bg-white shadow-xl border-t border-black/5 z-50">
+                  <div className="container-full mx-auto px-4 py-8 grid grid-cols-4 gap-6">
+                    {services.slice(0, 8).map(srv => (
+                      <Link key={srv._id} to={`/services`} state={{ preselectService: srv.name }} className="group/item flex items-center gap-4 hover:bg-slate-50 p-4 rounded-xl transition-colors border border-transparent hover:border-black/5 shadow-sm hover:shadow-md">
+                        <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover/item:scale-110 transition-transform shrink-0">
+                          <Sparkles className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <p className="font-medium text-sm text-slate-800 group-hover/item:text-primary transition-colors leading-tight line-clamp-2">{srv.name}</p>
+                          <p className="text-[11px] text-slate-500 uppercase tracking-widest mt-1 font-semibold">₹{srv.price}</p>
+                        </div>
+                      </Link>
+                    ))}
+                    {services.length === 0 && (
+                      <p className="text-sm text-slate-500 col-span-4 py-4 text-center">No services found.</p>
                     )}
                   </div>
                 </div>

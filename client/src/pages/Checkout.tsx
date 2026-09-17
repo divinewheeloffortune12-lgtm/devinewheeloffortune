@@ -393,10 +393,10 @@ const Checkout = () => {
                   className="w-full rounded-none py-6 text-sm tracking-[0.15em] uppercase btn-premium"
                 >
                   {isSubmitting ? (
-                    "Submitting..."
+                    "Processing..."
                   ) : (
                     <>
-                      Submit Order Request
+                      Pay Securely
                       <ArrowRight className="ml-3 w-4 h-4" />
                     </>
                   )}
@@ -468,10 +468,10 @@ const Checkout = () => {
                   <p className="text-sm text-muted-foreground">
                     Email us at{" "}
                     <a
-                      href="mailto:hello@maison.com"
+                      href="mailto:hello@divinewheeloffortune.com"
                       className="text-foreground underline"
                     >
-                      hello@maison.com
+                      hello@divinewheeloffortune.com
                     </a>
                   </p>
                 </div>

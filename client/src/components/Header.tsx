@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, Sparkles, X, ChevronDown, UserRound, Bell, CalendarClock, Home, Grid, ShoppingBag, Info, Phone } from "lucide-react";
+import { Menu, Sparkles, X, ChevronDown, UserRound, Bell, CalendarClock, Home, Grid, ShoppingBag, Info, Phone, ArrowRight } from "lucide-react";
 import { CartIcon } from "@/components/CartIcon";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api";
@@ -111,6 +111,13 @@ export const Header = () => {
                         </div>
                       </Link>
                     ))}
+                    {services.length > 0 && (
+                      <Link to="/services" className="group/item flex flex-col items-center justify-center gap-2 bg-slate-50 hover:bg-primary/5 p-4 rounded-xl transition-colors border border-transparent hover:border-primary/20 shadow-sm hover:shadow-md h-full min-h-[80px]">
+                        <span className="font-medium text-sm text-primary flex items-center gap-2">
+                          View All Services <ArrowRight className="w-4 h-4 transition-transform group-hover/item:translate-x-1" />
+                        </span>
+                      </Link>
+                    )}
                     {services.length === 0 && (
                       <p className="text-sm text-slate-500 col-span-4 py-4 text-center">No services found.</p>
                     )}

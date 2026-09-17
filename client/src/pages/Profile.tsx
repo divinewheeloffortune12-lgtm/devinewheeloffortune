@@ -5,7 +5,7 @@ import * as z from "zod";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2, ShieldCheck, MapPin, User, Lock, Package, CreditCard, Receipt, Download, LogOut } from "lucide-react";
+import { Loader2, ShieldCheck, MapPin, User, Lock, Package, CreditCard, Receipt, Download, LogOut, Heart } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -34,7 +34,7 @@ const profileSchema = z.object({
 export const Profile = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [userData, setUserData] = useState<{ name: string; email: string; authProvider: string; profileUpdates?: string[]; mobile?: string; address?: Record<string, string> } | null>(null);
+  const [userData, setUserData] = useState<{ name: string; email: string; authProvider: string; profileUpdates?: string[]; mobile?: string; address?: Record<string, string>; likedProducts?: any[] } | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [updateLimitReached, setUpdateLimitReached] = useState(false);
   const { toast } = useToast();
@@ -348,6 +348,31 @@ export const Profile = () => {
             </div>
           )}
           <p className="mt-6 pt-4 border-t border-slate-50 text-xs text-slate-500 flex items-center gap-2"><CreditCard className="w-4 h-4" /> Payment card details are never stored or displayed for your security.</p>
+        </section>
+
+        {/* Liked Products Section */}
+        <section className="mt-8 bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-100">
+          <h2 className="text-xl font-medium text-slate-900 flex items-center gap-2"><Heart className="w-5 h-5 text-red-400" /> Liked Products</h2>
+          {!userData.likedProducts || userData.likedProducts.length === 0 ? (
+            <p className="mt-4 text-sm text-slate-500">You haven't liked any products yet.</p>
+          ) : (
+            <div className="mt-5 grid grid-cols-2 md:grid-cols-4 gap-4">
+              {userData.likedProducts.map((product) => (
+                <div key={product._id} className="border border-slate-100 rounded-xl overflow-hidden group">
+                  <div className="aspect-[4/5] bg-slate-50 relative">
+                    {product.images && product.images[0] && (
+                      <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+                    )}
+                  </div>
+                  <div className="p-3">
+                    <h3 className="font-medium text-sm text-slate-900 line-clamp-1">{product.name}</h3>
+                    <p className="text-sm font-semibold mt-1">₹{product.price?.toLocaleString('en-IN')}</p>
+                    <Button variant="outline" size="sm" className="w-full mt-2 text-xs h-8" onClick={() => window.location.href=`/product/${product.slug}`}>View Product</Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </section>
       </main>
     </Layout>

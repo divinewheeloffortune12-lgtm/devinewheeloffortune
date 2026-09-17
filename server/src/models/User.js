@@ -61,6 +61,10 @@ const userSchema = new mongoose.Schema({
   },
   profileUpdates: [{
     type: Date
+  }],
+  likedProducts: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Product'
   }]
 }, { timestamps: true });
 

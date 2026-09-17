@@ -121,19 +121,20 @@ export const AdminCategories = () => {
       if (selectedImage) formData.append("image", selectedImage);
       
       if (editingId) {
-        await api.patch(`/admin/categories/${editingId}`, formData, {
+        const { data } = await api.patch(`/admin/categories/${editingId}`, formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
         toast({ title: "Category updated successfully" });
+        setCategories(prev => prev.map((c: any) => c._id === editingId ? data.data : c));
       } else {
-        await api.post("/admin/categories", formData, {
+        const { data } = await api.post("/admin/categories", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
         toast({ title: "Category created successfully" });
+        setCategories(prev => [...prev, data.data]);
       }
       
       setIsDialogOpen(false);
-      fetchCategories();
     } catch (error: any) {
       toast({
         variant: "destructive",

@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { GoogleLogin, type CredentialResponse } from "@react-oauth/google";
+import ReCAPTCHA from "react-google-recaptcha";
 
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
@@ -25,6 +26,7 @@ const formSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   confirmPassword: z.string(),
+  recaptchaToken: z.string().min(1, "Please complete the reCAPTCHA"),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords do not match",
   path: ["confirmPassword"],
@@ -43,6 +45,7 @@ const Signup = () => {
       email: "",
       password: "",
       confirmPassword: "",
+      recaptchaToken: "",
     },
   });
 
@@ -52,7 +55,8 @@ const Signup = () => {
       await api.post("/auth/register", {
         name: values.name,
         email: values.email,
-        password: values.password
+        password: values.password,
+        recaptchaToken: values.recaptchaToken
       });
       
       toast({
@@ -168,6 +172,22 @@ const Signup = () => {
                         type={showPassword ? "text" : "password"} 
                         placeholder="••••••••" 
                         {...field} 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="recaptchaToken"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col items-center justify-center pt-2">
+                    <FormControl>
+                      <ReCAPTCHA
+                        sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY || "6LdkfMAtAAAAAPPHbUNEdhCpF04oJTGgU9ZXxv6Y"}
+                        onChange={field.onChange}
                       />
                     </FormControl>
                     <FormMessage />

@@ -11,4 +11,9 @@ router.get('/', getProfile);
 router.get('/orders', getMyOrders);
 router.patch('/', updateProfile);
 
+// Liked Products
+const { addLike, removeLike } = require('../controllers/profile.controller');
+router.post('/likes/:productId', addLike);
+router.delete('/likes/:productId', removeLike);
+
 module.exports = router;

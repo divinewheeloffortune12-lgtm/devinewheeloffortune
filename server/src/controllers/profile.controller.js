@@ -3,7 +3,7 @@ const Order = require('../models/Order');
 
 exports.getProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id).select('-passwordHash -googleId');
+    const user = await User.findById(req.user._id).select('-passwordHash -googleId').populate('likedProducts');
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
@@ -75,4 +75,30 @@ exports.updateProfile = async (req, res) => {
     console.error(error);
     res.status(500).json({ success: false, message: 'Server error' });
   }
+};
+
+exports.addLike = async (req, res, next) => {
+  try {
+    const { productId } = req.params;
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+    
+    if (!user.likedProducts.includes(productId)) {
+      user.likedProducts.push(productId);
+      await user.save();
+    }
+    res.json({ success: true, message: 'Product liked' });
+  } catch (error) { next(error); }
+};
+
+exports.removeLike = async (req, res, next) => {
+  try {
+    const { productId } = req.params;
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+    
+    user.likedProducts = user.likedProducts.filter(id => id.toString() !== productId);
+    await user.save();
+    res.json({ success: true, message: 'Product unliked' });
+  } catch (error) { next(error); }
 };

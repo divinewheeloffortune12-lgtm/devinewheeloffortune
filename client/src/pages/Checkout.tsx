@@ -28,6 +28,13 @@ const Checkout = () => {
   });
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toast({ title: "Authentication Required", description: "Please log in to proceed to checkout." });
+      navigate("/login");
+      return;
+    }
+
     api.get("/profile").then(({ data }) => {
       if (data?.data) {
         const u = data.data;
@@ -44,8 +51,12 @@ const Checkout = () => {
           country: u.address?.country || "India",
         }));
       }
-    }).catch(() => undefined);
-  }, []);
+    }).catch((err) => {
+      if (err.response?.status === 401) {
+        navigate("/login");
+      }
+    });
+  }, [navigate, toast]);
 
   const subtotal = getSubtotal();
   const shipping = subtotal > 500 ? 0 : 25;

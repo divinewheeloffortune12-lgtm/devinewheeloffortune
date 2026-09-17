@@ -7,6 +7,11 @@ export function useLikes() {
 
   useEffect(() => {
     const fetchProfile = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setLoading(false);
+        return;
+      }
       try {
         const { data } = await api.get('/profile');
         if (data && data.data && data.data.likedProducts) {
@@ -22,6 +27,12 @@ export function useLikes() {
   }, []);
 
   const toggleLike = async (productId: string) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      window.location.href = "/login";
+      return;
+    }
+    
     const isLiked = likedProducts.includes(productId);
     
     // Optimistic update

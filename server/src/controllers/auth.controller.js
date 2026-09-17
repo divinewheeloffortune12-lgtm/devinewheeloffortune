@@ -87,7 +87,7 @@ exports.login = async (req, res) => {
 
     const user = await User.findOne({ email: String(email).trim().toLowerCase() }).select('+passwordHash');
     if (!user) {
-      return res.status(401).json({ success: false, message: 'Invalid credentials' });
+      return res.status(401).json({ success: false, message: 'Account not found. Please register first.' });
     }
 
     if (user.authProvider === 'google' && !user.passwordHash) {
@@ -145,7 +145,7 @@ exports.googleAuth = async (req, res) => {
     sendTokenResponse(user, 'user', 200, res);
   } catch (error) {
     console.error('Google Auth Error:', error);
-    res.status(401).json({ success: false, message: 'Google authentication failed' });
+    res.status(401).json({ success: false, message: 'Google authentication failed: ' + error.message });
   }
 };
 

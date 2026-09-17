@@ -135,6 +135,8 @@ export const AdminCategories = () => {
       }
       
       setIsDialogOpen(false);
+      setSelectedImage(null);
+      setPreviewUrl(null);
     } catch (error: any) {
       toast({
         variant: "destructive",

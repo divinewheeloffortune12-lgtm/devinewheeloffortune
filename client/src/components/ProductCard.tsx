@@ -4,14 +4,18 @@ import { motion } from "framer-motion";
 import { Product, collections } from "@/data/products";
 import { useWishlist } from "@/hooks/useWishlist";
 import { cn } from "@/lib/utils";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Pagination, EffectFade } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/effect-fade";
+import Tilt from "react-parallax-tilt";
 
 interface ProductCardProps {
   product: Product;
   index?: number;
   variant?: "default" | "large";
 }
-
-import Tilt from "react-parallax-tilt";
 
 export const ProductCard = ({ product, index = 0, variant = "default" }: ProductCardProps) => {
   const { addItem, removeItem, isInWishlist } = useWishlist();
@@ -46,24 +50,28 @@ export const ProductCard = ({ product, index = 0, variant = "default" }: Product
               variant === "large" ? "aspect-[3/4]" : "aspect-[4/5]"
             )}
           >
-          {/* Primary Image */}
-          <img
-            src={product.images[0]}
-            alt={product.name}
-            className={cn(
-              "w-full h-full object-cover transition-all duration-[1s] ease-out",
-              hasSecondImage
-                ? "group-hover:opacity-0 group-hover:scale-105"
-                : "group-hover:scale-105"
-            )}
-          />
-
-          {/* Secondary Image (hover) */}
-          {hasSecondImage && (
+          {hasSecondImage ? (
+            <Swiper
+              modules={[Pagination, EffectFade]}
+              effect="fade"
+              pagination={{ clickable: true }}
+              className="w-full h-full [&_.swiper-pagination-bullet]:bg-white [&_.swiper-pagination-bullet-active]:bg-white"
+            >
+              {product.images.map((img, i) => (
+                <SwiperSlide key={i}>
+                  <img
+                    src={img}
+                    alt={`${product.name} - view ${i + 1}`}
+                    className="w-full h-full object-cover transition-all duration-[1s] ease-out group-hover:scale-105"
+                  />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          ) : (
             <img
-              src={product.images[1]}
-              alt={`${product.name} - alternate view`}
-              className="absolute inset-0 w-full h-full object-cover opacity-0 scale-105 transition-all duration-[1s] ease-out group-hover:opacity-100 group-hover:scale-100"
+              src={product.images[0]}
+              alt={product.name}
+              className="w-full h-full object-cover transition-all duration-[1s] ease-out group-hover:scale-105"
             />
           )}
 

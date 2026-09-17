@@ -23,9 +23,29 @@ exports.adminLoginLimiter = rateLimit({
 // Protects general API routes to prevent generic DDoS
 exports.apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: process.env.NODE_ENV === 'production' ? 100 : 1000, // higher limit in dev
+  max: process.env.NODE_ENV === 'production' ? 1000 : 2000, 
   message: {
     success: false,
     message: 'Too many requests, please try again later.'
+  }
+});
+
+// Protects payment initiation endpoints to prevent spamming Razorpay API
+exports.paymentLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // Max 10 payment initiations per 15 minutes
+  message: {
+    success: false,
+    message: 'Too many checkout attempts. Please try again in 15 minutes.'
+  }
+});
+
+// Protects receipt downloads to prevent scraping/abuse
+exports.receiptLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 20, // Max 20 receipt downloads per 15 mins
+  message: {
+    success: false,
+    message: 'Too many receipt downloads. Please try again later.'
   }
 });

@@ -188,31 +188,18 @@ exports.adminLogin = async (req, res) => {
 
     const normalizedEmail = String(email).trim().toLowerCase();
     
-    // First-time setup: If absolutely zero admins exist in the DB, create this one.
-    const adminCount = await AdminUser.countDocuments();
-    let admin;
-    
-    if (adminCount === 0) {
-      const salt = await bcrypt.genSalt(10);
-      const passwordHash = await bcrypt.hash(password.trim(), salt);
-      admin = await AdminUser.create({
-        email: normalizedEmail,
-        passwordHash,
-        role: 'super_admin',
-        status: 'active'
-      });
-      console.log(`First-time admin setup complete for: ${normalizedEmail}`);
-    } else {
-      admin = await AdminUser.findOne({ email: normalizedEmail });
+    // SECURITY: Removed auto-creation of admin when zero admins exist.
+    // Admin accounts must be created via the seed script (npm run admin:create)
+    // or the auto-seed in db.js on first connection.
+    const admin = await AdminUser.findOne({ email: normalizedEmail });
       
-      if (!admin) {
-        return res.status(401).json({ success: false, message: 'Invalid credentials' });
-      }
+    if (!admin) {
+      return res.status(401).json({ success: false, message: 'Invalid credentials' });
+    }
 
-      const isMatch = await bcrypt.compare(password.trim(), admin.passwordHash);
-      if (!isMatch) {
-        return res.status(401).json({ success: false, message: 'Invalid credentials' });
-      }
+    const isMatch = await bcrypt.compare(password.trim(), admin.passwordHash);
+    if (!isMatch) {
+      return res.status(401).json({ success: false, message: 'Invalid credentials' });
     }
 
     sendTokenResponse(admin, 'admin', 200, res);

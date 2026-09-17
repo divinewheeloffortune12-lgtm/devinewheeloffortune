@@ -8,8 +8,8 @@ export default function About() {
       <section className="py-20 md:py-32 pt-32 bg-[#f9f9f9]">
         <div className="container-full grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
           <div className="flex flex-col">
-            <div className="relative overflow-hidden rounded-3xl shadow-xl shadow-black/5 border border-black/5 bg-black/5 aspect-[4/5] sm:aspect-square md:aspect-[4/6]">
-              <video className="absolute top-0 left-0 w-full h-full object-cover object-[center_top] rounded-3xl" autoPlay muted loop playsInline preload="metadata">
+            <div className="relative w-full max-h-[80vh] flex justify-center items-center rounded-3xl shadow-xl shadow-black/5 border border-black/5 bg-black/5">
+              <video className="max-w-full max-h-[80vh] w-auto h-auto rounded-3xl object-contain" autoPlay muted loop playsInline preload="metadata">
                 <source src="/about.mp4" type="video/mp4" />
               </video>
             </div>

@@ -77,7 +77,7 @@ const Index = () => {
         <div className="absolute inset-0 bg-black/20" />
         <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-background to-transparent" />
         
-        <div className="container-full relative flex min-h-[88svh] items-end justify-end pb-8 pt-32 md:pb-12 z-10">
+        <div className="container-full relative flex min-h-[88svh] items-end justify-start pb-8 pt-32 md:pb-12 z-10">
           <motion.div 
             initial="hidden"
             animate="visible"
@@ -85,7 +85,7 @@ const Index = () => {
               hidden: { opacity: 0 },
               visible: { opacity: 1, transition: { staggerChildren: 0.2 } }
             }}
-            className="max-w-2xl text-white drop-shadow-2xl flex flex-col items-end text-right"
+            className="max-w-2xl text-white drop-shadow-2xl flex flex-col items-start text-left"
           >
             <motion.p 
               variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } } }}
@@ -100,7 +100,7 @@ const Index = () => {
             
             <motion.h1 
               variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } } }}
-              className="text-3xl sm:text-4xl leading-[0.95] md:text-5xl lg:text-6xl text-white font-serif tracking-tight drop-shadow-xl flex flex-col items-end"
+              className="text-3xl sm:text-4xl leading-[0.95] md:text-5xl lg:text-6xl text-white font-serif tracking-tight drop-shadow-xl flex flex-col items-start"
             >
               <FoldText 
                 text="Divine Wheel" 
@@ -137,10 +137,9 @@ const Index = () => {
             
             <motion.div 
               variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } } }}
-              className="mt-8 flex flex-col sm:flex-row gap-3 w-full sm:w-auto justify-end"
+              className="mt-8 flex flex-col sm:flex-row gap-3 w-full sm:w-auto justify-start"
             >
-              <Button asChild size="lg" className="h-12 rounded-none bg-background px-4 sm:px-7 text-foreground hover:bg-background/90 shadow-xl text-xs sm:text-base"><a href="#book" className="flex items-center justify-center">Book a session <ArrowRight className="hidden sm:block ml-2 w-4 h-4" /></a></Button>
-              <Button asChild size="lg" variant="outline" className="h-12 rounded-none border-primary-foreground/60 bg-black/20 backdrop-blur-md px-4 sm:px-7 text-primary-foreground hover:bg-primary-foreground/20 hover:text-primary-foreground shadow-xl text-xs sm:text-base"><a href="#services" className="flex items-center justify-center">Explore services</a></Button>
+              <Button asChild size="lg" className="h-12 rounded-none bg-background px-4 sm:px-7 text-foreground hover:bg-background/90 shadow-xl text-xs sm:text-base"><a href="#services" className="flex items-center justify-center">Explore services</a></Button>
             </motion.div>
           </motion.div>
         </div>
@@ -151,8 +150,8 @@ const Index = () => {
       <section id="about" className="py-20 md:py-32">
         <div className="container-full grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
           <div className="flex flex-col">
-            <div className="relative overflow-hidden rounded-3xl shadow-xl shadow-black/5 border border-black/5 bg-black/5 aspect-[4/5] sm:aspect-square md:aspect-[4/6]">
-              <video className="absolute top-0 left-0 w-full h-full object-cover object-[center_top] rounded-3xl" autoPlay muted loop playsInline preload="metadata"><source src="/about.mp4" type="video/mp4" /></video>
+            <div className="relative w-full max-h-[80vh] flex justify-center items-center rounded-3xl shadow-xl shadow-black/5 border border-black/5 bg-black/5">
+              <video className="max-w-full max-h-[80vh] w-auto h-auto rounded-3xl object-contain" autoPlay muted loop playsInline preload="metadata"><source src="/about.mp4" type="video/mp4" /></video>
             </div>
             <motion.div 
               initial={{ opacity: 0, y: 30 }}
@@ -189,31 +188,6 @@ const Index = () => {
         </div>
       </div>
 
-      <section className="relative overflow-hidden py-16 md:py-24 text-white">
-        <div className="absolute inset-0 z-0">
-          <Aurora
-            colorStops={["#d8b4fe", "#B497CF", "#5227FF"]}
-            blend={0.5}
-            amplitude={1.2}
-            speed={0.5}
-          />
-        </div>
-        <div className="relative z-10">
-          <CurvedLoop marqueeText="CLARITY ✦ HEALING ✦ ABUNDANCE ✦ ALIGNMENT ✦ " speed={0.8} direction="right" curveAmount={150} />
-        </div>
-      </section>
-
-      <section id="book" className="py-20 md:py-32">
-        <div className="container-narrow text-center">
-          <SectionHeading eyebrow="Book a session" title="Choose the space you need." copy="Select a duration to begin. This preview demonstrates the booking experience; no payment will be taken." />
-          <div className="mt-12 grid gap-3 sm:grid-cols-3">
-            {[30, 60, 90].map((minutes) => <button key={minutes} onClick={() => setDuration(minutes)} className={`min-h-40 border p-6 text-left transition-colors ${duration === minutes ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background hover:border-primary"}`} aria-pressed={duration === minutes}>
-              <Clock3 className="h-5 w-5" /><span className="mt-8 block font-serif text-3xl">{minutes} minutes</span><span className={`mt-2 block text-sm ${duration === minutes ? "text-primary-foreground/75" : "text-muted-foreground"}`}>{minutes === 30 ? "One focused question" : minutes === 60 ? "A deeper personal reading" : "An immersive exploration"}</span>
-            </button>)}
-          </div>
-          <div className="mt-7 flex flex-col items-center justify-between gap-5 border-y border-border py-6 sm:flex-row"><p className="text-left"><span className="block text-sm text-muted-foreground">Your selection</span><strong className="font-serif text-2xl font-medium">{duration}-minute private session</strong></p><Button size="lg" onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })} className="h-12 rounded-none px-8">Continue to booking <ArrowRight /></Button></div>
-        </div>
-      </section>
 
 
       <section id="shop" className="relative py-20 md:py-28 overflow-hidden bg-gradient-to-b from-sky-100/50 via-white to-sky-50/30">

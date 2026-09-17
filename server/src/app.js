@@ -26,38 +26,48 @@ const app = express();
 app.disable('x-powered-by');
 app.set('trust proxy', 1);
 
-// Security Middleware
+// Security Middleware — use same-origin-allow-popups so Google OAuth
+// popup can postMessage back to the opener while retaining COOP protection.
 app.use(helmet({
-  crossOriginOpenerPolicy: false
+  crossOriginOpenerPolicy: { policy: 'same-origin-allow-popups' }
 }));
 
-// Middleware
+// Parse FRONTEND_URL which may be comma-separated
+const frontendUrls = (process.env.FRONTEND_URL || '')
+  .split(',')
+  .map(u => u.trim())
+  .filter(Boolean);
+
 const allowedOrigins = [
-  'http://localhost:5173',
-  'http://localhost:8080',
-  'http://127.0.0.1:5173',
-  'http://127.0.0.1:8080',
+  ...frontendUrls,
   'https://divinewheeloffortune.com',
   'https://www.divinewheeloffortune.com',
-  process.env.FRONTEND_URL
-].filter(Boolean);
+];
+
+// Deduplicate
+const uniqueOrigins = [...new Set(allowedOrigins)];
+
+// Add dev origins only outside production
+if (process.env.NODE_ENV !== 'production') {
+  uniqueOrigins.push(
+    'http://localhost:5173',
+    'http://localhost:8080',
+    'http://127.0.0.1:5173',
+    'http://127.0.0.1:8080'
+  );
+}
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
+    // Allow requests with no origin (like mobile apps, curl, webhooks)
     if (!origin) return callback(null, true);
 
-    // Local origins are never accepted by a production deployment.
-    if (process.env.NODE_ENV !== 'production' && (origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:'))) {
-      return callback(null, true);
-    }
-
-    // Allow Vercel domains
+    // Allow Vercel preview domains
     if (origin.endsWith('.vercel.app')) {
       return callback(null, true);
     }
 
-    if (allowedOrigins.indexOf(origin) === -1) {
+    if (uniqueOrigins.indexOf(origin) === -1) {
       return callback(new Error('The CORS policy for this site does not allow access from the specified Origin.'));
     }
 
@@ -65,7 +75,12 @@ app.use(cors({
   },
   credentials: true,
 }));
-app.use(express.json({ limit: '10kb' })); // Limit body size against DOS
+
+// Webhook route needs raw body for HMAC signature verification.
+// Must be registered BEFORE express.json() parses the body.
+app.use('/api/orders/webhook', express.raw({ type: 'application/json' }));
+
+app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 app.use(cookieParser());
 app.use(requireTrustedOrigin);
@@ -77,7 +92,7 @@ const adminRoutes = require('./routes/admin.routes');
 const profileRoutes = require('./routes/profile.routes');
 const orderRoutes = require('./routes/order.routes');
 
-// Simple in-memory cache for high traffic (20k users)
+// Simple in-memory cache for high traffic
 const cache = new Map();
 const cacheMiddleware = (durationSecs) => (req, res, next) => {
   if (req.method !== 'GET') return next();
@@ -117,6 +132,7 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Centralized error handler
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || (err.name === 'ValidationError' ? 400 : 500);
   if (process.env.NODE_ENV !== 'test' && statusCode >= 500) console.error(err);
@@ -131,6 +147,20 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 5000;
+
+// Process-level error handlers for production stability
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  // Don't crash — log and continue
+});
+
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+  // For truly unexpected errors, give in-flight requests 5s to finish, then exit
+  if (process.env.NODE_ENV === 'production') {
+    setTimeout(() => process.exit(1), 5000);
+  }
+});
 
 if (require.main === module) {
   app.listen(PORT, () => {

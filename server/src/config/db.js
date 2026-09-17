@@ -6,11 +6,11 @@ const connectDB = async () => {
     if (!databaseUri) throw new Error('MONGODB_URI is not configured');
     const conn = await mongoose.connect(databaseUri, { 
       serverSelectionTimeoutMS: 10_000,
-      maxPoolSize: 100 // High connection pool for 20k concurrent users
+      maxPoolSize: 100
     });
     console.log(`MongoDB Connected: ${conn.connection.host}`);
     
-    // Auto-seed Admin User
+    // Auto-seed Admin User (initial seed only — never force-reset password)
     try {
       const AdminUser = require('../models/Admin');
       const bcrypt = require('bcryptjs');
@@ -26,11 +26,9 @@ const connectDB = async () => {
             status: 'active' 
           });
           console.log(`Auto-seeded admin: ${email}`);
-        } else {
-          // Force update password for testing (remove in production if needed, but useful for fixing locked accounts)
-          await AdminUser.updateOne({ email }, { passwordHash: await bcrypt.hash(password, 12) });
-          console.log(`Ensured admin password matches env for: ${email}`);
         }
+        // NOTE: Removed force-reset of admin password on every startup.
+        // If you need to reset, use: npm run admin:create
       }
     } catch (seedErr) {
       console.error(`Error auto-seeding admin: ${seedErr.message}`);

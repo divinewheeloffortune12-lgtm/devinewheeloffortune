@@ -4,10 +4,14 @@ const Service = require('../models/Service');
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
 
-// Setup Razorpay
+// Setup Razorpay — no dummy fallbacks
+if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+  console.error('CRITICAL: RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET must be set');
+}
+
 const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID || 'dummy',
-  key_secret: process.env.RAZORPAY_KEY_SECRET || 'dummy',
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
 exports.getAllServices = async (req, res, next) => {
@@ -23,8 +27,17 @@ exports.createBookingOrder = async (req, res, next) => {
   try {
     const { customerName, mobile, serviceId, address } = req.body;
     
-    if (!customerName || !mobile || !serviceId || !address) {
-      throw Object.assign(new Error('Missing required booking information'), { statusCode: 400 });
+    if (!customerName || typeof customerName !== 'string' || customerName.trim().length < 2) {
+      throw Object.assign(new Error('A valid name is required'), { statusCode: 400 });
+    }
+    if (!mobile || typeof mobile !== 'string' || mobile.trim().length < 10) {
+      throw Object.assign(new Error('A valid mobile number is required'), { statusCode: 400 });
+    }
+    if (!serviceId || !mongoose.isValidObjectId(serviceId)) {
+      throw Object.assign(new Error('A valid service must be selected'), { statusCode: 400 });
+    }
+    if (!address || typeof address !== 'string' || address.trim().length < 5) {
+      throw Object.assign(new Error('A valid address is required'), { statusCode: 400 });
     }
 
     // 1. Verify service exists and get price from backend
@@ -37,7 +50,7 @@ exports.createBookingOrder = async (req, res, next) => {
 
     // 2. Create Razorpay Order
     const razorpayOptions = {
-      amount: amount * 100, // in paise
+      amount: Math.round(amount * 100), // in paise
       currency: "INR",
       receipt: `BKG-${Date.now()}`,
     };
@@ -56,10 +69,10 @@ exports.createBookingOrder = async (req, res, next) => {
 
     // 3. Create Booking Record
     const booking = new ServiceBooking({
-      customerName,
-      mobile,
+      customerName: customerName.trim(),
+      mobile: mobile.trim(),
       service: service._id,
-      address,
+      address: address.trim(),
       amount,
       razorpayOrderId: rzpOrder.id,
       status: 'PENDING_PAYMENT',
@@ -91,29 +104,48 @@ exports.verifyBookingPayment = async (req, res, next) => {
       throw Object.assign(new Error('Payment verification parameters missing'), { statusCode: 400 });
     }
 
-    const secret = process.env.RAZORPAY_KEY_SECRET || 'dummy';
+    const secret = process.env.RAZORPAY_KEY_SECRET;
+    if (!secret) {
+      throw Object.assign(new Error('Payment configuration error'), { statusCode: 500 });
+    }
+
     const body = razorpay_order_id + "|" + razorpay_payment_id;
     const expectedSignature = crypto.createHmac('sha256', secret)
                                     .update(body.toString())
                                     .digest('hex');
-                                    
-    const isAuthentic = expectedSignature === razorpay_signature;
     
-    if (!isAuthentic) {
+    // Timing-safe comparison
+    if (expectedSignature.length !== razorpay_signature.length ||
+        !crypto.timingSafeEqual(Buffer.from(expectedSignature), Buffer.from(razorpay_signature))) {
       throw Object.assign(new Error('Invalid payment signature'), { statusCode: 400 });
     }
     
-    // Verify order
-    const booking = await ServiceBooking.findOne({ razorpayOrderId: razorpay_order_id });
+    // Idempotent update — only update if still PENDING
+    const booking = await ServiceBooking.findOneAndUpdate(
+      { razorpayOrderId: razorpay_order_id, paymentStatus: 'PENDING' },
+      {
+        $set: {
+          paymentStatus: 'PAID',
+          status: 'CONFIRMED',
+          razorpayPaymentId: razorpay_payment_id,
+        }
+      },
+      { new: true }
+    );
+
     if (!booking) {
-      throw Object.assign(new Error('Booking not found'), { statusCode: 404 });
+      // Either not found or already paid
+      const existing = await ServiceBooking.findOne({ razorpayOrderId: razorpay_order_id });
+      if (!existing) {
+        throw Object.assign(new Error('Booking not found'), { statusCode: 404 });
+      }
+      // Already paid — return success (idempotent)
+      return res.json({
+        success: true,
+        message: 'Payment already verified',
+        data: { bookingId: existing._id }
+      });
     }
-    
-    // Update status safely
-    booking.paymentStatus = 'PAID';
-    booking.status = 'CONFIRMED';
-    booking.razorpayPaymentId = razorpay_payment_id;
-    await booking.save();
     
     res.json({
       success: true,

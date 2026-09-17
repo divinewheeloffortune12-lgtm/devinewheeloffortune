@@ -22,7 +22,7 @@ const orderSchema = new mongoose.Schema({
       required: true,
     }
   }],
-  orderNumber: { type: String, required: true, unique: true, index: true },
+  orderNumber: { type: String, required: true, unique: true },
   totalAmount: {
     type: Number,
     required: true,
@@ -44,7 +44,23 @@ const orderSchema = new mongoose.Schema({
   razorpayPaymentId: { type: String, unique: true, sparse: true },
   shippingAddress: {
     type: String,
-  }
+  },
+  paidAt: {
+    type: Date,
+  },
+  statusHistory: [{
+    status: { type: String, required: true },
+    changedAt: { type: Date, default: Date.now },
+    changedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'AdminUser' },
+    reason: { type: String },
+  }],
 }, { timestamps: true });
+
+// Performance indexes
+orderSchema.index({ user: 1, createdAt: -1 });
+orderSchema.index({ razorpayOrderId: 1 });
+orderSchema.index({ paymentStatus: 1 });
+orderSchema.index({ orderNumber: 1 });
+orderSchema.index({ status: 1, paymentStatus: 1 });
 
 module.exports = mongoose.model('Order', orderSchema);

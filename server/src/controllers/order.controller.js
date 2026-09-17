@@ -18,14 +18,12 @@ exports.createOrder = async (req, res, next) => {
   session.startTransaction();
   
   try {
-    const { shippingAddress } = req.body;
+    const { shippingAddress, items } = req.body;
     if (!shippingAddress) {
       throw Object.assign(new Error('Shipping address is required'), { statusCode: 400 });
     }
 
-    // 1. Fetch User's Cart
-    const cart = await Cart.findOne({ user: req.user._id }).populate('items.product');
-    if (!cart || cart.items.length === 0) {
+    if (!items || items.length === 0) {
       throw Object.assign(new Error('Cart is empty'), { statusCode: 400 });
     }
 
@@ -33,10 +31,10 @@ exports.createOrder = async (req, res, next) => {
     let totalAmount = 0;
     const orderProducts = [];
 
-    for (const item of cart.items) {
-      const product = await Product.findById(item.product._id).session(session);
+    for (const item of items) {
+      const product = await Product.findById(item.productId).session(session);
       if (!product || product.isDeleted || !product.availability) {
-        throw Object.assign(new Error(`Product ${item.product.name} is unavailable`), { statusCode: 400 });
+        throw Object.assign(new Error(`Product is unavailable`), { statusCode: 400 });
       }
       if (product.stock < item.quantity) {
         throw Object.assign(new Error(`Insufficient stock for ${product.name}`), { statusCode: 400 });
@@ -86,9 +84,7 @@ exports.createOrder = async (req, res, next) => {
 
     await order.save({ session });
     
-    // Clear cart after order creation
-    cart.items = [];
-    await cart.save({ session });
+    // Note: frontend clears the local cart state
 
     await session.commitTransaction();
     

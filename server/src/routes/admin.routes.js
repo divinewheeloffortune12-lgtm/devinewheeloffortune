@@ -9,7 +9,8 @@ const {
   createProduct, 
   getProducts, 
   deleteProduct, 
-  getDeletedProducts 
+  getDeletedProducts,
+  toggleProductAvailability
 } = require('../controllers/adminProduct.controller');
 
 const { 
@@ -42,6 +43,7 @@ router.get('/stats', adminStatsController.getStats);
 router.post('/products', upload.array('images', 5), createProduct);
 router.get('/products', getProducts);
 router.delete('/products/:id', deleteProduct);
+router.patch('/products/:id/availability', toggleProductAvailability);
 router.get('/products/deleted/all', getDeletedProducts);
 
 // Categories: archive only, never delete categories referenced by products.

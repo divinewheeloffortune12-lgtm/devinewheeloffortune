@@ -7,7 +7,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Plus, Trash2, Image as ImageIcon } from "lucide-react";
+import { Loader2, Plus, Trash2, Image as ImageIcon, Eye, EyeOff } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -140,6 +140,20 @@ export const AdminProducts = () => {
       toast({ 
         variant: "destructive", 
         title: "Failed to delete product",
+        description: error.response?.data?.message || "Please try again."
+      });
+    }
+  };
+
+  const toggleAvailability = async (id: string) => {
+    try {
+      await api.patch(`/admin/products/${id}/availability`);
+      toast({ title: "Product visibility updated" });
+      fetchProducts();
+    } catch (error: any) {
+      toast({ 
+        variant: "destructive", 
+        title: "Update failed",
         description: error.response?.data?.message || "Please try again."
       });
     }
@@ -363,7 +377,16 @@ export const AdminProducts = () => {
                       {p.stock > 0 ? `${p.stock} in stock` : 'Out of stock'}
                     </span>
                   </td>
-                  <td className="p-4 text-right">
+                  <td className="p-4 text-right flex justify-end gap-2">
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      onClick={() => toggleAvailability(p._id)} 
+                      className={p.availability === false ? "text-amber-500 hover:text-amber-600 hover:bg-amber-50" : "text-slate-400 hover:text-primary hover:bg-primary/5"}
+                      title={p.availability === false ? "Hidden from website - Click to show" : "Visible on website - Click to hide"}
+                    >
+                      {p.availability === false ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </Button>
                     <Button variant="ghost" size="icon" onClick={() => deleteProduct(p._id)} className="text-slate-400 hover:text-red-600 hover:bg-red-50">
                       <Trash2 className="w-4 h-4" />
                     </Button>

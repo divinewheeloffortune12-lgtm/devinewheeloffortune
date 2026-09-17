@@ -7,11 +7,11 @@ import { ScrollToTop } from "./components/ScrollToTop";
 import { lazy, Suspense } from 'react';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
-const Index = lazy(() => import("./pages/Index"));
-const Shop = lazy(() => import("./pages/Shop"));
-const ProductPage = lazy(() => import("./pages/ProductPage"));
-const Cart = lazy(() => import("./pages/Cart"));
-const Checkout = lazy(() => import("./pages/Checkout"));
+import Index from "./pages/Index";
+import Shop from "./pages/Shop";
+import ProductPage from "./pages/ProductPage";
+import Cart from "./pages/Cart";
+import Checkout from "./pages/Checkout";
 
 const Login = lazy(() => import("./pages/Login"));
 const Signup = lazy(() => import("./pages/Signup"));

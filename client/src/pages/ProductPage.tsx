@@ -5,11 +5,12 @@ import { Layout } from '@/components/Layout';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { api, getErrorMessage } from '@/lib/api';
-import { isAxiosError } from 'axios';
 import { useToast } from '@/components/ui/use-toast';
+import { useCart } from '@/hooks/useCart';
 
 type Product = { 
   _id: string; 
+  id?: string;
   name: string; 
   description?: string; 
   price: number; 
@@ -28,6 +29,7 @@ export default function ProductPage() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const { toast } = useToast();
+  const { addItem } = useCart();
 
   useEffect(() => { 
     let live = true; 
@@ -43,18 +45,11 @@ export default function ProductPage() {
     return () => { live = false; }; 
   }, [slug]);
 
-  const add = async () => { 
+  const add = () => { 
     if (!product) return; 
-    try { 
-      // Add size info if required later. For now just adding productId.
-      await api.post('/cart/items', { productId: product._id, quantity: 1, size: selectedSize }); 
-      toast({ title: 'Added to bag' }); 
-    } catch (error) { 
-      if (isAxiosError(error) && (error.response?.status === 401 || error.response?.status === 403)) {
-        return setAuthPrompt(true); 
-      }
-      toast({ variant: 'destructive', title: 'Could not add product', description: getErrorMessage(error, 'Please try again.') }); 
-    } 
+    const formattedProduct = { ...product, id: product._id };
+    addItem(formattedProduct as any, 1);
+    toast({ title: 'Added to bag' }); 
   };
 
   const nextImage = () => {
@@ -182,18 +177,12 @@ export default function ProductPage() {
                 {product.stock < 1 ? 'Unavailable' : <><ShoppingBag className="mr-2 w-5 h-5"/> Add to Bag</>}
               </Button>
               <Button 
-                onClick={async () => {
+                onClick={() => {
                   if (!product) return;
                   if (product.stock < 1) return;
-                  try {
-                    await api.post('/cart/items', { productId: product._id, quantity: 1, size: selectedSize });
-                    window.location.href = '/checkout';
-                  } catch (error) {
-                    if (isAxiosError(error) && (error.response?.status === 401 || error.response?.status === 403)) {
-                      return setAuthPrompt(true);
-                    }
-                    toast({ variant: 'destructive', title: 'Could not process request', description: getErrorMessage(error, 'Please try again.') });
-                  }
+                  const formattedProduct = { ...product, id: product._id };
+                  addItem(formattedProduct as any, 1);
+                  window.location.href = '/checkout';
                 }} 
                 disabled={product.stock < 1} 
                 className="w-full rounded-full h-14 text-sm font-semibold tracking-wide uppercase shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 transition-all duration-300"

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight, AlertCircle, CheckCircle2 } from "lucide-react";
@@ -10,8 +10,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import api from "@/lib/api";
 import { loadRazorpayScript } from "./Services";
-import { useNavigate } from "react-router-dom";
-
 const Checkout = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -131,7 +129,8 @@ const Checkout = () => {
       
       const orderResponse = await api.post('/orders/create', {
         shippingAddress: fullAddress,
-        notes: formData.notes
+        notes: formData.notes,
+        items: items.map(i => ({ productId: i.product.id || (i.product as any)._id, quantity: i.quantity, size: (i as any).size }))
       });
 
       if (!orderResponse.data.success) {

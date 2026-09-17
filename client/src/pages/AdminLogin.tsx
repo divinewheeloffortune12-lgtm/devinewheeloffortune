@@ -4,8 +4,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Eye, EyeOff, Loader2, ShieldCheck } from "lucide-react";
-import ReCAPTCHA from "react-google-recaptcha";
-
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,7 +21,6 @@ import { api, getErrorMessage } from "@/lib/api";
 const formSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   password: z.string().min(1, "Password is required"),
-  recaptchaToken: z.string().min(1, "Please complete the reCAPTCHA"),
 });
 
 const AdminLogin = () => {
@@ -37,7 +34,6 @@ const AdminLogin = () => {
     defaultValues: {
       email: "",
       password: "",
-      recaptchaToken: "",
     },
   });
 
@@ -127,22 +123,6 @@ const AdminLogin = () => {
                 )}
               />
 
-              <FormField
-                control={form.control}
-                name="recaptchaToken"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col items-center justify-center pt-2">
-                    <FormControl>
-                      <ReCAPTCHA
-                        sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY || "6LdkfMAtAAAAAPPHbUNEdhCpF04oJTGgU9ZXxv6Y"}
-                        onChange={field.onChange}
-                        theme="dark"
-                      />
-                    </FormControl>
-                    <FormMessage className="text-red-400" />
-                  </FormItem>
-                )}
-              />
 
               <Button 
                 type="submit" 

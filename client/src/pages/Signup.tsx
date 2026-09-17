@@ -5,8 +5,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { GoogleLogin, type CredentialResponse } from "@react-oauth/google";
-import ReCAPTCHA from "react-google-recaptcha";
-
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,7 +24,6 @@ const formSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   confirmPassword: z.string(),
-  recaptchaToken: z.string().min(1, "Please complete the reCAPTCHA"),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords do not match",
   path: ["confirmPassword"],
@@ -45,7 +42,6 @@ const Signup = () => {
       email: "",
       password: "",
       confirmPassword: "",
-      recaptchaToken: "",
     },
   });
 
@@ -55,8 +51,7 @@ const Signup = () => {
       await api.post("/auth/register", {
         name: values.name,
         email: values.email,
-        password: values.password,
-        recaptchaToken: values.recaptchaToken
+        password: values.password
       });
       
       toast({
@@ -179,21 +174,6 @@ const Signup = () => {
                 )}
               />
 
-              <FormField
-                control={form.control}
-                name="recaptchaToken"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col items-center justify-center pt-2">
-                    <FormControl>
-                      <ReCAPTCHA
-                        sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY || "6LdkfMAtAAAAAPPHbUNEdhCpF04oJTGgU9ZXxv6Y"}
-                        onChange={field.onChange}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
 
               <Button type="submit" className="w-full h-12" disabled={isLoading}>
                 {isLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}

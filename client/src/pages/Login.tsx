@@ -5,8 +5,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { GoogleLogin, type CredentialResponse } from "@react-oauth/google";
-import ReCAPTCHA from "react-google-recaptcha";
-
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,7 +22,6 @@ import { api, getErrorMessage } from "@/lib/api";
 const formSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   password: z.string().min(1, "Password is required"),
-  recaptchaToken: z.string().min(1, "Please complete the reCAPTCHA"),
 });
 
 const Login = () => {
@@ -38,7 +35,6 @@ const Login = () => {
     defaultValues: {
       email: "",
       password: "",
-      recaptchaToken: "",
     },
   });
 
@@ -149,21 +145,6 @@ const Login = () => {
                 )}
               />
 
-              <FormField
-                control={form.control}
-                name="recaptchaToken"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col items-center justify-center pt-2">
-                    <FormControl>
-                      <ReCAPTCHA
-                        sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY || "6LdkfMAtAAAAAPPHbUNEdhCpF04oJTGgU9ZXxv6Y"}
-                        onChange={field.onChange}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
 
               <Button type="submit" className="w-full h-12" disabled={isLoading}>
                 {isLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}

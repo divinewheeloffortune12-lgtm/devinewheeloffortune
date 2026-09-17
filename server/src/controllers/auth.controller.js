@@ -40,23 +40,6 @@ const sendTokenResponse = (user, type, statusCode, res) => {
     });
 };
 
-const verifyRecaptcha = async (token) => {
-  if (!token) return false;
-  try {
-    const response = await fetch('https://www.google.com/recaptcha/api/siteverify', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: `secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${token}`
-    });
-    const data = await response.json();
-    return data.success;
-  } catch (error) {
-    console.error('reCAPTCHA verification error:', error);
-    return false;
-  }
-};
 
 exports.register = async (req, res) => {
   try {
@@ -65,14 +48,8 @@ exports.register = async (req, res) => {
       return res.status(400).json({ success: false, errors: errors.array() });
     }
 
-    const { name, email, password, recaptchaToken } = req.body;
+    const { name, email, password } = req.body;
     const normalizedEmail = String(email).trim().toLowerCase();
-
-    // Verify reCAPTCHA
-    const isHuman = await verifyRecaptcha(recaptchaToken);
-    if (!isHuman) {
-      return res.status(400).json({ success: false, message: 'Invalid reCAPTCHA. Please try again.' });
-    }
 
     // Check if user already exists
     let user = await User.findOne({ email: normalizedEmail });
@@ -102,16 +79,10 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
   try {
-    const { email, password, recaptchaToken } = req.body;
+    const { email, password } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({ success: false, message: 'Please provide email and password' });
-    }
-
-    // Verify reCAPTCHA
-    const isHuman = await verifyRecaptcha(recaptchaToken);
-    if (!isHuman) {
-      return res.status(400).json({ success: false, message: 'Invalid reCAPTCHA. Please try again.' });
     }
 
     const user = await User.findOne({ email: String(email).trim().toLowerCase() }).select('+passwordHash');
@@ -210,16 +181,10 @@ exports.getMe = async (req, res) => {
 
 exports.adminLogin = async (req, res) => {
   try {
-    const { email, password, recaptchaToken } = req.body;
+    const { email, password } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({ success: false, message: 'Please provide email and password' });
-    }
-
-    // Verify reCAPTCHA
-    const isHuman = await verifyRecaptcha(recaptchaToken);
-    if (!isHuman) {
-      return res.status(400).json({ success: false, message: 'Invalid reCAPTCHA. Please try again.' });
     }
 
     const normalizedEmail = String(email).trim().toLowerCase();

@@ -319,17 +319,15 @@ exports.updateProduct = async (req, res) => {
   }
 };
 
- e x p o r t s . g e t P r o d u c t B y I d   =   a s y n c   ( r e q ,   r e s )   = >   { 
-     t r y   { 
-         c o n s t   p r o d u c t   =   a w a i t   P r o d u c t . f i n d B y I d ( r e q . p a r a m s . i d ) . p o p u l a t e ( " c a t e g o r y " ,   " n a m e " ) ; 
-         i f   ( ! p r o d u c t   | |   p r o d u c t . i s D e l e t e d )   { 
-             r e t u r n   r e s . s t a t u s ( 4 0 4 ) . j s o n ( {   s u c c e s s :   f a l s e ,   m e s s a g e :   " P r o d u c t   n o t   f o u n d "   } ) ; 
-         } 
-         r e s . s t a t u s ( 2 0 0 ) . j s o n ( {   s u c c e s s :   t r u e ,   d a t a :   p r o d u c t   } ) ; 
-     }   c a t c h   ( e r r o r )   { 
-         c o n s o l e . e r r o r ( e r r o r ) ; 
-         r e s . s t a t u s ( 5 0 0 ) . j s o n ( {   s u c c e s s :   f a l s e ,   m e s s a g e :   " S e r v e r   e r r o r "   } ) ; 
-     } 
- } ; 
-  
- 
+exports.getProductById = async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id).populate("category", "name");
+    if (!product || product.isDeleted) {
+      return res.status(404).json({ success: false, message: "Product not found" });
+    }
+    res.status(200).json({ success: true, data: product });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};

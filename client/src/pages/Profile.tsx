@@ -5,7 +5,7 @@ import * as z from "zod";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2, ShieldCheck, MapPin, User, Lock, Package, CreditCard, Receipt, Download } from "lucide-react";
+import { Loader2, ShieldCheck, MapPin, User, Lock, Package, CreditCard, Receipt, Download, LogOut } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -223,6 +223,23 @@ export const Profile = () => {
                   <User className="w-4 h-4" />
                   Provider: <span className="capitalize">{userData.authProvider}</span>
                 </div>
+              </div>
+
+              <div className="mt-6 pt-4 border-t border-slate-100">
+                <Button 
+                  variant="outline" 
+                  className="w-full text-red-600 hover:text-red-700 hover:bg-red-50 border-red-100" 
+                  onClick={async () => {
+                    try {
+                      await api.post('/auth/logout');
+                      window.location.href = '/';
+                    } catch (err) {
+                      toast({ variant: 'destructive', title: 'Logout Failed' });
+                    }
+                  }}
+                >
+                  <LogOut className="w-4 h-4 mr-2" /> Log out
+                </Button>
               </div>
             </div>
           </div>

@@ -193,7 +193,20 @@ export const Header = () => {
                       <CalendarClock className="h-5 w-5 opacity-70" />
                       Book a Session
                     </Link>
-                    <Link to="/profile" onClick={() => setOpen(false)} className="flex items-center gap-3 px-5 py-3.5 text-sm font-semibold text-foreground/80 hover:bg-black/5 hover:text-primary rounded-lg"><UserRound className="h-5 w-5 opacity-70" /> My Profile</Link>
+                    {signedIn && (
+                      <>
+                        <Link to="/profile" onClick={() => setOpen(false)} className="flex items-center gap-3 px-5 py-3.5 text-sm font-semibold text-foreground/80 hover:bg-black/5 hover:text-primary rounded-lg"><UserRound className="h-5 w-5 opacity-70" /> My Profile</Link>
+                        <button onClick={async () => {
+                          setOpen(false);
+                          try {
+                            await api.post('/auth/logout');
+                            window.location.href = '/';
+                          } catch (err) {}
+                        }} className="flex items-center gap-3 px-5 py-3.5 text-sm font-semibold text-red-600 hover:bg-red-50 hover:text-red-700 rounded-lg text-left">
+                          Log out
+                        </button>
+                      </>
+                    )}
                     {!signedIn && (
                       <>
                         <Link to="/login" onClick={() => setOpen(false)} className="text-sm font-semibold text-foreground/70 px-5 py-2">Login</Link>

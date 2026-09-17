@@ -121,25 +121,36 @@ exports.googleAuth = async (req, res) => {
     
     const payload = ticket.getPayload();
     const { email, name, sub: googleId, email_verified } = payload;
+    const normalizedEmail = String(email).toLowerCase();
 
-    let user = await User.findOne({ email });
+    // First try to find user by googleId
+    let user = await User.findOne({ googleId });
 
-    if (user) {
-      // If user exists but is local, we link the googleId
-      if (!user.googleId) {
-        user.googleId = googleId;
-        user.authProvider = 'both';
-        user.emailVerified = email_verified || user.emailVerified;
-        await user.save();
+    if (!user) {
+      // If not found by googleId, try to find by email
+      user = await User.findOne({ email: normalizedEmail });
+
+      if (user) {
+        // If user exists but is local, link the googleId
+        if (!user.googleId) {
+          user.googleId = googleId;
+          user.authProvider = 'both';
+          user.emailVerified = email_verified || user.emailVerified;
+          await user.save();
+        }
+      } else {
+        // Create new user
+        user = await User.create({
+          name,
+          email: normalizedEmail,
+          googleId,
+          authProvider: 'google',
+          emailVerified: Boolean(email_verified),
+        });
       }
     } else {
-      user = await User.create({
-        name,
-        email,
-        googleId,
-        authProvider: 'google',
-        emailVerified: Boolean(email_verified),
-      });
+      // If user found by googleId, we could optionally update their email/name if it changed, 
+      // but for now we just proceed to log them in.
     }
 
     sendTokenResponse(user, 'user', 200, res);

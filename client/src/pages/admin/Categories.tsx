@@ -242,7 +242,7 @@ export const AdminCategories = () => {
               {categories.map((c: any) => (
                 <tr key={c._id} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50 transition-colors">
                   <td className="p-4">
-                    <img src={c.image || 'https://via.placeholder.com/150'} alt={c.name} className="w-12 h-12 rounded-xl object-cover shadow-sm border border-slate-200" />
+                    <img src={c.image || 'https://placehold.co/150x150'} alt={c.name} className="w-12 h-12 rounded-xl object-cover shadow-sm border border-slate-200" />
                   </td>
                   <td className="p-4 font-medium text-slate-800">{c.name}</td>
                   <td className="p-4">

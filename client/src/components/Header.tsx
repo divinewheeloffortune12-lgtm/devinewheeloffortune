@@ -79,7 +79,7 @@ export const Header = () => {
                   <div className="container-full mx-auto px-4 py-8 grid grid-cols-4 gap-6">
                     {categories.slice(0, 8).map(cat => (
                       <Link key={cat._id} to={`/products?category=${cat.slug}`} className="group/item flex items-center gap-4 hover:bg-slate-50 p-3 rounded-xl transition-colors">
-                        <img src={cat.image || 'https://via.placeholder.com/150'} alt={cat.name} className="w-16 h-16 rounded-lg object-cover shadow-sm border border-slate-100" />
+                        <img src={cat.image || 'https://placehold.co/150x150'} alt={cat.name} className="w-16 h-16 rounded-lg object-cover shadow-sm border border-slate-100" />
                         <div>
                           <p className="font-medium text-sm text-slate-800 group-hover/item:text-primary transition-colors">{cat.name}</p>
                           {cat.note && <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-1">{cat.note}</p>}

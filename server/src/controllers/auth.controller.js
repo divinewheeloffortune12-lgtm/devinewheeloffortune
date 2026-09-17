@@ -12,7 +12,7 @@ const generateToken = (id, type) => {
     throw new Error('JWT_SECRET must be configured with at least 32 characters');
   }
   return jwt.sign({ id, type }, process.env.JWT_SECRET, {
-    expiresIn: '30d',
+    expiresIn: '7d', // Auto logout after 1 week
   });
 };
 
@@ -21,7 +21,7 @@ const sendTokenResponse = (user, type, statusCode, res) => {
   const cookieName = type === 'admin' ? 'adminToken' : 'token';
 
   const options = {
-    expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+    expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
@@ -172,9 +172,11 @@ exports.logout = (req, res) => {
 
 exports.getMe = async (req, res) => {
   try {
-    let token = req.cookies && req.cookies.token;
-    if (!token && req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+    let token = null;
+    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
       token = req.headers.authorization.split(' ')[1];
+    } else if (req.cookies && req.cookies.token) {
+      token = req.cookies.token;
     }
     if (!token) return res.status(200).json({ success: true, data: null });
 

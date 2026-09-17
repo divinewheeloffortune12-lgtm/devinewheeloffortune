@@ -6,11 +6,11 @@ exports.requireUser = async (req, res, next) => {
   try {
     let token;
     
-    // Check for token in cookies or headers
-    if (req.cookies && req.cookies.token) {
-      token = req.cookies.token;
-    } else if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+    // Check for token in headers first, then cookies
+    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
       token = req.headers.authorization.split(' ')[1];
+    } else if (req.cookies && req.cookies.token) {
+      token = req.cookies.token;
     }
     
     if (!token) {
@@ -41,11 +41,11 @@ exports.requireAdmin = async (req, res, next) => {
   try {
     let token;
     
-    // Check for token in cookies, headers, or query string
-    if (req.cookies && req.cookies.adminToken) {
-      token = req.cookies.adminToken;
-    } else if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+    // Check for token in headers first, then cookies or query string
+    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
       token = req.headers.authorization.split(' ')[1];
+    } else if (req.cookies && req.cookies.adminToken) {
+      token = req.cookies.adminToken;
     } else if (req.query && req.query.token) {
       token = req.query.token;
     }

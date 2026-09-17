@@ -12,6 +12,8 @@ const Cart = () => {
   const shipping = subtotal > 500 ? 0 : 25;
   const total = subtotal + shipping;
 
+  const hasUnavailableItems = items.some(item => !item.product.availability || item.product.stock < item.quantity);
+
   if (items.length === 0) {
     return (
       <Layout>
@@ -106,6 +108,13 @@ const Cart = () => {
                         <p className="font-serif text-lg mt-3">
                           ${item.product.price.toLocaleString()}
                         </p>
+                        {(!item.product.availability || item.product.stock < item.quantity) && (
+                          <div className="mt-2 text-xs font-medium text-destructive">
+                            {!item.product.availability ? "Item Unavailable" : 
+                             item.product.stock === 0 ? "Out of Stock" : 
+                             `Only ${item.product.stock} available`}
+                          </div>
+                        )}
                       </div>
 
                       {/* Actions */}
@@ -175,13 +184,19 @@ const Cart = () => {
                 <Button
                   asChild
                   size="lg"
-                  className="w-full rounded-none py-6 text-sm tracking-[0.15em] uppercase btn-premium"
+                  disabled={hasUnavailableItems}
+                  className={`w-full rounded-none py-6 text-sm tracking-[0.15em] uppercase ${hasUnavailableItems ? 'bg-muted text-muted-foreground pointer-events-none' : 'btn-premium'}`}
                 >
                   <Link to="/checkout">
                     Proceed to Checkout
                     <ArrowRight className="ml-3 w-4 h-4" />
                   </Link>
                 </Button>
+                {hasUnavailableItems && (
+                  <p className="text-xs text-destructive text-center mt-3">
+                    Please remove or update unavailable items to proceed.
+                  </p>
+                )}
 
                 {/* Trust signals */}
                 <div className="mt-8 pt-6 border-t border-border grid grid-cols-2 gap-4">

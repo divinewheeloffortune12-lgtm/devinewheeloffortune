@@ -28,7 +28,6 @@ const formSchema = z.object({
   name: z.string().min(2, "Name is required"),
   slug: z.string().min(2, "Slug is required"),
   description: z.string().optional(),
-  image: z.string().url("Must be a valid URL"),
   note: z.string().min(2, "Note is required"),
 });
 
@@ -40,13 +39,15 @@ export const AdminCategories = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const { toast } = useToast();
 
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
       slug: "",
       description: "",
-      image: "",
       note: "",
     },
   });
@@ -71,11 +72,12 @@ export const AdminCategories = () => {
 
   const handleEdit = (item: any) => {
     setEditingId(item._id);
+    setSelectedImage(null);
+    setPreviewUrl(item.image || null);
     form.reset({
       name: item.name,
       slug: item.slug || "",
       description: item.description || "",
-      image: item.image || "",
       note: item.note || "",
     });
     setIsDialogOpen(true);
@@ -83,25 +85,50 @@ export const AdminCategories = () => {
 
   const handleCreateNew = () => {
     setEditingId(null);
+    setSelectedImage(null);
+    setPreviewUrl(null);
     form.reset({
       name: "",
       slug: "",
       description: "",
-      image: "",
       note: "",
     });
     setIsDialogOpen(true);
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setSelectedImage(file);
+      setPreviewUrl(URL.createObjectURL(file));
+    }
+  };
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
+      if (!editingId && !selectedImage) {
+        toast({ variant: "destructive", title: "Image is required" });
+        return;
+      }
+
       setIsSubmitting(true);
       
+      const formData = new FormData();
+      formData.append("name", values.name);
+      formData.append("slug", values.slug);
+      if (values.description) formData.append("description", values.description);
+      formData.append("note", values.note);
+      if (selectedImage) formData.append("image", selectedImage);
+      
       if (editingId) {
-        await api.patch(`/admin/categories/${editingId}`, values);
+        await api.patch(`/admin/categories/${editingId}`, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
         toast({ title: "Category updated successfully" });
       } else {
-        await api.post("/admin/categories", values);
+        await api.post("/admin/categories", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
         toast({ title: "Category created successfully" });
       }
       
@@ -166,9 +193,15 @@ export const AdminCategories = () => {
                   <FormItem><FormLabel>Note (e.g. "Sacred living")</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
 
-                <FormField control={form.control} name="image" render={({ field }) => (
-                  <FormItem><FormLabel>Image URL</FormLabel><FormControl><Input {...field} placeholder="https://..." /></FormControl><FormMessage /></FormItem>
-                )} />
+                <div className="space-y-2">
+                  <FormLabel>Category Image</FormLabel>
+                  <div className="flex items-center gap-4">
+                    {previewUrl && (
+                      <img src={previewUrl} alt="Preview" className="w-16 h-16 object-cover rounded-md border border-slate-200" />
+                    )}
+                    <Input type="file" accept="image/*" onChange={handleImageChange} className="flex-1" />
+                  </div>
+                </div>
 
                 <FormField control={form.control} name="description" render={({ field }) => (
                   <FormItem><FormLabel>Description</FormLabel><FormControl><Textarea {...field} className="min-h-[80px]" /></FormControl><FormMessage /></FormItem>

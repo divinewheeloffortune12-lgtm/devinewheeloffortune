@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { api } from "@/lib/api";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
-import { Loader2, UserX, Clock, Eye } from "lucide-react";
+import { Loader2, UserX, Clock, Eye, Download } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -59,15 +59,42 @@ export const AdminUsers = () => {
     return false;
   };
 
+  const handleDeleteUser = async (id: string) => {
+    if (!confirm("Are you sure you want to permanently delete this user? This action cannot be undone.")) return;
+    try {
+      await api.delete(`/admin/users/${id}`);
+      toast({ title: "User Deleted" });
+      setSelectedUser(null);
+      fetchUsers();
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Deletion failed",
+        description: "Could not delete user."
+      });
+    }
+  };
+
   if (isLoading) {
     return <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-slate-400" /></div>;
   }
 
   return (
     <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500">
-      <div>
-        <h2 className="text-3xl font-serif text-slate-800 font-medium tracking-tight">User Management</h2>
-        <p className="text-slate-500 mt-1 text-sm">Manage registered customers and their access.</p>
+      <div className="flex justify-between items-center">
+        <div>
+          <h2 className="text-3xl font-serif text-slate-800 font-medium tracking-tight">User Management</h2>
+          <p className="text-slate-500 mt-1 text-sm">Manage registered customers and their access.</p>
+        </div>
+        <Button 
+          variant="outline"
+          className="gap-2"
+          onClick={() => {
+            window.open(`${import.meta.env.VITE_API_URL}/admin/users/export?token=${localStorage.getItem('admin_token') || ''}`, '_blank');
+          }}
+        >
+          <Download className="w-4 h-4" /> Download Users
+        </Button>
       </div>
 
       {users.length === 0 ? (
@@ -136,7 +163,7 @@ export const AdminUsers = () => {
                             Block
                           </Button>
                         </>
-                      ) : (
+                      ) : user.status !== 'deleted' ? (
                         <Button 
                           variant="outline" 
                           size="sm"
@@ -145,7 +172,7 @@ export const AdminUsers = () => {
                         >
                           Unblock
                         </Button>
-                      )}
+                      ) : null}
                     </td>
                   </tr>
                 );
@@ -223,6 +250,17 @@ export const AdminUsers = () => {
                   </div>
                 </div>
               </div>
+
+              {selectedUser.status !== 'deleted' && (
+                <div className="col-span-2 mt-4 flex justify-end border-t border-slate-100 pt-4">
+                  <Button 
+                    variant="destructive" 
+                    onClick={() => handleDeleteUser(selectedUser._id)}
+                  >
+                    Delete User
+                  </Button>
+                </div>
+              )}
             </div>
           )}
         </DialogContent>

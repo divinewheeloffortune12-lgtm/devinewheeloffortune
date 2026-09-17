@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { api } from "@/lib/api";
-import { Loader2, Receipt, TrendingUp, ChevronLeft, ChevronRight, Package, Truck, CheckCircle2, XCircle } from "lucide-react";
+import { Loader2, Receipt, TrendingUp, ChevronLeft, ChevronRight, Package, Truck, CheckCircle2, XCircle, Download } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -17,17 +17,20 @@ export const AdminSales = () => {
   const [isUpdating, setIsUpdating] = useState(false);
   const { toast } = useToast();
 
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [dateRange, setDateRange] = useState('all');
+
   useEffect(() => {
     fetchSales(page);
-  }, [page]);
+  }, [page, statusFilter, dateRange]);
 
   const fetchSales = async (pageNum: number) => {
     setIsLoading(true);
     try {
-      const { data } = await api.get(`/admin/sales?page=${pageNum}&limit=10`);
-      setSales(data.data.sales || []);
-      setTotalPages(data.data.pages || 1);
-      setTotalOrders(data.data.total || 0);
+      const { data } = await api.get(`/admin/sales?page=${pageNum}&limit=10&status=${statusFilter}&dateRange=${dateRange}`);
+      setSales(data.data.sales || data.data || []);
+      setTotalPages(data.data.pages || data.pagination?.totalPages || 1);
+      setTotalOrders(data.data.total || data.pagination?.total || 0);
       
       // We might need a separate call for total revenue, or just use what we have.
       // Assuming backend sends total revenue or we calculate it.
@@ -53,7 +56,7 @@ export const AdminSales = () => {
   const handleStatusUpdate = async (orderId: string, newStatus: string) => {
     setIsUpdating(true);
     try {
-      await api.patch(`/admin/orders/${orderId}/status`, { status: newStatus });
+      await api.put(`/admin/sales/${orderId}/status`, { status: newStatus });
       toast({ title: "Status updated successfully" });
       setSales(sales.map(s => s._id === orderId ? { ...s, status: newStatus } : s));
       if (selectedOrder && selectedOrder._id === orderId) {
@@ -86,9 +89,54 @@ export const AdminSales = () => {
 
   return (
     <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500">
-      <div>
-        <h2 className="text-3xl font-serif text-slate-800 font-medium tracking-tight">Sales & Orders</h2>
-        <p className="text-slate-500 mt-1 text-sm">View transaction history and manage order fulfillment.</p>
+      <div className="flex justify-between items-center">
+        <div>
+          <h2 className="text-3xl font-serif text-slate-800 font-medium tracking-tight">Sales & Orders</h2>
+          <p className="text-slate-500 mt-1 text-sm">View transaction history and manage order fulfillment.</p>
+        </div>
+        <Button 
+          variant="outline"
+          className="gap-2"
+          onClick={() => {
+            window.open(`${import.meta.env.VITE_API_URL}/admin/sales/export?token=${localStorage.getItem('admin_token') || ''}&status=${statusFilter}&dateRange=${dateRange}`, '_blank');
+          }}
+        >
+          <Download className="w-4 h-4" /> Download Sales
+        </Button>
+      </div>
+
+      {/* Filters */}
+      <div className="flex gap-4 items-center bg-white p-4 rounded-xl border border-slate-100 shadow-sm">
+        <div className="w-48">
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger>
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Statuses</SelectItem>
+              <SelectItem value="PENDING">Pending</SelectItem>
+              <SelectItem value="PROCESSING">Processing</SelectItem>
+              <SelectItem value="SHIPPED">Shipped</SelectItem>
+              <SelectItem value="DELIVERED">Delivered</SelectItem>
+              <SelectItem value="CANCELLED">Cancelled</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="w-48">
+          <Select value={dateRange} onValueChange={setDateRange}>
+            <SelectTrigger>
+              <SelectValue placeholder="Date Range" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Time</SelectItem>
+              <SelectItem value="today">Today</SelectItem>
+              <SelectItem value="yesterday">Yesterday</SelectItem>
+              <SelectItem value="last7days">Last 7 Days</SelectItem>
+              <SelectItem value="last30days">Last 30 Days</SelectItem>
+              <SelectItem value="thismonth">This Month</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

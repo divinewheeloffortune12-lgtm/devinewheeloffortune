@@ -62,5 +62,6 @@ orderSchema.index({ razorpayOrderId: 1 });
 orderSchema.index({ paymentStatus: 1 });
 orderSchema.index({ orderNumber: 1 });
 orderSchema.index({ status: 1, paymentStatus: 1 });
+orderSchema.index({ createdAt: -1 });
 
 module.exports = mongoose.model('Order', orderSchema);

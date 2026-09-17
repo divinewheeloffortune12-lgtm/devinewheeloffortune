@@ -333,13 +333,12 @@ export const Profile = () => {
                     <div className="bg-slate-50 px-4 py-3 rounded-lg border border-slate-100 min-w-[200px]">
                       <p className="text-xs uppercase tracking-widest text-slate-500 mb-1">Tracking Status</p>
                       <p className={`font-semibold mb-3 ${
-                        order.status === 'CANCELLED' ? 'text-red-600' : 
+                        ['CANCELLED', 'REFUNDED'].includes(order.status) ? 'text-red-600' : 
                         order.status === 'DELIVERED' ? 'text-emerald-600' : 
+                        order.status === 'SHIPPED' ? 'text-blue-600' :
                         'text-amber-600'
                       }`}>
-                        {order.status === 'CANCELLED' ? 'Cancelled' : 
-                         order.status === 'DELIVERED' ? 'Successfully Delivered' : 
-                         'Pending / Processing'}
+                        {order.status.replace('_', ' ')}
                       </p>
                       <Button variant="outline" size="sm" onClick={() => printInvoice(order)} className="w-full text-xs h-8"><Download className="w-3 h-3 mr-2" /> Download Bill</Button>
                     </div>

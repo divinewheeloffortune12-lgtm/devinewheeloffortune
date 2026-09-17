@@ -79,3 +79,62 @@ exports.updateUserStatus = async (req, res) => {
     res.status(500).json({ success: false, message: 'Server error' });
   }
 };
+
+exports.deleteUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // Soft delete
+    user.status = 'deleted';
+    // Optionally obscure email to prevent login but allow recreation
+    user.email = `${user.email}-deleted-${Date.now()}`;
+    await user.save();
+
+    res.status(200).json({ success: true, message: 'User deleted successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
+
+exports.exportUsers = async (req, res) => {
+  try {
+    const exceljs = require('exceljs');
+    const workbook = new exceljs.Workbook();
+    const worksheet = workbook.addWorksheet('Users');
+
+    worksheet.columns = [
+      { header: 'ID', key: '_id', width: 25 },
+      { header: 'Name', key: 'name', width: 20 },
+      { header: 'Email', key: 'email', width: 30 },
+      { header: 'Mobile', key: 'mobile', width: 15 },
+      { header: 'Status', key: 'status', width: 15 },
+      { header: 'Joined At', key: 'createdAt', width: 20 }
+    ];
+
+    const users = await User.find({}).select('-passwordHash -googleId').sort({ createdAt: -1 });
+
+    users.forEach(user => {
+      worksheet.addRow({
+        _id: user._id.toString(),
+        name: user.name,
+        email: user.email,
+        mobile: user.mobile || 'N/A',
+        status: user.status,
+        createdAt: user.createdAt.toISOString()
+      });
+    });
+
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename=' + 'users-export.xlsx');
+    
+    await workbook.xlsx.write(res);
+    res.end();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+};

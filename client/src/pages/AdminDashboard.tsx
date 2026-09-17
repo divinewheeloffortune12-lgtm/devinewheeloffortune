@@ -161,16 +161,20 @@ const AdminDashboard = () => {
               <span className="text-sm font-medium">{currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
             </div>
           </div>
-          <div className="flex items-center gap-4">
-             <div className="flex items-center gap-2">
-                <div className="h-8 w-8 bg-slate-100 rounded-full flex items-center justify-center border border-slate-200 text-slate-600">
-                  <UserRound className="w-4 h-4" />
+           <div className="flex items-center gap-4">
+             <NavLink to="/admin/profile" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+                <div className="h-8 w-8 bg-slate-100 rounded-full flex items-center justify-center border border-slate-200 text-slate-600 overflow-hidden">
+                  {adminData?.profileImage ? (
+                    <img src={adminData.profileImage} alt="Profile" className="w-full h-full object-cover" />
+                  ) : (
+                    <UserRound className="w-4 h-4" />
+                  )}
                 </div>
-                <div className="hidden md:block">
-                  <p className="text-sm font-medium text-slate-700 leading-none">Admin</p>
-                  <p className="text-[10px] text-slate-500 mt-1 uppercase tracking-wider">Super User</p>
+                <div className="hidden md:block text-left">
+                  <p className="text-sm font-medium text-slate-700 leading-none">{adminData?.name || 'Admin'}</p>
+                  <p className="text-[10px] text-slate-500 mt-1 uppercase tracking-wider">{adminData?.role?.replace('_', ' ') || 'Super User'}</p>
                 </div>
-             </div>
+             </NavLink>
           </div>
         </header>
 

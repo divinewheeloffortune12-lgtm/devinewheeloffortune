@@ -56,6 +56,36 @@ const productSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  // Shipping Information
+  isShippingRequired: {
+    type: Boolean,
+    default: true,
+  },
+  shippingType: {
+    type: String,
+    enum: ['standard', 'express', 'digital', 'pickup'],
+    default: 'standard'
+  },
+  shippingCharge: {
+    type: Number,
+    default: 0
+  },
+  freeShipping: {
+    type: Boolean,
+    default: false
+  },
+  estimatedDeliveryTime: {
+    type: String, // e.g. "3-5 business days"
+  },
+  weight: {
+    type: Number, // in kg or grams, depending on store convention
+  },
+  dimensions: {
+    length: Number,
+    width: Number,
+    height: Number
+  },
+  // Deletion logic
   isDeleted: {
     type: Boolean,
     default: false,

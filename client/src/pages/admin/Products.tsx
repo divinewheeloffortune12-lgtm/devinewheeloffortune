@@ -7,7 +7,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Plus, Trash2, Image as ImageIcon, Eye, EyeOff } from "lucide-react";
+import { Loader2, Plus, Trash2, Image as ImageIcon, Eye, EyeOff, Edit } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -38,7 +38,10 @@ const formSchema = z.object({
   availability: z.boolean().default(true),
 });
 
+import { useNavigate } from "react-router-dom";
+
 export const AdminProducts = () => {
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -386,6 +389,9 @@ export const AdminProducts = () => {
                       title={p.availability === false ? "Hidden from website - Click to show" : "Visible on website - Click to hide"}
                     >
                       {p.availability === false ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </Button>
+                    <Button variant="ghost" size="icon" onClick={() => navigate(`/admin/products/${p._id}/edit`)} className="text-slate-400 hover:text-primary hover:bg-primary/5">
+                      <Edit className="w-4 h-4" />
                     </Button>
                     <Button variant="ghost" size="icon" onClick={() => deleteProduct(p._id)} className="text-slate-400 hover:text-red-600 hover:bg-red-50">
                       <Trash2 className="w-4 h-4" />

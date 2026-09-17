@@ -9,6 +9,8 @@ const feedbackController = require('../controllers/adminFeedback.controller');
 const { 
   createProduct, 
   getProducts, 
+  getProductById,
+  updateProduct,
   deleteProduct, 
   getDeletedProducts,
   toggleProductAvailability
@@ -20,6 +22,7 @@ const {
 } = require('../controllers/adminUser.controller');
 
 const adminStatsController = require('../controllers/adminStats.controller');
+const adminProfileController = require('../controllers/adminProfile.controller');
 
 const router = express.Router();
 
@@ -37,25 +40,33 @@ const upload = multer({
 // ALL routes here are strictly protected by requireAdmin
 router.use(requireAdmin);
 
+// Profile
+router.get('/profile', adminProfileController.getProfile);
+router.put('/profile', upload.single('profileImage'), adminProfileController.updateProfile);
+
 // Stats
 router.get('/stats', adminStatsController.getStats);
 
 // Products
 router.post('/products', upload.array('images', 5), createProduct);
+router.put('/products/:id', upload.array('images', 5), updateProduct);
 router.get('/products', getProducts);
+router.get('/products/:id', getProductById);
 router.delete('/products/:id', deleteProduct);
 router.patch('/products/:id/availability', toggleProductAvailability);
 router.get('/products/deleted/all', getDeletedProducts);
 
 // Categories: archive only, never delete categories referenced by products.
 router.get('/categories', categoryController.list);
-router.post('/categories', categoryController.create);
-router.patch('/categories/:id', categoryController.update);
+router.post('/categories', upload.single('image'), categoryController.create);
+router.patch('/categories/:id', upload.single('image'), categoryController.update);
 router.delete('/categories/:id', categoryController.archive);
 
 // Users
+router.get('/users/export', require('../controllers/adminUser.controller').exportUsers);
 router.get('/users', getUsers);
 router.patch('/users/:id/status', updateUserStatus);
+router.delete('/users/:id', require('../controllers/adminUser.controller').deleteUser);
 router.get('/feedback', feedbackController.list);
 router.patch('/feedback/:id', feedbackController.updateStatus);
 router.delete('/feedback/:id', feedbackController.deleteMessage);
@@ -63,7 +74,8 @@ router.delete('/feedback/:id', feedbackController.deleteMessage);
 const Order = require('../models/Order');
 const { VALID_TRANSITIONS } = require('../controllers/order.controller');
 
-// Sales & Orders — with pagination
+// Sales & Orders
+router.get('/sales/export', require('../controllers/adminSales.controller').exportSales);
 router.get('/sales', async (req, res, next) => {
   try {
     const page = Math.max(1, Number(req.query.page) || 1);

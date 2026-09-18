@@ -125,9 +125,22 @@ const Cart = () => {
                         <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
                           {item.product.description}
                         </p>
-                        <p className="font-serif text-lg mt-3">
-                          ₹{item.product.price.toLocaleString('en-IN')}
-                        </p>
+                        <div className="font-medium text-foreground">
+                          {(() => {
+                            const discount = item.product.discount || 0;
+                            const finalPrice = Math.round(item.product.price * (1 - discount / 100));
+                            return (
+                              <div className="flex flex-col items-end">
+                                <span>₹{finalPrice.toLocaleString('en-IN')}</span>
+                                {discount > 0 && (
+                                  <span className="text-xs line-through text-muted-foreground">
+                                    ₹{item.product.price.toLocaleString('en-IN')}
+                                  </span>
+                                )}
+                              </div>
+                            );
+                          })()}
+                        </div>
                         {((!item.product.availability) || (item.product.isDeleted) || item.product.stock < item.quantity) && (
                           <div className="mt-2 text-xs font-medium text-destructive">
                             {(!item.product.availability || item.product.isDeleted) ? "Product Not Available" : 

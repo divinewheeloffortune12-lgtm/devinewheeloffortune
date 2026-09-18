@@ -72,7 +72,11 @@ export const useCart = create<CartState>()(
 
       getSubtotal: () => {
         return get().items.reduce(
-          (total, item) => total + item.product.price * item.quantity,
+          (total, item) => {
+            const discount = item.product.discount || 0;
+            const finalPrice = Math.round(item.product.price * (1 - discount / 100));
+            return total + finalPrice * item.quantity;
+          },
           0
         );
       },

@@ -62,7 +62,9 @@ exports.createOrder = async (req, res, next) => {
       }
       
       // Calculate subtotal and shipping securely (ignoring any frontend prices)
-      subtotal += product.price * quantity;
+      const discount = product.discount || 0;
+      const finalPrice = Math.round(product.price * (1 - discount / 100));
+      subtotal += finalPrice * quantity;
       
       if (product.isShippingRequired && !product.freeShipping) {
         shippingCharge += (product.shippingCharge || 0) * quantity;
@@ -71,7 +73,7 @@ exports.createOrder = async (req, res, next) => {
       orderProducts.push({
         product: product._id,
         quantity: quantity,
-        priceAtPurchase: product.price
+        priceAtPurchase: finalPrice
       });
     }
 

@@ -135,8 +135,16 @@ export default function ProductPage() {
             <div className="mt-6 flex items-baseline gap-3">
               {isLoggedIn && product.price !== undefined ? (
                 <>
-                  <span className="text-2xl font-semibold">₹{product.price.toLocaleString('en-IN')}</span>
-                  {product.mrp > product.price && <span className="text-muted-foreground line-through">₹{product.mrp.toLocaleString('en-IN')}</span>}
+                  {(() => {
+                    const discount = product.discount || 0;
+                    const finalPrice = Math.round(product.price * (1 - discount / 100));
+                    return (
+                      <>
+                        <span className="text-2xl font-semibold">₹{finalPrice.toLocaleString('en-IN')}</span>
+                        {discount > 0 && <span className="text-muted-foreground line-through">₹{product.price.toLocaleString('en-IN')}</span>}
+                      </>
+                    );
+                  })()}
                 </>
               ) : (
                 <span className="text-xl font-semibold text-muted-foreground">Login to view price</span>
@@ -203,7 +211,13 @@ export default function ProductPage() {
                 disabled={product.stock < 1} 
                 className="w-full rounded-full h-14 text-sm font-semibold tracking-wide uppercase shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 transition-all duration-300"
               >
-                {product.stock < 1 ? 'Out of stock' : (isLoggedIn && product.price !== undefined ? `Buy Now — ₹${product.price.toLocaleString('en-IN')}` : 'Buy Now')}
+                {product.stock < 1 ? 'Out of stock' : (isLoggedIn && product.price !== undefined ? (
+                  (() => {
+                    const discount = product.discount || 0;
+                    const finalPrice = Math.round(product.price * (1 - discount / 100));
+                    return `Buy Now — ₹${finalPrice.toLocaleString('en-IN')}`;
+                  })()
+                ) : 'Buy Now')}
               </Button>
             </div>
           </section>

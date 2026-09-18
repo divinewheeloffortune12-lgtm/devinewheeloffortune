@@ -47,14 +47,15 @@ export const FeaturedProducts = () => {
             ) : (
               <div className="w-full h-full flex items-center justify-center text-slate-400">No image</div>
             )}
-            
-            {product.mrp > product.price && (
-              <div className="absolute top-4 left-4 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">
-                SALE
-              </div>
-            )}
-            
-            {/* Quick add overlay */}
+           {(() => {
+            const discount = product.discount || 0;
+            const finalPrice = Math.round(product.price * (1 - discount / 100));
+            return discount > 0 ? (
+              <span className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
+                -{discount}%
+              </span>
+            ) : null;
+          })()}  {/* Quick add overlay */}
             <div className="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 bg-gradient-to-t from-black/80 to-transparent">
               <div className="bg-white text-slate-900 w-full py-3 rounded-xl flex items-center justify-center gap-2 font-medium shadow-lg hover:bg-slate-50 transition-colors">
                 <ShoppingBag className="w-4 h-4" /> View Details
@@ -65,9 +66,17 @@ export const FeaturedProducts = () => {
           <div className="p-6">
             <p className="text-xs uppercase tracking-widest text-primary mb-2 font-medium">{product.category?.name || "Shop"}</p>
             <h3 className="font-serif text-xl text-slate-900 group-hover:text-primary transition-colors">{product.name}</h3>
-            <div className="mt-3 flex items-baseline gap-2">
-              <span className="font-semibold text-lg text-slate-900">₹{product.price}</span>
-              {product.mrp > product.price && <span className="text-sm text-slate-500 line-through">₹{product.mrp}</span>}
+            <div className="flex items-center gap-2 mt-2">
+              {(() => {
+                const discount = product.discount || 0;
+                const finalPrice = Math.round(product.price * (1 - discount / 100));
+                return (
+                  <>
+                    <span className="font-semibold text-lg text-slate-900">₹{finalPrice.toLocaleString('en-IN')}</span>
+                    {discount > 0 && <span className="text-sm text-slate-500 line-through">₹{product.price.toLocaleString('en-IN')}</span>}
+                  </>
+                );
+              })()}
             </div>
           </div>
         </Link>

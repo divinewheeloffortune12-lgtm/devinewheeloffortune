@@ -253,14 +253,22 @@ export default function Shop() {
                       "Selected with intention for your spiritual journey."}
                   </p>
                   <div className="flex items-baseline gap-2 mt-5 pt-5 border-t border-slate-50">
-                    <span className="text-lg font-semibold text-slate-900">
-                      ₹{product.price.toLocaleString("en-IN")}
-                    </span>
-                    {product.mrp > product.price && (
-                      <span className="text-xs line-through text-slate-400">
-                        ₹{product.mrp.toLocaleString("en-IN")}
-                      </span>
-                    )}
+                    {(() => {
+                      const discount = product.discount || 0;
+                      const finalPrice = Math.round(product.price * (1 - discount / 100));
+                      return (
+                        <>
+                          <span className="text-lg font-semibold text-slate-900">
+                            ₹{finalPrice.toLocaleString("en-IN")}
+                          </span>
+                          {discount > 0 && (
+                            <span className="text-xs line-through text-slate-400">
+                              ₹{product.price.toLocaleString("en-IN")}
+                            </span>
+                          )}
+                        </>
+                      );
+                    })()}
                   </div>
                   <div className="grid grid-cols-2 gap-2 mt-5">
                     <Button

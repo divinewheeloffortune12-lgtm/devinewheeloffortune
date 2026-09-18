@@ -226,9 +226,20 @@ const ProductDetail = () => {
               </h1>
 
               {isLoggedIn && product.price !== undefined ? (
-                <p className="text-2xl font-serif text-foreground mb-8">
-                  ₹{product.price.toLocaleString('en-IN')}
-                </p>
+                <div className="flex items-center gap-4 mb-8">
+                  <p className="text-2xl font-serif text-foreground">
+                    {(() => {
+                      const discount = product.discount || 0;
+                      const finalPrice = Math.round(product.price * (1 - discount / 100));
+                      return `₹${finalPrice.toLocaleString('en-IN')}`;
+                    })()}
+                  </p>
+                  {(product.discount || 0) > 0 && (
+                    <p className="text-lg font-serif text-muted-foreground line-through">
+                      ₹{product.price.toLocaleString('en-IN')}
+                    </p>
+                  )}
+                </div>
               ) : (
                 <p className="text-xl font-serif text-muted-foreground mb-8">
                   Login to view price

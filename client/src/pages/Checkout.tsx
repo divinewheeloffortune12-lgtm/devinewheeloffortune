@@ -499,7 +499,11 @@ const Checkout = () => {
                           </p>
                         )}
                         <p className="text-sm mt-1">
-                          ₹{(item.product.price * item.quantity).toLocaleString('en-IN')}
+                          {(() => {
+                            const discount = item.product.discount || 0;
+                            const finalPrice = Math.round(item.product.price * (1 - discount / 100));
+                            return `₹${(finalPrice * item.quantity).toLocaleString('en-IN')}`;
+                          })()}
                         </p>
                       </div>
                     </div>

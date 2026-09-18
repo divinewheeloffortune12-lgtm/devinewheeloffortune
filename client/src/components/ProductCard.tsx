@@ -150,9 +150,20 @@ export const ProductCard = ({ product, index = 0, variant = "default" }: Product
 
           <div className="flex items-center gap-3 pt-1">
             {isLoggedIn && product.price !== undefined ? (
-              <p className="text-base font-medium text-foreground tracking-wide">
-                ₹{product.price.toLocaleString('en-IN')}
-              </p>
+              <div className="flex items-center gap-2">
+                <p className="text-base font-medium text-foreground tracking-wide">
+                  {(() => {
+                    const discount = product.discount || 0;
+                    const finalPrice = Math.round(product.price * (1 - discount / 100));
+                    return `₹${finalPrice.toLocaleString('en-IN')}`;
+                  })()}
+                </p>
+                {(product.discount || 0) > 0 && (
+                  <p className="text-xs text-muted-foreground line-through">
+                    ₹{product.price.toLocaleString('en-IN')}
+                  </p>
+                )}
+              </div>
             ) : (
               <p className="text-sm text-muted-foreground tracking-wide">
                 Login to view price

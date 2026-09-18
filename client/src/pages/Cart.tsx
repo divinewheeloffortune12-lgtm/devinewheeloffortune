@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight, ShoppingBag, Trash2 } from "lucide-react";
@@ -5,12 +6,25 @@ import { Layout } from "@/components/Layout";
 import { QuantitySelector } from "@/components/QuantitySelector";
 import { useCart } from "@/hooks/useCart";
 import { Button } from "@/components/ui/button";
+import { api } from "@/lib/api";
 
 const Cart = () => {
   const { items, updateQuantity, removeItem, getSubtotal } = useCart();
-  const subtotal = getSubtotal();
-  const shipping = subtotal > 500 ? 0 : 25;
-  const total = subtotal + shipping;
+  const [shippingConfig, setShippingConfig] = useState({ shippingCharge: 50, freeShippingThreshold: 500 });
+
+  useEffect(() => {
+    api.get("/orders/shipping-config").then(({ data }) => {
+      if (data?.success) {
+        setShippingConfig(data.data);
+      }
+    }).catch(console.error);
+  }, []);
+
+  const subtotal = Math.max(0, Number(getSubtotal()) || 0);
+  const freeThresh = Math.max(0, Number(shippingConfig.freeShippingThreshold) || 500);
+  const shipCharge = Math.max(0, Number(shippingConfig.shippingCharge) || 0);
+  const shipping = subtotal >= freeThresh ? 0 : shipCharge;
+  const total = Math.max(0, subtotal + shipping);
 
   const hasUnavailableItems = items.some(item => !item.product.availability || item.product.stock < item.quantity);
 
@@ -106,7 +120,7 @@ const Cart = () => {
                           {item.product.description}
                         </p>
                         <p className="font-serif text-lg mt-3">
-                          ${item.product.price.toLocaleString()}
+                          ₹{item.product.price.toLocaleString('en-IN')}
                         </p>
                         {(!item.product.availability || item.product.stock < item.quantity) && (
                           <div className="mt-2 text-xs font-medium text-destructive">
@@ -159,17 +173,17 @@ const Cart = () => {
                 <div className="space-y-4 mb-8">
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Subtotal</span>
-                    <span>${subtotal.toLocaleString()}</span>
+                    <span>₹{subtotal.toLocaleString('en-IN')}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Shipping</span>
                     <span>
-                      {shipping === 0 ? "Complimentary" : `$${shipping}`}
+                      {shipping === 0 ? "Complimentary" : `₹${shipping.toLocaleString('en-IN')}`}
                     </span>
                   </div>
-                  {subtotal < 500 && (
+                  {subtotal < freeThresh && (
                     <p className="text-xs text-muted-foreground">
-                      Free shipping on orders over $500
+                      Free shipping on orders over ₹{freeThresh.toLocaleString('en-IN')}
                     </p>
                   )}
                 </div>
@@ -177,7 +191,7 @@ const Cart = () => {
                 <div className="border-t border-border pt-4 mb-8">
                   <div className="flex justify-between font-serif text-xl">
                     <span>Total</span>
-                    <span>${total.toLocaleString()}</span>
+                    <span>₹{total.toLocaleString('en-IN')}</span>
                   </div>
                 </div>
 

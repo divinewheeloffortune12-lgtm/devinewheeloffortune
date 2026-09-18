@@ -10,6 +10,7 @@ export const Header = () => {
   const [open, setOpen] = useState(false);
   const [announcementCount, setAnnouncementCount] = useState(0);
   const [signedIn, setSignedIn] = useState(false);
+  const [user, setUser] = useState<any>(null);
   const [categories, setCategories] = useState<any[]>([]);
   const [services, setServices] = useState<any[]>([]);
   const location = useLocation();
@@ -37,11 +38,23 @@ export const Header = () => {
     const token = localStorage.getItem("token") || localStorage.getItem("admin_token");
     if (!token) {
       setSignedIn(false);
+      setUser(null);
       return;
     }
     api.get('/auth/me')
-       .then((res) => setSignedIn(!!res.data?.data))
-       .catch(() => setSignedIn(false));
+       .then((res) => {
+         if (res.data?.data) {
+           setSignedIn(true);
+           setUser(res.data.data);
+         } else {
+           setSignedIn(false);
+           setUser(null);
+         }
+       })
+       .catch(() => {
+         setSignedIn(false);
+         setUser(null);
+       });
   };
 
   useEffect(() => {
@@ -190,12 +203,19 @@ export const Header = () => {
             {/* Actions & Icons */}
             <div className="flex items-center gap-1 sm:gap-2">
               {!signedIn ? (
-                <>
-                  <Link to="/login" className="hidden lg:inline-block text-[11px] font-semibold uppercase tracking-wider text-foreground/70 hover:text-primary px-3">Login</Link>
-                </>
+                <div className="hidden lg:flex items-center gap-2 pr-2">
+                  <Link to="/login" className="text-[11px] font-semibold uppercase tracking-wider text-foreground/70 hover:text-primary px-3 transition-colors">Login</Link>
+                  <Link to="/signup" className="text-[11px] font-semibold uppercase tracking-wider bg-primary/10 text-primary hover:bg-primary hover:text-white px-4 py-2 rounded-full transition-colors">Sign Up</Link>
+                </div>
               ) : (
-                <Link to="/profile" aria-label="My profile" className="flex items-center justify-center h-10 w-10 rounded-full hover:bg-primary/10 text-foreground/80 hover:text-primary transition-colors">
-                  <UserRound className="h-5 w-5" />
+                <Link to="/profile" aria-label="My profile" className="flex items-center justify-center h-10 w-10 rounded-full hover:bg-primary/10 text-foreground/80 hover:text-primary transition-colors overflow-hidden border border-black/10">
+                  {user?.profileImage ? (
+                    <img src={user.profileImage} alt="Profile" className="h-full w-full object-cover" />
+                  ) : user?.name ? (
+                    <span className="font-bold text-sm uppercase">{user.name.charAt(0)}</span>
+                  ) : (
+                    <UserRound className="h-5 w-5" />
+                  )}
                 </Link>
               )}
               
@@ -260,7 +280,16 @@ export const Header = () => {
                     </Link>
                     {signedIn && (
                       <>
-                        <Link to="/profile" onClick={() => setOpen(false)} className="flex items-center gap-3 px-5 py-3.5 text-sm font-semibold text-foreground/80 hover:bg-black/5 hover:text-primary rounded-lg"><UserRound className="h-5 w-5 opacity-70" /> My Profile</Link>
+                        <Link to="/profile" onClick={() => setOpen(false)} className="flex items-center gap-3 px-5 py-3.5 text-sm font-semibold text-foreground/80 hover:bg-black/5 hover:text-primary rounded-lg">
+                          {user?.profileImage ? (
+                            <img src={user.profileImage} alt="Profile" className="h-6 w-6 rounded-full object-cover" />
+                          ) : user?.name ? (
+                            <span className="flex items-center justify-center h-6 w-6 rounded-full bg-primary/10 text-primary font-bold text-xs uppercase">{user.name.charAt(0)}</span>
+                          ) : (
+                            <UserRound className="h-5 w-5 opacity-70" />
+                          )}
+                          My Profile
+                        </Link>
                         <button onClick={async () => {
                           setOpen(false);
                           try {
@@ -277,10 +306,10 @@ export const Header = () => {
                       </>
                     )}
                     {!signedIn && (
-                      <>
-                        <Link to="/login" onClick={() => setOpen(false)} className="text-sm font-semibold text-foreground/70 px-5 py-2">Login</Link>
-                        <Link to="/signup" onClick={() => setOpen(false)} className="text-sm font-semibold text-foreground/70 px-5 py-2">Sign Up</Link>
-                      </>
+                      <div className="flex flex-col gap-3 px-5 py-4">
+                        <Link to="/login" onClick={() => setOpen(false)} className="flex items-center justify-center w-full py-3.5 text-sm font-semibold text-foreground border border-black/10 hover:bg-black/5 rounded-xl transition-colors">Log In</Link>
+                        <Link to="/signup" onClick={() => setOpen(false)} className="flex items-center justify-center w-full py-3.5 text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl shadow-sm transition-colors">Create Account</Link>
+                      </div>
                     )}
                   </div>
                   </div>

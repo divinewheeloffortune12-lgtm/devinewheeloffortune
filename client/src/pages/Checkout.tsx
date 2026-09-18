@@ -22,6 +22,7 @@ const Checkout = () => {
     phone: "",
     address: "",
     city: "",
+    state: "",
     postalCode: "",
     country: "India",
     notes: "",
@@ -48,6 +49,7 @@ const Checkout = () => {
           phone: u.mobile || "",
           address: u.address?.addressLine1 || "",
           city: u.address?.city || "",
+          state: u.address?.state || "",
           postalCode: u.address?.pincode || "",
           country: u.address?.country || "India",
         }));
@@ -65,9 +67,11 @@ const Checkout = () => {
     }).catch(console.error);
   }, [navigate, toast]);
 
-  const subtotal = getSubtotal();
-  const shipping = subtotal >= shippingConfig.freeShippingThreshold ? 0 : shippingConfig.shippingCharge;
-  const total = subtotal + shipping;
+  const subtotal = Math.max(0, Number(getSubtotal()) || 0);
+  const freeThresh = Math.max(0, Number(shippingConfig.freeShippingThreshold));
+  const shipCharge = Math.max(0, Number(shippingConfig.shippingCharge));
+  const shipping = subtotal >= freeThresh ? 0 : shipCharge;
+  const total = Math.max(0, subtotal + shipping);
 
   if (items.length === 0) {
     return (
@@ -270,14 +274,13 @@ const Checkout = () => {
                         htmlFor="lastName"
                         className="block text-xs font-semibold tracking-[0.1em] uppercase text-muted-foreground mb-2"
                       >
-                        Last Name *
+                        Last Name
                       </label>
                       <Input
                         id="lastName"
                         name="lastName"
                         value={formData.lastName}
                         onChange={handleInputChange}
-                        required
                         className="rounded-none h-12"
                       />
                     </div>
@@ -339,8 +342,8 @@ const Checkout = () => {
                         className="rounded-none h-12"
                       />
                     </div>
-                    <div className="grid sm:grid-cols-3 gap-4">
-                      <div className="sm:col-span-1">
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div>
                         <label
                           htmlFor="city"
                           className="block text-xs font-semibold tracking-[0.1em] uppercase text-muted-foreground mb-2"
@@ -356,6 +359,36 @@ const Checkout = () => {
                           className="rounded-none h-12"
                         />
                       </div>
+                      <div>
+                        <label
+                          htmlFor="state"
+                          className="block text-xs font-semibold tracking-[0.1em] uppercase text-muted-foreground mb-2"
+                        >
+                          State *
+                        </label>
+                        <select
+                          id="state"
+                          name="state"
+                          value={formData.state}
+                          onChange={(e: any) => handleInputChange(e)}
+                          required
+                          className="flex h-12 w-full border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 rounded-none"
+                        >
+                          <option value="">Select State</option>
+                          {[
+                            "Andaman and Nicobar Islands", "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", 
+                            "Chandigarh", "Chhattisgarh", "Dadra and Nagar Haveli", "Daman and Diu", "Delhi", "Goa", 
+                            "Gujarat", "Haryana", "Himachal Pradesh", "Jammu and Kashmir", "Jharkhand", "Karnataka", 
+                            "Kerala", "Ladakh", "Lakshadweep", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", 
+                            "Mizoram", "Nagaland", "Odisha", "Puducherry", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu", 
+                            "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal"
+                          ].map(state => (
+                            <option key={state} value={state}>{state}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                    <div className="grid sm:grid-cols-2 gap-4">
                       <div>
                         <label
                           htmlFor="postalCode"

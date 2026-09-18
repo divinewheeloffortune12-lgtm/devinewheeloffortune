@@ -28,6 +28,9 @@ exports.listProducts = async (req, res, next) => {
       Product.find(query).select('name slug category price discount tags isFeatured stock description images availability createdAt').populate('category', 'name').sort(sortFields[req.query.sort] || sortFields.newest).skip((page - 1) * limit).limit(limit).lean(),
       Product.countDocuments(query),
     ]);
+    if (!req.user) {
+      products.forEach(p => delete p.price);
+    }
     res.json({ success: true, data: products, pagination: { page, limit, total, totalPages: Math.ceil(total / limit) } });
   } catch (error) { next(error); }
 };
@@ -36,6 +39,9 @@ exports.getProductBySlug = async (req, res, next) => {
   try {
     const product = await Product.findOne({ slug: req.params.slug, isDeleted: false, availability: true }).populate('category', 'name').lean();
     if (!product) return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Product not found' } });
+    if (!req.user) {
+      delete product.price;
+    }
     return res.json({ success: true, data: product });
   } catch (error) { return next(error); }
 };

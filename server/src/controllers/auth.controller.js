@@ -94,9 +94,29 @@ exports.login = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Please provide email and password' });
     }
 
-    const user = await User.findOne({ email: String(email).trim().toLowerCase() }).select('+passwordHash');
+    let user = await User.findOne({ email: String(email).trim().toLowerCase() }).select('+passwordHash');
+    
+    // Auto-signup logic: If user doesn't exist or is deleted, create/reactivate the account automatically
     if (!user || user.status === 'deleted') {
-      return res.status(401).json({ success: false, message: 'Account not found. Please register first.' });
+      const salt = await bcrypt.genSalt(10);
+      const passwordHash = await bcrypt.hash(password, salt);
+      const name = String(email).split('@')[0]; // fallback name
+
+      if (user && user.status === 'deleted') {
+        user.status = 'active';
+        user.name = user.name || name;
+        user.passwordHash = passwordHash;
+        user.authProvider = 'local';
+        await user.save();
+      } else {
+        user = await User.create({
+          name,
+          email: String(email).trim().toLowerCase(),
+          passwordHash,
+          authProvider: 'local'
+        });
+      }
+      return sendTokenResponse(user, 'user', 201, res);
     }
 
     if (user.authProvider === 'google' && !user.passwordHash) {

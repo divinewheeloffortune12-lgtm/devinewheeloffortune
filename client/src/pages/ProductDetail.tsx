@@ -1,4 +1,4 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Heart, ChevronLeft, ChevronRight, ArrowRight, ShoppingBag } from "lucide-react";
@@ -20,6 +20,8 @@ const ProductDetail = () => {
   const { addItem: addToWishlist, removeItem: removeFromWishlist, isInWishlist } = useWishlist();
   const { addItem: addToCart } = useCart();
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const isLoggedIn = !!localStorage.getItem("token");
 
   if (!product) {
     return (
@@ -58,6 +60,15 @@ const ProductDetail = () => {
   };
 
   const handleAddToCart = () => {
+    if (!isLoggedIn) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to add items to your bag.",
+      });
+      navigate("/login");
+      return;
+    }
+
     addToCart(product, quantity);
     toast({
       title: "Added to bag",
@@ -214,9 +225,15 @@ const ProductDetail = () => {
                 {product.name}
               </h1>
 
-              <p className="text-2xl font-serif text-foreground mb-8">
-                ${product.price.toLocaleString()}
-              </p>
+              {isLoggedIn && product.price !== undefined ? (
+                <p className="text-2xl font-serif text-foreground mb-8">
+                  ₹{product.price.toLocaleString('en-IN')}
+                </p>
+              ) : (
+                <p className="text-xl font-serif text-muted-foreground mb-8">
+                  Login to view price
+                </p>
+              )}
 
               <div className="w-12 h-px bg-border mb-8" />
 

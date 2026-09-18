@@ -33,6 +33,8 @@ export const ProductCard = ({ product, index = 0, variant = "default" }: Product
     }
   };
 
+  const isLoggedIn = !!localStorage.getItem("token");
+
   return (
     <motion.article
       initial={{ opacity: 0, y: 30 }}
@@ -147,9 +149,15 @@ export const ProductCard = ({ product, index = 0, variant = "default" }: Product
           </p>
 
           <div className="flex items-center gap-3 pt-1">
-            <p className="text-base font-medium text-foreground tracking-wide">
-              ${product.price.toLocaleString()}
-            </p>
+            {isLoggedIn && product.price !== undefined ? (
+              <p className="text-base font-medium text-foreground tracking-wide">
+                ₹{product.price.toLocaleString('en-IN')}
+              </p>
+            ) : (
+              <p className="text-sm text-muted-foreground tracking-wide">
+                Login to view price
+              </p>
+            )}
             {product.materials && (
               <>
                 <span className="w-px h-3 bg-border" />

@@ -45,7 +45,13 @@ export default function ProductPage() {
     return () => { live = false; }; 
   }, [slug]);
 
+  const isLoggedIn = !!localStorage.getItem("token");
+
   const add = () => { 
+    if (!isLoggedIn) {
+      setAuthPrompt(true);
+      return;
+    }
     if (!product) return; 
     const formattedProduct = { ...product, id: product._id };
     addItem(formattedProduct as any, 1);
@@ -127,8 +133,14 @@ export default function ProductPage() {
             <h1 className="font-serif text-4xl md:text-6xl mt-4">{product.name}</h1>
             
             <div className="mt-6 flex items-baseline gap-3">
-              <span className="text-2xl font-semibold">₹{product.price.toLocaleString('en-IN')}</span>
-              {product.mrp > product.price && <span className="text-muted-foreground line-through">₹{product.mrp.toLocaleString('en-IN')}</span>}
+              {isLoggedIn && product.price !== undefined ? (
+                <>
+                  <span className="text-2xl font-semibold">₹{product.price.toLocaleString('en-IN')}</span>
+                  {product.mrp > product.price && <span className="text-muted-foreground line-through">₹{product.mrp.toLocaleString('en-IN')}</span>}
+                </>
+              ) : (
+                <span className="text-xl font-semibold text-muted-foreground">Login to view price</span>
+              )}
             </div>
             
             <p className="mt-8 leading-8 text-muted-foreground">{product.description || 'A thoughtfully selected piece for your personal practice.'}</p>
@@ -178,6 +190,10 @@ export default function ProductPage() {
               </Button>
               <Button 
                 onClick={() => {
+                  if (!isLoggedIn) {
+                    setAuthPrompt(true);
+                    return;
+                  }
                   if (!product) return;
                   if (product.stock < 1) return;
                   const formattedProduct = { ...product, id: product._id };
@@ -187,7 +203,7 @@ export default function ProductPage() {
                 disabled={product.stock < 1} 
                 className="w-full rounded-full h-14 text-sm font-semibold tracking-wide uppercase shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 transition-all duration-300"
               >
-                {product.stock < 1 ? 'Out of stock' : `Buy Now — ₹${product.price.toLocaleString('en-IN')}`}
+                {product.stock < 1 ? 'Out of stock' : (isLoggedIn && product.price !== undefined ? `Buy Now — ₹${product.price.toLocaleString('en-IN')}` : 'Buy Now')}
               </Button>
             </div>
           </section>

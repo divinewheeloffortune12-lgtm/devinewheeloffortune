@@ -43,6 +43,7 @@ exports.createOrder = async (req, res, next) => {
 
     // Securely calculate total from DB — ignoring any frontend prices
     let subtotal = 0;
+    let shippingCharge = 0;
     const orderProducts = [];
 
     for (const item of items) {
@@ -60,8 +61,12 @@ exports.createOrder = async (req, res, next) => {
         throw Object.assign(new Error(`Insufficient stock for ${product.name}`), { statusCode: 400 });
       }
       
-      // Calculate subtotal securely (ignoring any frontend prices)
+      // Calculate subtotal and shipping securely (ignoring any frontend prices)
       subtotal += product.price * quantity;
+      
+      if (product.isShippingRequired && !product.freeShipping) {
+        shippingCharge += (product.shippingCharge || 0) * quantity;
+      }
       
       orderProducts.push({
         product: product._id,
@@ -74,10 +79,6 @@ exports.createOrder = async (req, res, next) => {
       throw Object.assign(new Error('Order total must be greater than zero'), { statusCode: 400 });
     }
 
-    // Calculate shipping from server-side config (NEVER trust frontend shipping amount)
-    const ShippingConfig = require('../models/ShippingConfig');
-    const shippingConfig = await ShippingConfig.getConfig();
-    const shippingCharge = subtotal >= shippingConfig.freeShippingThreshold ? 0 : shippingConfig.shippingCharge;
     const totalAmount = subtotal + shippingCharge;
 
     // Generate unique order number

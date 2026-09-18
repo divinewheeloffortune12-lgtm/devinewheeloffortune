@@ -10,15 +10,7 @@ import { api } from "@/lib/api";
 
 const Cart = () => {
   const { items, updateQuantity, removeItem, getSubtotal, syncCart } = useCart();
-  const [shippingConfig, setShippingConfig] = useState({ shippingCharge: 0, freeShippingThreshold: 500 });
-
   useEffect(() => {
-    api.get("/orders/shipping-config").then(({ data }) => {
-      if (data?.success) {
-        setShippingConfig(data.data);
-      }
-    }).catch(console.error);
-
     if (items.length > 0) {
       const itemIds = items.map(item => item.product.id);
       api.post("/products/validate-cart", { items: itemIds }).then(({ data }) => {
@@ -30,9 +22,14 @@ const Cart = () => {
   }, []);
 
   const subtotal = Math.max(0, Number(getSubtotal()) || 0);
-  const freeThresh = Math.max(0, Number(shippingConfig.freeShippingThreshold) || 500);
-  const shipCharge = Math.max(0, Number(shippingConfig.shippingCharge) || 0);
-  const shipping = subtotal >= freeThresh ? 0 : shipCharge;
+  
+  const shipping = items.reduce((total, item) => {
+    if (item.product.isShippingRequired && !item.product.freeShipping) {
+      return total + (item.product.shippingCharge || 0) * item.quantity;
+    }
+    return total;
+  }, 0);
+
   const total = Math.max(0, subtotal + shipping);
 
   const hasUnavailableItems = items.some(item => !item.product.availability || item.product.isDeleted || item.product.stock < item.quantity);
@@ -184,17 +181,12 @@ const Cart = () => {
                     <span className="text-muted-foreground">Subtotal</span>
                     <span>₹{subtotal.toLocaleString('en-IN')}</span>
                   </div>
-                  <div className="flex justify-between text-sm">
+                  <div className="flex justify-between py-4 border-b border-border">
                     <span className="text-muted-foreground">Shipping</span>
-                    <span>
-                      {shipping === 0 ? "Complimentary" : `₹${shipping.toLocaleString('en-IN')}`}
+                    <span className="font-medium text-foreground">
+                      {shipping === 0 ? "₹0" : `₹${shipping.toLocaleString('en-IN')}`}
                     </span>
                   </div>
-                  {subtotal < freeThresh && (
-                    <p className="text-xs text-muted-foreground">
-                      Free shipping on orders over ₹{freeThresh.toLocaleString('en-IN')}
-                    </p>
-                  )}
                 </div>
 
                 <div className="border-t border-border pt-4 mb-8">

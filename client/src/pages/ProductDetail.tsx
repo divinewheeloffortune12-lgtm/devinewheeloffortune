@@ -303,7 +303,9 @@ const ProductDetail = () => {
                     Shipping
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    Complimentary worldwide
+                    {!product.isShippingRequired ? "Digital delivery" : 
+                     product.freeShipping ? "Free Shipping" : 
+                     `₹${(product.shippingCharge || 0).toLocaleString('en-IN')} Shipping`}
                   </p>
                 </div>
                 <div>

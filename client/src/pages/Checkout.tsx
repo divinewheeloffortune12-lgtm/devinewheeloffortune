@@ -27,7 +27,6 @@ const Checkout = () => {
     country: "India",
     notes: "",
   });
-  const [shippingConfig, setShippingConfig] = useState({ shippingCharge: 0, freeShippingThreshold: 500 });
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -60,12 +59,6 @@ const Checkout = () => {
       }
     });
 
-    api.get("/orders/shipping-config").then(({ data }) => {
-      if (data?.success) {
-        setShippingConfig(data.data);
-      }
-    }).catch(console.error);
-
     if (items.length > 0) {
       const itemIds = items.map(item => item.product.id);
       api.post("/products/validate-cart", { items: itemIds }).then(({ data }) => {
@@ -77,9 +70,14 @@ const Checkout = () => {
   }, [navigate, toast]);
 
   const subtotal = Math.max(0, Number(getSubtotal()) || 0);
-  const freeThresh = Math.max(0, Number(shippingConfig.freeShippingThreshold));
-  const shipCharge = Math.max(0, Number(shippingConfig.shippingCharge));
-  const shipping = subtotal >= freeThresh ? 0 : shipCharge;
+  
+  const shipping = items.reduce((total, item) => {
+    if (item.product.isShippingRequired && !item.product.freeShipping) {
+      return total + (item.product.shippingCharge || 0) * item.quantity;
+    }
+    return total;
+  }, 0);
+
   const total = Math.max(0, subtotal + shipping);
 
   const hasUnavailableItems = items.some(item => !item.product.availability || item.product.isDeleted || item.product.stock < item.quantity);
@@ -513,10 +511,10 @@ const Checkout = () => {
                     <span className="text-muted-foreground">Subtotal</span>
                     <span>₹{subtotal.toLocaleString('en-IN')}</span>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Shipping</span>
-                    <span>
-                      {shipping === 0 ? "Complimentary" : `₹${shipping.toLocaleString('en-IN')}`}
+                  <div className="flex justify-between py-4 border-b border-slate-100">
+                    <span className="text-slate-500">Shipping</span>
+                    <span className="font-medium text-slate-900">
+                      {shipping === 0 ? "₹0" : `₹${shipping.toLocaleString('en-IN')}`}
                     </span>
                   </div>
                 </div>

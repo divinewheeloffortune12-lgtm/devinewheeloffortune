@@ -4,7 +4,7 @@ const shippingConfigSchema = new mongoose.Schema({
   shippingCharge: {
     type: Number,
     required: true,
-    default: 50,
+    default: 0,
     min: 0,
   },
   freeShippingThreshold: {

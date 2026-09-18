@@ -12,7 +12,19 @@ router.get('/shipping-config', async (req, res, next) => {
   try {
     const ShippingConfig = require('../models/ShippingConfig');
     const config = await ShippingConfig.getConfig();
-    res.json({ success: true, data: { shippingCharge: config.shippingCharge, freeShippingThreshold: config.freeShippingThreshold } });
+    res.json({ success: true, data: { shippingCharge: 0, freeShippingThreshold: config.freeShippingThreshold } });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post('/shipping-config-reset', async (req, res, next) => {
+  try {
+    const ShippingConfig = require('../models/ShippingConfig');
+    const config = await ShippingConfig.getConfig();
+    config.shippingCharge = 0;
+    await config.save();
+    res.json({ success: true, data: config });
   } catch (error) {
     next(error);
   }

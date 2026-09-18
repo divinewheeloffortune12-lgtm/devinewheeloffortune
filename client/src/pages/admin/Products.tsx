@@ -357,6 +357,22 @@ export const AdminProducts = () => {
                       </FormControl>
                     </FormItem>
                   )} />
+                  <FormField control={form.control} name="isFeatured" render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                      <div className="space-y-0.5">
+                        <FormLabel className="text-base">Featured</FormLabel>
+                        <div className="text-[0.8rem] text-muted-foreground">Highlight on homepage?</div>
+                      </div>
+                      <FormControl>
+                        <input 
+                          type="checkbox" 
+                          className="w-5 h-5 accent-primary cursor-pointer"
+                          checked={field.value}
+                          onChange={field.onChange}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )} />
                 </div>
                 
                 <div>

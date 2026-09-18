@@ -55,6 +55,7 @@ const Signup = () => {
       });
       if (response.data.token) {
         localStorage.setItem("token", response.data.token);
+        window.dispatchEvent(new Event('auth-change'));
       }
       
       toast({
@@ -81,6 +82,7 @@ const Signup = () => {
         const apiResponse = await api.post("/auth/google", { credential: response.credential });
         if (apiResponse.data.token) {
           localStorage.setItem("token", apiResponse.data.token);
+          window.dispatchEvent(new Event('auth-change'));
         }
         toast({
           title: "Account created!",

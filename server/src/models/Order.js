@@ -40,6 +40,10 @@ const orderSchema = new mongoose.Schema({
   paymentReference: {
     type: String,
   },
+  shippingCharge: {
+    type: Number,
+    default: 0,
+  },
   razorpayOrderId: { type: String, unique: true, sparse: true },
   razorpayPaymentId: { type: String, unique: true, sparse: true },
   shippingAddress: {

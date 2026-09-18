@@ -44,6 +44,7 @@ const Login = () => {
       const response = await api.post("/auth/login", values);
       if (response.data.token) {
         localStorage.setItem("token", response.data.token);
+        window.dispatchEvent(new Event('auth-change'));
       }
       
       toast({
@@ -73,6 +74,7 @@ const Login = () => {
         });
         if (response.data.token) {
           localStorage.setItem("token", response.data.token);
+          window.dispatchEvent(new Event('auth-change'));
         }
         toast({
           title: "Welcome back!",

@@ -114,7 +114,8 @@ export const AdminSales = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Statuses</SelectItem>
-              <SelectItem value="PENDING">Pending</SelectItem>
+              <SelectItem value="PENDING_PAYMENT">Pending Payment</SelectItem>
+              <SelectItem value="CONFIRMED">Confirmed</SelectItem>
               <SelectItem value="PROCESSING">Processing</SelectItem>
               <SelectItem value="SHIPPED">Shipped</SelectItem>
               <SelectItem value="DELIVERED">Delivered</SelectItem>
@@ -279,7 +280,11 @@ export const AdminSales = () => {
                     </div>
                   ))}
                 </div>
-                <div className="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center">
+                <div className="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center text-sm">
+                  <span className="font-medium text-slate-600">Shipping</span>
+                  <span className="font-semibold text-slate-900">{selectedOrder.shippingCharge === 0 ? 'Free' : `₹${(selectedOrder.shippingCharge || 0).toLocaleString("en-IN")}`}</span>
+                </div>
+                <div className="mt-2 pt-2 border-t border-slate-100 flex justify-between items-center">
                   <span className="font-medium text-slate-600">Total Amount</span>
                   <span className="text-lg font-bold text-slate-900">₹{selectedOrder.totalAmount?.toLocaleString("en-IN")}</span>
                 </div>
@@ -297,7 +302,9 @@ export const AdminSales = () => {
                       <SelectValue placeholder="Select status" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="PENDING">Pending Processing</SelectItem>
+                      <SelectItem value="PENDING_PAYMENT">Pending Payment</SelectItem>
+                      <SelectItem value="CONFIRMED">Confirmed</SelectItem>
+                      <SelectItem value="PROCESSING">Processing</SelectItem>
                       <SelectItem value="SHIPPED">Shipped / Dispatched</SelectItem>
                       <SelectItem value="DELIVERED">Successfully Delivered</SelectItem>
                       <SelectItem value="CANCELLED">Cancelled</SelectItem>

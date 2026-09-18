@@ -16,8 +16,9 @@ exports.getProfile = async (req, res) => {
 
 exports.getMyOrders = async (req, res, next) => {
   try {
-    const orders = await Order.find({ user: req.user._id })
-      .select('orderNumber products totalAmount status paymentStatus createdAt')
+    // Only show successfully paid orders in purchase history
+    const orders = await Order.find({ user: req.user._id, paymentStatus: 'PAID' })
+      .select('orderNumber products totalAmount shippingCharge status paymentStatus createdAt')
       .populate('products.product', 'name slug images')
       .sort({ createdAt: -1 })
       .limit(50)

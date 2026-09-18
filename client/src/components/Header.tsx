@@ -32,7 +32,8 @@ export const Header = () => {
     return () => { live = false; }; 
   }, []);
 
-  useEffect(() => { 
+  // Check auth state — re-runs on route change, storage events, and custom auth events
+  const checkAuth = () => {
     const token = localStorage.getItem("token") || localStorage.getItem("admin_token");
     if (!token) {
       setSignedIn(false);
@@ -40,8 +41,28 @@ export const Header = () => {
     }
     api.get('/auth/me')
        .then((res) => setSignedIn(!!res.data?.data))
-       .catch(() => setSignedIn(false)); 
+       .catch(() => setSignedIn(false));
+  };
+
+  useEffect(() => {
+    checkAuth();
   }, [location.pathname]);
+
+  useEffect(() => {
+    // Listen for cross-tab storage changes and same-tab custom auth events
+    const onStorageChange = (e: StorageEvent) => {
+      if (e.key === 'token' || e.key === 'admin_token' || e.key === null) {
+        checkAuth();
+      }
+    };
+    const onAuthChange = () => checkAuth();
+    window.addEventListener('storage', onStorageChange);
+    window.addEventListener('auth-change', onAuthChange);
+    return () => {
+      window.removeEventListener('storage', onStorageChange);
+      window.removeEventListener('auth-change', onAuthChange);
+    };
+  }, []);
 
   const moreDropdown = [
     { label: "Gallery", href: "/#gallery" },
@@ -244,8 +265,12 @@ export const Header = () => {
                           setOpen(false);
                           try {
                             await api.post('/auth/logout');
+                            localStorage.removeItem('token');
                             window.location.href = '/';
-                          } catch (err) {}
+                          } catch (err) {
+                            localStorage.removeItem('token');
+                            window.location.href = '/';
+                          }
                         }} className="flex items-center gap-3 px-5 py-3.5 text-sm font-semibold text-red-600 hover:bg-red-50 hover:text-red-700 rounded-lg text-left">
                           Log out
                         </button>

@@ -232,9 +232,11 @@ export const Profile = () => {
                   onClick={async () => {
                     try {
                       await api.post('/auth/logout');
+                      localStorage.removeItem('token');
                       window.location.href = '/';
                     } catch (err) {
-                      toast({ variant: 'destructive', title: 'Logout Failed' });
+                      localStorage.removeItem('token');
+                      window.location.href = '/';
                     }
                   }}
                 >

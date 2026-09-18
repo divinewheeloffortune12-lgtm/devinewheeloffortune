@@ -23,14 +23,19 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
-    // Handle 401 Unauthorized globally
+    // Handle 401 Unauthorized globally — only clear the relevant token
     if (error.response?.status === 401) {
-      const isApiAuthRoute = error.config?.url?.includes('/auth/login') || error.config?.url?.includes('/auth/admin/login');
-      if (!isApiAuthRoute) {
-        localStorage.removeItem('token');
-        localStorage.removeItem('admin_token');
-        // We don't force redirect here to allow components to handle it gracefully,
-        // but clearing the token ensures the next request doesn't use an expired one.
+      const url = error.config?.url || '';
+      // Don't clear tokens for login/register attempts (those are expected auth failures)
+      const isAuthAttempt = url.includes('/auth/login') || url.includes('/auth/register') || url.includes('/auth/google') || url.includes('/auth/admin/login');
+      if (!isAuthAttempt) {
+        // Only clear the token that corresponds to the failed request type
+        const isAdminRoute = url.startsWith('/admin') || url.startsWith('/auth/admin');
+        if (isAdminRoute) {
+          localStorage.removeItem('admin_token');
+        } else {
+          localStorage.removeItem('token');
+        }
       }
     }
 

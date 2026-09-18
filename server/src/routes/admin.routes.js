@@ -212,6 +212,43 @@ router.get('/orders/:orderId/receipt', async (req, res, next) => {
   }
 });
 
+// Shipping Configuration
+const ShippingConfig = require('../models/ShippingConfig');
+
+router.get('/shipping', async (req, res, next) => {
+  try {
+    const config = await ShippingConfig.getConfig();
+    res.json({ success: true, data: config });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.put('/shipping', async (req, res, next) => {
+  try {
+    const { shippingCharge, freeShippingThreshold } = req.body;
+    const config = await ShippingConfig.getConfig();
+
+    if (shippingCharge !== undefined) {
+      if (typeof shippingCharge !== 'number' || shippingCharge < 0) {
+        return res.status(400).json({ success: false, message: 'Shipping charge must be a non-negative number' });
+      }
+      config.shippingCharge = shippingCharge;
+    }
+    if (freeShippingThreshold !== undefined) {
+      if (typeof freeShippingThreshold !== 'number' || freeShippingThreshold < 0) {
+        return res.status(400).json({ success: false, message: 'Free shipping threshold must be a non-negative number' });
+      }
+      config.freeShippingThreshold = freeShippingThreshold;
+    }
+
+    await config.save();
+    res.json({ success: true, data: config, message: 'Shipping configuration updated' });
+  } catch (error) {
+    next(error);
+  }
+});
+
 // Stubs for future modules
 router.get('/reports', (req, res) => res.json({ success: true, data: [] }));
 router.get('/announcements', (req, res) => res.json({ success: true, data: [] }));

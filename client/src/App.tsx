@@ -13,6 +13,8 @@ import ProductPage from "./pages/ProductPage";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 
+const PaymentSuccess = lazy(() => import("./pages/PaymentSuccess"));
+
 const Login = lazy(() => import("./pages/Login"));
 const Signup = lazy(() => import("./pages/Signup"));
 const AdminLogin = lazy(() => import("./pages/AdminLogin"));
@@ -59,6 +61,7 @@ const App = () => (
               <Route path="/product/:slug" element={<ProductPage />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/checkout" element={<Checkout />} />
+              <Route path="/payment-success" element={<PaymentSuccess />} />
               
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />

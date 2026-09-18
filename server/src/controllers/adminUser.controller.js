@@ -87,10 +87,12 @@ exports.deleteUser = async (req, res) => {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
-    // Soft delete
+    // Soft delete — keep email intact so re-signup reactivates (see auth.controller register)
     user.status = 'deleted';
-    // Optionally obscure email to prevent login but allow recreation
-    user.email = `${user.email}-deleted-${Date.now()}`;
+    // Invalidate old credentials so deleted user can't login with stale tokens/passwords
+    user.passwordHash = undefined;
+    user.googleId = undefined;
+    user.authProvider = 'local';
     await user.save();
 
     res.status(200).json({ success: true, message: 'User deleted successfully' });

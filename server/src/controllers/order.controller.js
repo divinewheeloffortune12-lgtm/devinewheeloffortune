@@ -42,7 +42,7 @@ exports.createOrder = async (req, res, next) => {
     }
 
     // Securely calculate total from DB — ignoring any frontend prices
-    let totalAmount = 0;
+    let subtotal = 0;
     const orderProducts = [];
 
     for (const item of items) {
@@ -60,8 +60,8 @@ exports.createOrder = async (req, res, next) => {
         throw Object.assign(new Error(`Insufficient stock for ${product.name}`), { statusCode: 400 });
       }
       
-      // Calculate total securely (ignoring any frontend prices)
-      totalAmount += product.price * quantity;
+      // Calculate subtotal securely (ignoring any frontend prices)
+      subtotal += product.price * quantity;
       
       orderProducts.push({
         product: product._id,
@@ -70,9 +70,15 @@ exports.createOrder = async (req, res, next) => {
       });
     }
 
-    if (totalAmount <= 0) {
+    if (subtotal <= 0) {
       throw Object.assign(new Error('Order total must be greater than zero'), { statusCode: 400 });
     }
+
+    // Calculate shipping from server-side config (NEVER trust frontend shipping amount)
+    const ShippingConfig = require('../models/ShippingConfig');
+    const shippingConfig = await ShippingConfig.getConfig();
+    const shippingCharge = subtotal >= shippingConfig.freeShippingThreshold ? 0 : shippingConfig.shippingCharge;
+    const totalAmount = subtotal + shippingCharge;
 
     // Generate unique order number
     const orderNumber = `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
@@ -98,6 +104,7 @@ exports.createOrder = async (req, res, next) => {
       products: orderProducts,
       orderNumber,
       totalAmount,
+      shippingCharge,
       shippingAddress: shippingAddress.trim(),
       razorpayOrderId: rzpOrder.id,
       status: 'PENDING_PAYMENT',
@@ -113,6 +120,8 @@ exports.createOrder = async (req, res, next) => {
       data: {
         orderId: order._id,
         orderNumber: order.orderNumber,
+        subtotal,
+        shippingCharge,
         totalAmount: order.totalAmount,
         razorpayOrderId: rzpOrder.id,
         key: process.env.RAZORPAY_KEY_ID
@@ -300,14 +309,16 @@ exports.getUserOrders = async (req, res, next) => {
     const page = Math.max(1, Number(req.query.page) || 1);
     const limit = Math.min(50, Math.max(1, Number(req.query.limit) || 20));
 
+    const filter = { user: req.user._id, paymentStatus: 'PAID' };
+
     const [orders, total] = await Promise.all([
-      Order.find({ user: req.user._id })
+      Order.find(filter)
         .populate('products.product', 'name images price slug')
         .sort({ createdAt: -1 })
         .skip((page - 1) * limit)
         .limit(limit)
         .lean(),
-      Order.countDocuments({ user: req.user._id })
+      Order.countDocuments(filter)
     ]);
 
     res.json({
@@ -363,6 +374,8 @@ exports.getOrderReceipt = async (req, res, next) => {
           unitPrice: p.priceAtPurchase,
           total: p.priceAtPurchase * p.quantity,
         })),
+        subtotal: order.products.reduce((sum, p) => sum + p.priceAtPurchase * p.quantity, 0),
+        shippingCharge: order.shippingCharge || 0,
         totalAmount: order.totalAmount,
         shippingAddress: order.shippingAddress,
         paymentStatus: order.paymentStatus,

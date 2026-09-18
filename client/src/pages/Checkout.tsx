@@ -26,6 +26,7 @@ const Checkout = () => {
     country: "India",
     notes: "",
   });
+  const [shippingConfig, setShippingConfig] = useState({ shippingCharge: 50, freeShippingThreshold: 500 });
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -56,10 +57,16 @@ const Checkout = () => {
         navigate("/login");
       }
     });
+
+    api.get("/orders/shipping-config").then(({ data }) => {
+      if (data?.success) {
+        setShippingConfig(data.data);
+      }
+    }).catch(console.error);
   }, [navigate, toast]);
 
   const subtotal = getSubtotal();
-  const shipping = subtotal > 500 ? 0 : 25;
+  const shipping = subtotal >= shippingConfig.freeShippingThreshold ? 0 : shippingConfig.shippingCharge;
   const total = subtotal + shipping;
 
   if (items.length === 0) {
@@ -112,7 +119,7 @@ const Checkout = () => {
           description: "Thank you for your purchase. We'll send shipping details soon.",
         });
         clearCart();
-        navigate("/");
+        navigate(`/payment-success?orderId=${verifyRes.data.data.orderId}`);
       } else {
         toast({ title: "Verification Failed", description: "Payment verification failed.", variant: "destructive" });
       }

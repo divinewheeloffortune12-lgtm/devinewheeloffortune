@@ -10,7 +10,7 @@ import { api } from "@/lib/api";
 
 const Cart = () => {
   const { items, updateQuantity, removeItem, getSubtotal } = useCart();
-  const [shippingConfig, setShippingConfig] = useState({ shippingCharge: 50, freeShippingThreshold: 500 });
+  const [shippingConfig, setShippingConfig] = useState({ shippingCharge: 0, freeShippingThreshold: 500 });
 
   useEffect(() => {
     api.get("/orders/shipping-config").then(({ data }) => {

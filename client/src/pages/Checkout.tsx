@@ -27,7 +27,7 @@ const Checkout = () => {
     country: "India",
     notes: "",
   });
-  const [shippingConfig, setShippingConfig] = useState({ shippingCharge: 50, freeShippingThreshold: 500 });
+  const [shippingConfig, setShippingConfig] = useState({ shippingCharge: 0, freeShippingThreshold: 500 });
 
   useEffect(() => {
     const token = localStorage.getItem("token");

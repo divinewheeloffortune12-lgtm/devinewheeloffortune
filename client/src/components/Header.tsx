@@ -203,9 +203,9 @@ export const Header = () => {
             {/* Actions & Icons */}
             <div className="flex items-center gap-1 sm:gap-2">
               {!signedIn ? (
-                <div className="hidden lg:flex items-center gap-2 pr-2">
-                  <Link to="/login" className="text-[11px] font-semibold uppercase tracking-wider text-foreground/70 hover:text-primary px-3 transition-colors">Login</Link>
-                  <Link to="/signup" className="text-[11px] font-semibold uppercase tracking-wider bg-primary/10 text-primary hover:bg-primary hover:text-white px-4 py-2 rounded-full transition-colors">Sign Up</Link>
+                <div className="hidden lg:flex items-center gap-4 pr-3 border-r border-black/10 mr-1">
+                  <Link to="/login" className="text-xs font-semibold uppercase tracking-widest text-foreground hover:text-primary transition-all border-b border-transparent hover:border-primary pb-0.5">Login</Link>
+                  <Link to="/signup" className="text-xs font-semibold uppercase tracking-widest bg-foreground text-background hover:bg-primary px-5 py-2.5 rounded-full transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5">Sign Up</Link>
                 </div>
               ) : (
                 <Link to="/profile" aria-label="My profile" className="flex items-center justify-center h-10 w-10 rounded-full hover:bg-primary/10 text-foreground/80 hover:text-primary transition-colors overflow-hidden border border-black/10">
@@ -278,7 +278,7 @@ export const Header = () => {
                       <CalendarClock className="h-5 w-5 opacity-70" />
                       Book a Session
                     </Link>
-                    {signedIn && (
+                    {signedIn ? (
                       <>
                         <Link to="/profile" onClick={() => setOpen(false)} className="flex items-center gap-3 px-5 py-3.5 text-sm font-semibold text-foreground/80 hover:bg-black/5 hover:text-primary rounded-lg">
                           {user?.profileImage ? (

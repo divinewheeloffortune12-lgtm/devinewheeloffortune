@@ -45,3 +45,24 @@ exports.getProductBySlug = async (req, res, next) => {
     return res.json({ success: true, data: product });
   } catch (error) { return next(error); }
 };
+
+exports.validateCart = async (req, res, next) => {
+  try {
+    const { items } = req.body;
+    if (!Array.isArray(items) || items.length === 0) {
+      return res.json({ success: true, data: [] });
+    }
+    
+    const products = await Product.find({ _id: { $in: items } })
+      .select('name price stock availability isDeleted images slug description')
+      .lean();
+      
+    if (!req.user) {
+      products.forEach(p => delete p.price);
+    }
+    
+    return res.json({ success: true, data: products });
+  } catch (error) {
+    return next(error);
+  }
+};

@@ -13,7 +13,7 @@ import { loadRazorpayScript } from "./Services";
 const Checkout = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { items, getSubtotal, clearCart } = useCart();
+  const { items, getSubtotal, clearCart, syncCart } = useCart();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
@@ -65,6 +65,15 @@ const Checkout = () => {
         setShippingConfig(data.data);
       }
     }).catch(console.error);
+
+    if (items.length > 0) {
+      const itemIds = items.map(item => item.product.id);
+      api.post("/products/validate-cart", { items: itemIds }).then(({ data }) => {
+        if (data?.success) {
+          syncCart(data.data);
+        }
+      }).catch(console.error);
+    }
   }, [navigate, toast]);
 
   const subtotal = Math.max(0, Number(getSubtotal()) || 0);
@@ -72,6 +81,8 @@ const Checkout = () => {
   const shipCharge = Math.max(0, Number(shippingConfig.shippingCharge));
   const shipping = subtotal >= freeThresh ? 0 : shipCharge;
   const total = Math.max(0, subtotal + shipping);
+
+  const hasUnavailableItems = items.some(item => !item.product.availability || item.product.isDeleted || item.product.stock < item.quantity);
 
   if (items.length === 0) {
     return (
@@ -440,7 +451,7 @@ const Checkout = () => {
                 <Button
                   type="submit"
                   size="lg"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || hasUnavailableItems}
                   className="w-full rounded-none py-6 text-sm tracking-[0.15em] uppercase btn-premium"
                 >
                   {isSubmitting ? (
@@ -480,9 +491,15 @@ const Checkout = () => {
                         <p className="text-sm font-medium line-clamp-1">
                           {item.product.name}
                         </p>
-                        <p className="text-xs text-muted-foreground mt-0.5">
-                          Qty: {item.quantity}
-                        </p>
+                        {(!item.product.availability || item.product.isDeleted || item.product.stock < item.quantity) ? (
+                          <p className="text-xs text-destructive mt-0.5">
+                            {(!item.product.availability || item.product.isDeleted) ? "Product Not Available" : "Out of Stock"}
+                          </p>
+                        ) : (
+                          <p className="text-xs text-muted-foreground mt-0.5">
+                            Qty: {item.quantity}
+                          </p>
+                        )}
                         <p className="text-sm mt-1">
                           ₹{(item.product.price * item.quantity).toLocaleString('en-IN')}
                         </p>

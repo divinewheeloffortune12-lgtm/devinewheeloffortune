@@ -278,7 +278,7 @@ export const Header = () => {
                       <CalendarClock className="h-5 w-5 opacity-70" />
                       Book a Session
                     </Link>
-                    {signedIn ? (
+                    {signedIn && (
                       <>
                         <Link to="/profile" onClick={() => setOpen(false)} className="flex items-center gap-3 px-5 py-3.5 text-sm font-semibold text-foreground/80 hover:bg-black/5 hover:text-primary rounded-lg">
                           {user?.profileImage ? (

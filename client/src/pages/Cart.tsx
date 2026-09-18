@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api";
 
 const Cart = () => {
-  const { items, updateQuantity, removeItem, getSubtotal } = useCart();
+  const { items, updateQuantity, removeItem, getSubtotal, syncCart } = useCart();
   const [shippingConfig, setShippingConfig] = useState({ shippingCharge: 0, freeShippingThreshold: 500 });
 
   useEffect(() => {
@@ -18,6 +18,15 @@ const Cart = () => {
         setShippingConfig(data.data);
       }
     }).catch(console.error);
+
+    if (items.length > 0) {
+      const itemIds = items.map(item => item.product.id);
+      api.post("/products/validate-cart", { items: itemIds }).then(({ data }) => {
+        if (data?.success) {
+          syncCart(data.data);
+        }
+      }).catch(console.error);
+    }
   }, []);
 
   const subtotal = Math.max(0, Number(getSubtotal()) || 0);
@@ -26,7 +35,7 @@ const Cart = () => {
   const shipping = subtotal >= freeThresh ? 0 : shipCharge;
   const total = Math.max(0, subtotal + shipping);
 
-  const hasUnavailableItems = items.some(item => !item.product.availability || item.product.stock < item.quantity);
+  const hasUnavailableItems = items.some(item => !item.product.availability || item.product.isDeleted || item.product.stock < item.quantity);
 
   if (items.length === 0) {
     return (
@@ -122,9 +131,9 @@ const Cart = () => {
                         <p className="font-serif text-lg mt-3">
                           ₹{item.product.price.toLocaleString('en-IN')}
                         </p>
-                        {(!item.product.availability || item.product.stock < item.quantity) && (
+                        {((!item.product.availability) || (item.product.isDeleted) || item.product.stock < item.quantity) && (
                           <div className="mt-2 text-xs font-medium text-destructive">
-                            {!item.product.availability ? "Item Unavailable" : 
+                            {(!item.product.availability || item.product.isDeleted) ? "Product Not Available" : 
                              item.product.stock === 0 ? "Out of Stock" : 
                              `Only ${item.product.stock} available`}
                           </div>

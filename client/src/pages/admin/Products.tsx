@@ -36,6 +36,15 @@ const formSchema = z.object({
   tags: z.string().optional(),
   isFeatured: z.boolean().default(false),
   availability: z.boolean().default(true),
+  isShippingRequired: z.boolean().default(true),
+  shippingType: z.string().default("standard"),
+  shippingCharge: z.coerce.number().min(0).default(0),
+  freeShipping: z.boolean().default(false),
+  estimatedDeliveryTime: z.string().optional(),
+  weight: z.coerce.number().optional(),
+  dimensions_length: z.coerce.number().optional(),
+  dimensions_width: z.coerce.number().optional(),
+  dimensions_height: z.coerce.number().optional(),
 });
 
 import { useNavigate } from "react-router-dom";
@@ -64,6 +73,11 @@ export const AdminProducts = () => {
       tags: "",
       isFeatured: false,
       availability: true,
+      isShippingRequired: true,
+      shippingType: "standard",
+      shippingCharge: 0,
+      freeShipping: false,
+      estimatedDeliveryTime: "",
     },
   });
 
@@ -243,7 +257,73 @@ export const AdminProducts = () => {
                   <FormItem><FormLabel>Description</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
 
-                <div className="grid grid-cols-2 gap-4">
+                {/* Shipping Section */}
+                <div className="border-t border-slate-200 pt-6 mt-6">
+                  <h3 className="text-lg font-medium text-slate-900 mb-4">Shipping Information</h3>
+                  <div className="grid grid-cols-2 gap-4 mb-4">
+                     <FormField control={form.control} name="isShippingRequired" render={({ field }) => (
+                      <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 bg-slate-50">
+                        <div className="space-y-0.5">
+                          <FormLabel className="text-base">Requires Shipping</FormLabel>
+                          <div className="text-[0.8rem] text-muted-foreground">Does this need physical delivery?</div>
+                        </div>
+                        <FormControl>
+                          <input type="checkbox" className="w-5 h-5 accent-primary" checked={field.value} onChange={field.onChange} />
+                        </FormControl>
+                      </FormItem>
+                    )} />
+                    <FormField control={form.control} name="freeShipping" render={({ field }) => (
+                      <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 bg-slate-50">
+                        <div className="space-y-0.5">
+                          <FormLabel className="text-base">Free Shipping</FormLabel>
+                          <div className="text-[0.8rem] text-muted-foreground">Override shipping charges?</div>
+                        </div>
+                        <FormControl>
+                          <input type="checkbox" className="w-5 h-5 accent-primary" checked={field.value} onChange={field.onChange} />
+                        </FormControl>
+                      </FormItem>
+                    )} />
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-4 mb-4">
+                    <FormField control={form.control} name="shippingType" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Shipping Type</FormLabel>
+                        <FormControl>
+                          <select className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm" {...field}>
+                            <option value="standard">Standard</option>
+                            <option value="express">Express</option>
+                            <option value="digital">Digital (No shipping)</option>
+                            <option value="pickup">Local Pickup</option>
+                          </select>
+                        </FormControl>
+                      </FormItem>
+                    )} />
+                    <FormField control={form.control} name="shippingCharge" render={({ field }) => (
+                      <FormItem><FormLabel>Shipping Charge (₹)</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                    <FormField control={form.control} name="estimatedDeliveryTime" render={({ field }) => (
+                      <FormItem><FormLabel>Est. Delivery Time</FormLabel><FormControl><Input placeholder="e.g. 3-5 days" {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                  </div>
+
+                  <div className="grid grid-cols-4 gap-4">
+                     <FormField control={form.control} name="weight" render={({ field }) => (
+                      <FormItem><FormLabel>Weight (g)</FormLabel><FormControl><Input type="number" {...field} value={field.value || ""} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                    <FormField control={form.control} name="dimensions_length" render={({ field }) => (
+                      <FormItem><FormLabel>Length (cm)</FormLabel><FormControl><Input type="number" {...field} value={field.value || ""} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                    <FormField control={form.control} name="dimensions_width" render={({ field }) => (
+                      <FormItem><FormLabel>Width (cm)</FormLabel><FormControl><Input type="number" {...field} value={field.value || ""} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                    <FormField control={form.control} name="dimensions_height" render={({ field }) => (
+                      <FormItem><FormLabel>Height (cm)</FormLabel><FormControl><Input type="number" {...field} value={field.value || ""} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                  </div>
+                </div>
+
+                <div className="border-t border-slate-200 pt-6 mt-6 grid grid-cols-2 gap-4">
                   <FormField control={form.control} name="availability" render={({ field }) => (
                     <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                       <div className="space-y-0.5">

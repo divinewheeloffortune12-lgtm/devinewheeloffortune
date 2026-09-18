@@ -15,6 +15,7 @@ interface CartState {
   clearCart: () => void;
   getSubtotal: () => number;
   getItemCount: () => number;
+  syncCart: (validProducts: any[]) => void;
 }
 
 export const useCart = create<CartState>()(
@@ -78,6 +79,32 @@ export const useCart = create<CartState>()(
 
       getItemCount: () => {
         return get().items.reduce((count, item) => count + item.quantity, 0);
+      },
+
+      syncCart: (validProducts: any[]) => {
+        set((state) => ({
+          items: state.items.map((item) => {
+            const validProduct = validProducts.find(p => p._id === item.product.id || p.id === item.product.id);
+            if (!validProduct || validProduct.isDeleted) {
+              return {
+                ...item,
+                product: {
+                  ...item.product,
+                  availability: false,
+                  isDeleted: true
+                }
+              };
+            }
+            return {
+              ...item,
+              product: {
+                ...item.product,
+                ...validProduct,
+                id: validProduct._id || validProduct.id
+              }
+            };
+          })
+        }));
       },
     }),
     {

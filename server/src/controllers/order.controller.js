@@ -217,14 +217,14 @@ exports.verifyPayment = async (req, res, next) => {
       return res.json({ success: true, message: 'Payment already processed', data: { orderId: order._id, orderNumber: order.orderNumber } });
     }
     
-    // Create an automated personalized announcement
+    // Create an automated personalized announcement safely
     try {
-      await Announcement.create({
+      const { createSystemAnnouncement } = require('./announcement.controller');
+      await createSystemAnnouncement({
         title: 'Payment Successful',
         content: `Your payment for Order #${updatedOrder.orderNumber} (₹${updatedOrder.totalAmount.toLocaleString('en-IN')}) was successful. We are processing your order!`,
         type: 'info',
-        status: 'published',
-        user: updatedOrder.user
+        userId: updatedOrder.user
       });
     } catch (annError) {
       console.error('Failed to create automated announcement:', annError);

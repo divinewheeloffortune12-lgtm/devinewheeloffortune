@@ -162,17 +162,27 @@ export const AdminProducts = () => {
     }
   };
 
-  const toggleAvailability = async (id: string) => {
+  const toggleAvailability = async (id: string, currentAvailability: boolean) => {
     try {
-      await api.patch(`/admin/products/${id}/availability`);
+      const intendedState = !currentAvailability;
+      const response = await api.patch(`/admin/products/${id}/availability`, { availability: intendedState });
+      
+      // Update local state using the authoritative server response
+      if (response.data?.success && response.data?.data) {
+        setProducts(prevProducts => prevProducts.map((p: any) => 
+          p._id === id ? { ...p, availability: response.data.data.availability } : p
+        ));
+      }
+      
       toast({ title: "Product visibility updated" });
-      fetchProducts();
     } catch (error: any) {
       toast({ 
         variant: "destructive", 
         title: "Update failed",
         description: error.response?.data?.message || "Please try again."
       });
+      // Fallback fetch in case of failure to ensure UI consistency
+      fetchProducts();
     }
   };
 
@@ -480,7 +490,7 @@ export const AdminProducts = () => {
                     <Button 
                       variant="ghost" 
                       size="icon" 
-                      onClick={() => toggleAvailability(p._id)} 
+                      onClick={() => toggleAvailability(p._id, p.availability)} 
                       className={p.availability === false ? "text-amber-500 hover:text-amber-600 hover:bg-amber-50" : "text-slate-400 hover:text-primary hover:bg-primary/5"}
                       title={p.availability === false ? "Hidden from website - Click to show" : "Visible on website - Click to hide"}
                     >

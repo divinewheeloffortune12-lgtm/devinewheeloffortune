@@ -10,12 +10,12 @@ exports.getStats = async (req, res, next) => {
     
     // Efficient aggregation for total revenue and orders
     const orderStats = await Order.aggregate([
-      { $match: { paymentStatus: 'PAID' } },
+      { $match: { paymentStatus: 'PAID', status: { $ne: 'CANCELLED' } } },
       { $group: { _id: null, revenue: { $sum: '$totalAmount' }, count: { $sum: 1 } } }
     ]);
     
     const bookingStats = await ServiceBooking.aggregate([
-      { $match: { paymentStatus: 'PAID' } },
+      { $match: { paymentStatus: 'PAID', status: { $ne: 'CANCELLED' } } },
       { $group: { _id: null, revenue: { $sum: '$amount' }, count: { $sum: 1 } } }
     ]);
 
@@ -29,12 +29,12 @@ exports.getStats = async (req, res, next) => {
 
     // Monthly revenue trend (last 6 months)
     const sixMonthsAgo = new Date();
+    sixMonthsAgo.setDate(1); // Set to 1st BEFORE modifying month to prevent wrap-around bugs
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 5);
-    sixMonthsAgo.setDate(1);
     sixMonthsAgo.setHours(0, 0, 0, 0);
 
     const monthlyOrders = await Order.aggregate([
-      { $match: { paymentStatus: 'PAID', createdAt: { $gte: sixMonthsAgo } } },
+      { $match: { paymentStatus: 'PAID', status: { $ne: 'CANCELLED' }, createdAt: { $gte: sixMonthsAgo } } },
       { $group: { 
           _id: { month: { $month: '$createdAt' }, year: { $year: '$createdAt' } }, 
           revenue: { $sum: '$totalAmount' } 
@@ -42,7 +42,7 @@ exports.getStats = async (req, res, next) => {
     ]);
 
     const monthlyBookings = await ServiceBooking.aggregate([
-      { $match: { paymentStatus: 'PAID', createdAt: { $gte: sixMonthsAgo } } },
+      { $match: { paymentStatus: 'PAID', status: { $ne: 'CANCELLED' }, createdAt: { $gte: sixMonthsAgo } } },
       { $group: { 
           _id: { month: { $month: '$createdAt' }, year: { $year: '$createdAt' } }, 
           revenue: { $sum: '$amount' } 
@@ -55,6 +55,7 @@ exports.getStats = async (req, res, next) => {
     
     for (let i = 0; i < 6; i++) {
       const d = new Date();
+      d.setDate(1); // Crucial: avoid missing months when current day > 28
       d.setMonth(d.getMonth() - (5 - i));
       const m = d.getMonth() + 1;
       const y = d.getFullYear();

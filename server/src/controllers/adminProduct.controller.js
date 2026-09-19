@@ -157,10 +157,15 @@ exports.deleteProduct = async (req, res) => {
 
 exports.toggleProductAvailability = async (req, res) => {
   try {
+    const { availability } = req.body;
+    if (typeof availability !== 'boolean') {
+      return res.status(400).json({ success: false, message: 'Explicit boolean availability state is required' });
+    }
+
     const product = await Product.findById(req.params.id);
     if (!product || product.isDeleted) return res.status(404).json({ success: false, message: 'Product not found' });
     
-    product.availability = !product.availability;
+    product.availability = availability;
     await product.save();
     
     res.status(200).json({ success: true, data: product });

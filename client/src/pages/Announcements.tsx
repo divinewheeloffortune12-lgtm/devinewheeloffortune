@@ -39,15 +39,33 @@ export default function Announcements() {
 
   return (
     <Layout>
-      <section className="pt-32 pb-24 bg-gradient-to-b from-[#181422] to-[#252033] text-white">
-        <div className="container-full">
-          <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur border border-white/20 mb-6">
-              <Sparkles className="w-4 h-4 text-primary" />
-              <span className="text-xs uppercase tracking-[.2em] font-medium">Latest Updates</span>
+      <section className="relative min-h-[50vh] flex items-center pt-32 pb-24 overflow-hidden bg-black text-white">
+        {/* Proper Video Layer */}
+        <video 
+          className="absolute inset-0 h-full w-full object-cover contrast-125 saturate-110 brightness-110 filter" 
+          autoPlay 
+          muted 
+          loop 
+          playsInline 
+          preload="metadata"
+          poster="/images/placeholder.png"
+        >
+          <source src="/herovideo.mp4" type="video/mp4" />
+        </video>
+        
+        {/* Overlay Layer to ensure text readability */}
+        <div className="absolute inset-0 bg-black/60 z-0" />
+        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-slate-50 to-transparent z-0" />
+
+        {/* Content Layer */}
+        <div className="container-full relative z-10">
+          <div className="max-w-2xl drop-shadow-xl">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/30 mb-6 shadow-sm">
+              <Sparkles className="w-4 h-4 text-white" />
+              <span className="text-xs uppercase tracking-[.2em] font-semibold text-white shadow-sm">Latest Updates</span>
             </div>
-            <h1 className="font-serif text-5xl md:text-7xl">Announcements</h1>
-            <p className="mt-6 text-lg text-white/70 leading-relaxed">Stay up to date with our newest products, exclusive sales, and important community alerts.</p>
+            <h1 className="font-serif text-5xl md:text-7xl drop-shadow-md">Announcements</h1>
+            <p className="mt-6 text-lg text-white/90 leading-relaxed drop-shadow">Stay up to date with our newest products, exclusive sales, and important community alerts.</p>
           </div>
         </div>
       </section>

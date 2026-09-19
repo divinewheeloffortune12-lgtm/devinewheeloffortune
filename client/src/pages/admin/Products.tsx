@@ -490,7 +490,7 @@ export const AdminProducts = () => {
                     <Button 
                       variant="ghost" 
                       size="icon" 
-                      onClick={() => toggleAvailability(p._id, p.availability)} 
+                      onClick={() => toggleAvailability(p._id, p.availability !== false)} 
                       className={p.availability === false ? "text-amber-500 hover:text-amber-600 hover:bg-amber-50" : "text-slate-400 hover:text-primary hover:bg-primary/5"}
                       title={p.availability === false ? "Hidden from website - Click to show" : "Visible on website - Click to hide"}
                     >

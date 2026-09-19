@@ -48,8 +48,8 @@ export const AdminSales = () => {
   useEffect(() => {
     // Fetch total revenue separately for the dashboard card
     api.get("/admin/stats").then(({ data }) => {
-      setTotalRevenue(data.data.revenue || 0);
-      setTotalOrders(data.data.orders || 0);
+      setTotalRevenue(data.data.totals?.revenue || 0);
+      setTotalOrders(data.data.totals?.sales || 0);
     }).catch(() => undefined);
   }, []);
 

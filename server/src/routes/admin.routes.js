@@ -63,6 +63,18 @@ router.post('/categories', upload.single('image'), categoryController.create);
 router.patch('/categories/:id', upload.single('image'), categoryController.update);
 router.delete('/categories/:id', categoryController.archive);
 
+// Bookings
+router.get('/bookings', require('../controllers/adminBooking.controller').getAllBookings);
+router.patch('/bookings/:id/status', require('../controllers/adminBooking.controller').updateBookingStatus);
+router.delete('/bookings/:id', require('../controllers/adminBooking.controller').deleteBooking);
+
+// Services (Admin)
+const adminServiceController = require('../controllers/adminService.controller');
+router.get('/services', adminServiceController.getAllServices);
+router.post('/services', upload.single('image'), adminServiceController.createService);
+router.put('/services/:id', upload.single('image'), adminServiceController.updateService);
+router.delete('/services/:id', adminServiceController.deleteService);
+
 // Users
 router.get('/users/export', require('../controllers/adminUser.controller').exportUsers);
 router.get('/users', getUsers);
@@ -73,6 +85,7 @@ router.patch('/feedback/:id', feedbackController.updateStatus);
 router.delete('/feedback/:id', feedbackController.deleteMessage);
 
 const Order = require('../models/Order');
+const Announcement = require('../models/Announcement');
 const { VALID_TRANSITIONS } = require('../controllers/order.controller');
 
 // Sales & Orders
@@ -157,6 +170,25 @@ router.put('/sales/:id/status', async (req, res, next) => {
     });
 
     await order.save();
+
+    // Create an announcement for the user
+    let message = '';
+    if (status === 'CANCELLED') {
+      message = `Your order #${order.orderNumber} has been cancelled. Our team will contact you shortly.`;
+    } else if (status === 'CONFIRMED') {
+      message = `Great news! Your order #${order.orderNumber} has been confirmed.`;
+    } else if (status === 'SHIPPED') {
+      message = `Your order #${order.orderNumber} has been shipped!`;
+    }
+
+    if (message && order.user) {
+      await Announcement.create({
+        user: order.user,
+        title: 'Order Status Update',
+        content: message,
+        isRead: false
+      });
+    }
 
     res.json({ success: true, data: order });
   } catch (error) {

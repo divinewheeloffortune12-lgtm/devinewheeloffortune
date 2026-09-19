@@ -14,25 +14,9 @@ import FoldText from "@/components/ui/FoldText";
 import ClickSpark from "@/components/ui/ClickSpark";
 import { FeaturedProducts } from "@/components/FeaturedProducts";
 
-const services = [
-  { title: "Tarot Card Reading", description: "Receive intuitive perspective on the questions and crossroads present in your life.", symbol: "✦" },
-  { title: "Cord-Cutting Ritual", description: "A guided energetic ritual created to support release, renewal, and clearer boundaries.", symbol: "∞" },
-  { title: "Akashic Records Reading", description: "Explore reflective insights through a contemplative reading of your soul journey.", symbol: "☼" },
-  { title: "Reiki & Money Reiki", description: "Gentle energy work focused on balance, receptivity, and your relationship with abundance.", symbol: "◈" },
-  { title: "Past Life Regression", description: "A guided inner journey to explore recurring themes, memories, and personal meaning.", symbol: "◌" },
-  { title: "Numerology Reading", description: "Discover the symbolism and patterns held within your name and birth date.", symbol: "Ⅸ" },
-  { title: "Chakra Balancing", description: "A calming session to support energetic alignment and a renewed sense of equilibrium.", symbol: "❋" },
-  { title: "Astrology Consultation", description: "A personal conversation exploring your birth chart, cycles, and current season.", symbol: "☾" },
-];
+// Removing hardcoded services array; will fetch dynamically.
 
-const parallaxServices = services.map((service, index) => ({
-  id: index + 1,
-  title: service.title,
-  description: service.description,
-  symbol: service.symbol,
-  imageUrl: `/images/${service.title.toLowerCase().replace(/ & /g, '_').replace(/ /g, '_').replace(/-/g, '_')}.png`,
-  reverse: index % 2 !== 0
-}));
+// Will generate parallaxServices inside the component using fetched data
 
 const faqs = [
   ["Which session length should I choose?", "A 30-minute session suits one focused question, 60 minutes allows deeper exploration, and 90 minutes offers the most spacious experience."],
@@ -65,7 +49,24 @@ const Index = () => {
     }
   });
 
+  const { data: servicesData, isLoading: servicesLoading } = useQuery({
+    queryKey: ['services-list'],
+    queryFn: async () => {
+      const response = await api.get('/bookings/services');
+      return response.data.data;
+    }
+  });
+
   const shopCategories = categoriesData || [];
+  
+  const parallaxServices = (servicesData || []).map((service: any, index: number) => ({
+    id: service._id || (index + 1),
+    title: service.name,
+    description: service.description || "A transformative spiritual session tailored for your healing journey.",
+    symbol: ["✦", "∞", "☼", "◈", "◌", "Ⅸ", "❋", "☾"][index % 8],
+    imageUrl: service.image || `/images/placeholder.png`,
+    reverse: index % 2 !== 0
+  }));
 
   return (
     <Layout>
@@ -176,11 +177,15 @@ const Index = () => {
       </section>
 
       <div id="services" className="pb-20 md:pb-32 flex flex-col">
-        <ParallaxScrollFeatureSection 
-          title="Ways to work together"
-          description="Guidance for every season. Choose a focused 30-minute reading or make room for a deeper 60-minute session."
-          sections={parallaxServices.slice(0, 4)}
-        />
+        {servicesLoading ? (
+          <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>
+        ) : (
+          <ParallaxScrollFeatureSection 
+            title="Ways to work together"
+            description="Guidance for every season. Choose a focused session or make room for a deeper exploration."
+            sections={parallaxServices.slice(0, 4)}
+          />
+        )}
         <div className="mt-4 md:mt-12 text-center pb-8 flex justify-center w-full">
           <Button asChild size="lg" className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg h-14 px-8 text-base transition-transform hover:scale-105">
             <Link to="/services">See More <ArrowRight className="ml-2 w-5 h-5" /></Link>

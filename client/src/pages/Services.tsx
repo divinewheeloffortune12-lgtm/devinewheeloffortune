@@ -206,15 +206,26 @@ const Services = () => {
                   className="group flex flex-col bg-white rounded-3xl shadow-sm border border-black/5 overflow-hidden hover:shadow-xl transition-all duration-300"
                 >
                   <div className="relative aspect-[4/3] bg-gradient-to-br from-purple-100 to-indigo-50 flex items-center justify-center overflow-hidden">
-                    <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors duration-500 z-10" />
-                    <Sparkles className="w-16 h-16 text-primary/30 group-hover:scale-110 group-hover:text-primary/50 transition-transform duration-500 z-0" />
+                    {service.image ? (
+                      <img src={service.image} alt={service.name} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 z-0" />
+                    ) : (
+                      <>
+                        <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors duration-500 z-10" />
+                        <Sparkles className="w-16 h-16 text-primary/30 group-hover:scale-110 group-hover:text-primary/50 transition-transform duration-500 z-0" />
+                      </>
+                    )}
                   </div>
                   <div className="p-6 flex flex-col flex-grow justify-between">
                     <div>
                       <h3 className="font-serif text-xl font-medium leading-tight mb-2 group-hover:text-primary transition-colors">{service.name}</h3>
-                      <p className="text-sm text-muted-foreground mb-4">
+                      <p className="text-sm text-muted-foreground mb-4 font-medium text-primary">
                         ₹{service.price} {service.duration && <span className="text-xs opacity-75 ml-1">({service.duration})</span>}
                       </p>
+                      {service.description && (
+                        <p className="text-sm text-slate-600 mb-4 line-clamp-3">
+                          {service.description}
+                        </p>
+                      )}
                     </div>
                     <Button 
                       className="w-full rounded-full mt-auto group-hover:bg-primary transition-colors" 

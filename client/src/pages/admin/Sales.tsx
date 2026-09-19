@@ -204,7 +204,21 @@ export const AdminSales = () => {
                     </td>
                     <td className="p-4 text-slate-500">{new Date(s.createdAt).toLocaleDateString()}</td>
                     <td className="p-4 text-right">
-                      <Button variant="ghost" size="sm" onClick={() => setSelectedOrder(s)} className="text-primary hover:text-primary hover:bg-primary/10">View Details</Button>
+                      <div className="flex items-center justify-end gap-2">
+                        {s.status === 'PENDING' && (
+                          <Button variant="outline" size="sm" onClick={() => handleStatusUpdate(s._id, 'SHIPPED')} className="h-8 text-blue-600 border-blue-200 hover:bg-blue-50" disabled={isUpdating}>
+                            Ship
+                          </Button>
+                        )}
+                        {['PENDING', 'SHIPPED'].includes(s.status) && (
+                          <Button variant="outline" size="sm" onClick={() => handleStatusUpdate(s._id, 'CANCELLED')} className="h-8 text-red-600 border-red-200 hover:bg-red-50" disabled={isUpdating}>
+                            Cancel
+                          </Button>
+                        )}
+                        <Button variant="ghost" size="sm" onClick={() => setSelectedOrder(s)} className="h-8 text-primary hover:text-primary hover:bg-primary/10">
+                          Details
+                        </Button>
+                      </div>
                     </td>
                   </tr>
                 ))}

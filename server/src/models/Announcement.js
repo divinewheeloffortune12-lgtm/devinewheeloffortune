@@ -22,7 +22,12 @@ const announcementSchema = new mongoose.Schema({
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'AdminUser',
-    required: true,
+    required: false,
+  },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: false,
   },
 }, { timestamps: true });
 

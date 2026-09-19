@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Order = require('../models/Order');
 const Cart = require('../models/Cart');
 const Product = require('../models/Product');
+const Announcement = require('../models/Announcement');
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
 
@@ -213,6 +214,20 @@ exports.verifyPayment = async (req, res, next) => {
     if (!updatedOrder) {
       // Already processed (race between verifyPayment and webhook) — return success
       return res.json({ success: true, message: 'Payment already processed', data: { orderId: order._id, orderNumber: order.orderNumber } });
+    }
+    
+    // Create an automated personalized announcement
+    try {
+      await Announcement.create({
+        title: 'Payment Successful',
+        content: `Your payment for Order #${updatedOrder.orderNumber} (₹${updatedOrder.totalAmount.toLocaleString('en-IN')}) was successful. We are processing your order!`,
+        type: 'info',
+        status: 'published',
+        user: updatedOrder.user
+      });
+    } catch (annError) {
+      console.error('Failed to create automated announcement:', annError);
+      // Non-fatal, do not throw
     }
     
     res.json({ success: true, message: 'Payment verified and order placed successfully', data: { orderId: updatedOrder._id, orderNumber: updatedOrder.orderNumber } });

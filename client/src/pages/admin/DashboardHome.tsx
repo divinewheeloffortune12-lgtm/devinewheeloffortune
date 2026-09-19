@@ -113,20 +113,29 @@ export const DashboardHome = () => {
         <div className="flex flex-col gap-8">
           <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden flex-1">
             <div className="p-5 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
-              <h3 className="font-semibold text-slate-800 text-sm">Recent Users</h3>
+              <h3 className="font-semibold text-slate-800 text-sm">Recent Orders</h3>
             </div>
             <div className="divide-y divide-slate-50">
-              {stats?.recentUsers?.map((user: any) => (
-                <div key={user._id} className="p-4 flex items-center justify-between hover:bg-slate-50/80 transition-colors">
+              {stats?.recentSales?.map((order: any) => (
+                <div key={order._id} className="p-4 flex items-center justify-between hover:bg-slate-50/80 transition-colors">
                   <div>
-                    <p className="font-medium text-slate-800 text-sm">{user.name}</p>
-                    <p className="text-xs text-slate-500">{user.email}</p>
+                    <p className="font-medium text-slate-800 text-sm">{order.user?.name || 'Guest User'}</p>
+                    <p className="text-xs text-slate-500">{order.orderNumber}</p>
                   </div>
-                  <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-400">{new Date(user.createdAt).toLocaleDateString()}</span>
+                  <div className="text-right">
+                    <span className="text-sm font-semibold text-slate-700">₹{order.totalAmount?.toLocaleString("en-IN")}</span>
+                    <p className={`text-[10px] uppercase tracking-wider font-semibold mt-1 ${
+                      ['CANCELLED', 'REFUNDED'].includes(order.status) ? 'text-red-500' :
+                      order.status === 'DELIVERED' ? 'text-emerald-500' :
+                      order.status === 'SHIPPED' ? 'text-blue-500' : 'text-amber-500'
+                    }`}>
+                      {order.status?.replace('_', ' ') || order.paymentStatus}
+                    </p>
+                  </div>
                 </div>
               ))}
-              {(!stats?.recentUsers || stats.recentUsers.length === 0) && (
-                <p className="p-6 text-center text-sm text-slate-400">No users found.</p>
+              {(!stats?.recentSales || stats.recentSales.length === 0) && (
+                <p className="p-6 text-center text-sm text-slate-400">No recent orders.</p>
               )}
             </div>
           </div>

@@ -83,7 +83,11 @@ router.get('/sales', async (req, res, next) => {
     const limit = Math.min(100, Math.max(1, Number(req.query.limit) || 50));
 
     const filter = {};
-    if (req.query.status && req.query.status !== 'all') filter.status = req.query.status;
+    if (req.query.status && req.query.status !== 'all') {
+      filter.status = req.query.status;
+    } else {
+      filter.status = { $ne: 'PENDING_PAYMENT' };
+    }
     if (req.query.paymentStatus && req.query.paymentStatus !== 'all') filter.paymentStatus = req.query.paymentStatus;
 
     const [orders, total] = await Promise.all([

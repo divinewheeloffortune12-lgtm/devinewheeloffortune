@@ -3,7 +3,7 @@ import { Loader2, Plus, Edit, Trash2 } from "lucide-react";
 import { api } from "@/lib/api";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
@@ -197,6 +197,9 @@ export const ServiceBookings = () => {
               <DialogContent className="sm:max-w-[500px]">
                 <DialogHeader>
                   <DialogTitle>{editingService ? "Edit Service" : "Add New Service"}</DialogTitle>
+                  <DialogDescription className="hidden">
+                    Service details form
+                  </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleServiceSubmit} className="space-y-4 py-4">
                   <div>

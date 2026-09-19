@@ -3,7 +3,7 @@ import { api } from "@/lib/api";
 import { Loader2, Receipt, TrendingUp, ChevronLeft, ChevronRight, Package, Truck, CheckCircle2, XCircle, Download } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export const AdminSales = () => {
@@ -208,7 +208,12 @@ export const AdminSales = () => {
                     <td className="p-4 text-slate-500">{new Date(s.createdAt).toLocaleDateString()}</td>
                     <td className="p-4 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        {['CONFIRMED', 'PROCESSING'].includes(s.status) && (
+                        {s.status === 'CONFIRMED' && (
+                          <Button variant="outline" size="sm" onClick={() => handleStatusUpdate(s._id, 'PROCESSING')} className="h-8 text-amber-600 border-amber-200 hover:bg-amber-50" disabled={isUpdating}>
+                            Process
+                          </Button>
+                        )}
+                        {s.status === 'PROCESSING' && (
                           <Button variant="outline" size="sm" onClick={() => handleStatusUpdate(s._id, 'SHIPPED')} className="h-8 text-blue-600 border-blue-200 hover:bg-blue-50" disabled={isUpdating}>
                             Ship
                           </Button>
@@ -249,9 +254,12 @@ export const AdminSales = () => {
               <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
                 selectedOrder?.paymentStatus === 'PAID' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
               }`}>
-                {selectedOrder?.paymentStatus || 'PENDING'}
+                {selectedOrder?.paymentStatus || 'PENDING_PAYMENT'}
               </span>
             </DialogTitle>
+            <DialogDescription className="hidden">
+              Order Details
+            </DialogDescription>
           </DialogHeader>
           
           {selectedOrder && (

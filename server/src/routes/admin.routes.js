@@ -63,10 +63,7 @@ router.post('/categories', upload.single('image'), categoryController.create);
 router.patch('/categories/:id', upload.single('image'), categoryController.update);
 router.delete('/categories/:id', categoryController.archive);
 
-// Bookings
-router.get('/bookings', require('../controllers/adminBooking.controller').getAllBookings);
-router.patch('/bookings/:id/status', require('../controllers/adminBooking.controller').updateBookingStatus);
-router.delete('/bookings/:id', require('../controllers/adminBooking.controller').deleteBooking);
+
 
 // Services (Admin)
 const adminServiceController = require('../controllers/adminService.controller');

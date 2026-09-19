@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Order = require('../models/Order');
+const CancellationRequest = require('../models/CancellationRequest');
 const Cart = require('../models/Cart');
 const Product = require('../models/Product');
 const Announcement = require('../models/Announcement');
@@ -409,3 +410,33 @@ exports.getOrderReceipt = async (req, res, next) => {
 
 // Export valid transitions for use in admin routes
 exports.VALID_TRANSITIONS = VALID_TRANSITIONS;
+
+exports.requestCancellation = async (req, res, next) => {
+  try {
+    const { orderId } = req.params;
+    const { reason } = req.body;
+
+    const order = await Order.findOne({ _id: orderId, user: req.user._id });
+    if (!order) return res.status(404).json({ success: false, message: 'Order not found' });
+
+    // Ensure order is in a state that can be cancelled
+    if (['SHIPPED', 'DELIVERED', 'CANCELLED', 'REFUNDED'].includes(order.status)) {
+      return res.status(400).json({ success: false, message: `Cannot request cancellation for order with status ${order.status}` });
+    }
+
+    const existingRequest = await CancellationRequest.findOne({ order: order._id, status: 'pending' });
+    if (existingRequest) {
+      return res.status(400).json({ success: false, message: 'A cancellation request is already pending for this order' });
+    }
+
+    const request = await CancellationRequest.create({
+      order: order._id,
+      user: req.user._id,
+      reason
+    });
+
+    res.status(201).json({ success: true, data: request, message: 'Cancellation request submitted successfully' });
+  } catch (error) {
+    next(error);
+  }
+};

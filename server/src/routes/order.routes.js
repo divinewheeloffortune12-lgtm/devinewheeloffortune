@@ -36,5 +36,6 @@ router.post('/create', paymentLimiter, controller.createOrder);
 router.post('/verify-payment', controller.verifyPayment);
 router.get('/', controller.getUserOrders);
 router.get('/:orderId/receipt', controller.getOrderReceipt);
+router.post('/:orderId/cancel-request', controller.requestCancellation);
 
 module.exports = router;

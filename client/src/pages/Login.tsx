@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -29,6 +29,8 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const redirect = searchParams.get("redirect") || "/";
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -52,8 +54,8 @@ const Login = () => {
         description: "You have successfully logged in.",
       });
       
-      // Redirect to profile or home
-      navigate("/");
+      // Redirect to profile, home, or intended page
+      navigate(redirect);
     } catch (error: unknown) {
       toast({
         variant: "destructive",
@@ -80,7 +82,7 @@ const Login = () => {
           title: "Welcome back!",
           description: "You have successfully logged in.",
         });
-        navigate("/");
+        navigate(redirect);
       } catch (error: unknown) {
          toast({
           variant: "destructive",

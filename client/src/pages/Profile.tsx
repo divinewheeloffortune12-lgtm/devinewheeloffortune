@@ -137,6 +137,26 @@ export const Profile = () => {
     }
   };
 
+  const handleCancelRequest = async (orderId: string) => {
+    if (!window.confirm("Are you sure you want to request cancellation for this order?")) return;
+    try {
+      setCancellingOrderId(orderId);
+      const { data } = await api.post(`/orders/${orderId}/cancel-request`, { reason: cancelReason });
+      if (data.success) {
+        toast({ title: "Request Submitted", description: "Your cancellation request has been submitted to admin." });
+      }
+    } catch (error: any) {
+      toast({ 
+        title: "Action Failed", 
+        description: error.response?.data?.message || "Failed to submit cancellation request.", 
+        variant: "destructive" 
+      });
+    } finally {
+      setCancellingOrderId(null);
+      setCancelReason("");
+    }
+  };
+
   const printInvoice = (order: Order) => {
     const printWindow = window.open('', '_blank');
     if (!printWindow) return;
@@ -343,6 +363,19 @@ export const Profile = () => {
                         {order.status.replace('_', ' ')}
                       </p>
                       <Button variant="outline" size="sm" onClick={() => printInvoice(order)} className="w-full text-xs h-8"><Download className="w-3 h-3 mr-2" /> Download Bill</Button>
+                      {!['SHIPPED', 'DELIVERED', 'CANCELLED', 'REFUNDED'].includes(order.status) && (
+                        <div className="mt-3 pt-3 border-t border-slate-200">
+                          <Button 
+                            variant="destructive" 
+                            size="sm" 
+                            onClick={() => handleCancelRequest(order._id)} 
+                            disabled={cancellingOrderId === order._id}
+                            className="w-full text-xs h-8 bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 hover:text-red-700"
+                          >
+                            {cancellingOrderId === order._id ? "Processing..." : "Cancel Order"}
+                          </Button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>

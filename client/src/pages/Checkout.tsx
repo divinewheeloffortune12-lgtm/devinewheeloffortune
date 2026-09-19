@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowRight, AlertCircle, CheckCircle2 } from "lucide-react";
+import { ArrowRight, AlertCircle, CheckCircle2, Plus, Minus, Trash2 } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { useCart } from "@/hooks/useCart";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,7 @@ import { loadRazorpayScript } from "./Services";
 const Checkout = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { items, getSubtotal, clearCart, syncCart } = useCart();
+  const { items, getSubtotal, clearCart, syncCart, updateQuantity, removeItem } = useCart();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
@@ -32,7 +32,7 @@ const Checkout = () => {
     const token = localStorage.getItem("token");
     if (!token) {
       toast({ title: "Authentication Required", description: "Please log in to proceed to checkout." });
-      navigate("/login");
+      navigate("/login?redirect=/checkout");
       return;
     }
 
@@ -55,7 +55,7 @@ const Checkout = () => {
       }
     }).catch((err) => {
       if (err.response?.status === 401) {
-        navigate("/login");
+        navigate("/login?redirect=/checkout");
       }
     });
 
@@ -494,9 +494,24 @@ const Checkout = () => {
                             {(!item.product.availability || item.product.isDeleted) ? "Product Not Available" : "Out of Stock"}
                           </p>
                         ) : (
-                          <p className="text-xs text-muted-foreground mt-0.5">
-                            Qty: {item.quantity}
-                          </p>
+                          <div className="flex items-center gap-2 mt-1">
+                            <button
+                              type="button"
+                              onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                              className="w-6 h-6 flex items-center justify-center border border-border rounded hover:bg-muted transition-colors"
+                            >
+                              <Minus className="w-3 h-3" />
+                            </button>
+                            <span className="text-xs min-w-[20px] text-center">{item.quantity}</span>
+                            <button
+                              type="button"
+                              onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                              disabled={item.quantity >= item.product.stock}
+                              className="w-6 h-6 flex items-center justify-center border border-border rounded hover:bg-muted transition-colors disabled:opacity-40"
+                            >
+                              <Plus className="w-3 h-3" />
+                            </button>
+                          </div>
                         )}
                         <p className="text-sm mt-1">
                           {(() => {
@@ -506,6 +521,14 @@ const Checkout = () => {
                           })()}
                         </p>
                       </div>
+                      <button
+                        type="button"
+                        onClick={() => removeItem(item.product.id)}
+                        className="self-start p-1 text-muted-foreground hover:text-destructive transition-colors"
+                        title="Remove item"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
                     </div>
                   ))}
                 </div>

@@ -10,9 +10,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const AdminReports = () => {
   const [messages, setMessages] = useState([]);
+  const [cancellations, setCancellations] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedMessage, setSelectedMessage] = useState<any>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -24,12 +26,26 @@ export const AdminReports = () => {
 
   const fetchMessages = async () => {
     try {
-      const { data } = await api.get("/admin/feedback");
-      setMessages(data.data);
+      const [msgRes, cancelRes] = await Promise.all([
+        api.get("/admin/feedback"),
+        api.get("/admin/cancellations")
+      ]);
+      setMessages(msgRes.data.data);
+      setCancellations(cancelRes.data.data);
     } catch (error) {
       toast({ variant: "destructive", title: "Error fetching reports" });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const updateCancelStatus = async (id: string, status: string, comments: string = "") => {
+    try {
+      await api.patch(`/admin/cancellations/${id}`, { status, comments });
+      toast({ title: `Cancellation ${status}` });
+      fetchMessages();
+    } catch (error: any) {
+      toast({ variant: "destructive", title: error.response?.data?.message || "Failed to update status" });
     }
   };
 
@@ -77,7 +93,14 @@ export const AdminReports = () => {
         </div>
       </div>
 
-      {messages.length === 0 ? (
+      <Tabs defaultValue="cancellations" className="w-full">
+        <TabsList className="mb-4">
+          <TabsTrigger value="cancellations">Cancellation Requests</TabsTrigger>
+          <TabsTrigger value="feedback">User Feedback</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="feedback">
+          {messages.length === 0 ? (
         <div className="bg-white rounded-2xl p-10 text-center border border-slate-100 shadow-sm">
           <p className="text-slate-500">No reports or messages found.</p>
         </div>
@@ -129,6 +152,60 @@ export const AdminReports = () => {
           </table>
         </div>
       )}
+      </TabsContent>
+
+      <TabsContent value="cancellations">
+        {cancellations.length === 0 ? (
+          <div className="bg-white rounded-2xl p-10 text-center border border-slate-100 shadow-sm">
+            <p className="text-slate-500">No cancellation requests found.</p>
+          </div>
+        ) : (
+          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden flex flex-col gap-4 p-6">
+            {cancellations.map((c: any) => (
+              <div key={c._id} className="border border-slate-100 rounded-xl p-5 bg-slate-50 relative">
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <h4 className="font-semibold text-slate-800 text-lg">Order #{c.order?.orderNumber}</h4>
+                    <p className="text-sm text-slate-500">Customer: {c.user?.name} ({c.user?.email})</p>
+                    <p className="text-sm text-slate-500">Requested: {new Date(c.createdAt).toLocaleString()}</p>
+                  </div>
+                  <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                    c.status === 'pending' ? 'bg-amber-100 text-amber-700' :
+                    c.status === 'approved' ? 'bg-emerald-100 text-emerald-700' :
+                    'bg-red-100 text-red-700'
+                  }`}>
+                    {c.status}
+                  </span>
+                </div>
+                
+                <div className="mb-4">
+                  <p className="text-sm font-medium text-slate-700 mb-1">Reason for Cancellation:</p>
+                  <p className="text-sm text-slate-600 bg-white p-3 rounded border border-slate-200">
+                    {c.reason || "No reason provided"}
+                  </p>
+                </div>
+                
+                {c.status === 'pending' && (
+                  <div className="flex gap-3 justify-end pt-4 border-t border-slate-200">
+                    <Button variant="outline" className="text-red-600 hover:text-red-700 border-red-200 hover:bg-red-50" onClick={() => updateCancelStatus(c._id, 'rejected')}>
+                      Reject Request
+                    </Button>
+                    <Button variant="default" className="bg-emerald-600 hover:bg-emerald-700 text-white" onClick={() => updateCancelStatus(c._id, 'approved')}>
+                      Approve Cancellation
+                    </Button>
+                  </div>
+                )}
+                {c.status !== 'pending' && c.comments && (
+                  <div className="mt-4 text-sm text-slate-500">
+                    <span className="font-medium">Admin Comment:</span> {c.comments}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </TabsContent>
+      </Tabs>
 
       {/* View Message Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>

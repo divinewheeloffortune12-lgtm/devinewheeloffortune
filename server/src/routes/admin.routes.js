@@ -23,6 +23,7 @@ const {
 
 const adminStatsController = require('../controllers/adminStats.controller');
 const adminProfileController = require('../controllers/adminProfile.controller');
+const adminCancellationController = require('../controllers/adminCancellation.controller');
 
 const router = express.Router();
 
@@ -82,8 +83,8 @@ router.get('/sales', async (req, res, next) => {
     const limit = Math.min(100, Math.max(1, Number(req.query.limit) || 50));
 
     const filter = {};
-    if (req.query.status) filter.status = req.query.status;
-    if (req.query.paymentStatus) filter.paymentStatus = req.query.paymentStatus;
+    if (req.query.status && req.query.status !== 'all') filter.status = req.query.status;
+    if (req.query.paymentStatus && req.query.paymentStatus !== 'all') filter.paymentStatus = req.query.paymentStatus;
 
     const [orders, total] = await Promise.all([
       Order.find(filter)
@@ -158,6 +159,10 @@ router.put('/sales/:id/status', async (req, res, next) => {
     next(error);
   }
 });
+
+// Cancellations
+router.get('/cancellations', adminCancellationController.getCancellationRequests);
+router.patch('/cancellations/:id', adminCancellationController.updateCancellationStatus);
 
 // Admin receipt access
 router.get('/orders/:orderId/receipt', async (req, res, next) => {

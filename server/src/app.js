@@ -101,6 +101,7 @@ const cacheMiddleware = (durationSecs) => (req, res, next) => {
   if (cachedResponse && cachedResponse.expiry > Date.now()) {
     return res.json(cachedResponse.data);
   }
+
   const originalJson = res.json.bind(res);
   res.json = (body) => {
     cache.set(key, { data: body, expiry: Date.now() + durationSecs * 1000 });

@@ -21,7 +21,7 @@ export const ProductCard = ({ product, index = 0, variant = "default" }: Product
   const { addItem, removeItem, isInWishlist } = useWishlist();
   const inWishlist = isInWishlist(product.id);
   const collection = collections.find((c) => c.id === product.collection);
-  const hasSecondImage = product.images.length > 1;
+  const hasSecondImage = (product.images || []).length > 1;
 
   const handleWishlistToggle = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -59,7 +59,7 @@ export const ProductCard = ({ product, index = 0, variant = "default" }: Product
               pagination={{ clickable: true }}
               className="w-full h-full [&_.swiper-pagination-bullet]:bg-white [&_.swiper-pagination-bullet-active]:bg-white"
             >
-              {product.images.map((img, i) => (
+              {(product.images || []).map((img, i) => (
                 <SwiperSlide key={i}>
                   <img
                     src={img}
@@ -71,7 +71,7 @@ export const ProductCard = ({ product, index = 0, variant = "default" }: Product
             </Swiper>
           ) : (
             <img
-              src={product.images[0]}
+              src={(product.images || [])[0]}
               alt={product.name}
               className="w-full h-full object-cover transition-all duration-[1s] ease-out group-hover:scale-105"
             />

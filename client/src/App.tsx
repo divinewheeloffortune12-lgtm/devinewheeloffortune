@@ -7,6 +7,8 @@ import { ScrollToTop } from "./components/ScrollToTop";
 import { lazy, Suspense } from 'react';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
+import { ErrorBoundary } from "./components/ErrorBoundary";
+
 import Index from "./pages/Index";
 import Shop from "./pages/Shop";
 import ProductPage from "./pages/ProductPage";
@@ -54,9 +56,10 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <ScrollToTop />
-          <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-slate-50"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
-            <Routes>
-              <Route path="/" element={<Index />} />
+          <ErrorBoundary>
+            <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-slate-50"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
+              <Routes>
+                <Route path="/" element={<Index />} />
               <Route path="/products" element={<Shop />} />
               <Route path="/product/:slug" element={<ProductPage />} />
               <Route path="/cart" element={<Cart />} />
@@ -92,7 +95,8 @@ const App = () => (
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
-          </Suspense>
+            </Suspense>
+          </ErrorBoundary>
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>

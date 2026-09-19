@@ -327,12 +327,39 @@ export const AdminSales = () => {
                       <SelectValue placeholder="Select status" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="PENDING_PAYMENT">Pending Payment</SelectItem>
-                      <SelectItem value="CONFIRMED">Confirmed</SelectItem>
-                      <SelectItem value="PROCESSING">Processing</SelectItem>
-                      <SelectItem value="SHIPPED">Shipped / Dispatched</SelectItem>
-                      <SelectItem value="DELIVERED">Successfully Delivered</SelectItem>
-                      <SelectItem value="CANCELLED">Cancelled</SelectItem>
+                      <SelectItem value={selectedOrder.status || 'PENDING_PAYMENT'}>
+                        Current: {selectedOrder.status?.replace('_', ' ') || 'Pending Payment'}
+                      </SelectItem>
+                      {(() => {
+                        const VALID_TRANSITIONS: Record<string, string[]> = {
+                          PENDING_PAYMENT: ['CONFIRMED', 'CANCELLED'],
+                          CONFIRMED: ['PROCESSING', 'CANCELLED'],
+                          PROCESSING: ['SHIPPED', 'CANCELLED'],
+                          SHIPPED: ['DELIVERED'],
+                          DELIVERED: ['REFUNDED'],
+                          CANCELLED: [],
+                          REFUNDED: [],
+                        };
+                        const getStatusLabel = (status: string) => {
+                          switch (status) {
+                            case 'PENDING_PAYMENT': return 'Pending Payment';
+                            case 'CONFIRMED': return 'Confirmed';
+                            case 'PROCESSING': return 'Processing';
+                            case 'SHIPPED': return 'Shipped / Dispatched';
+                            case 'DELIVERED': return 'Successfully Delivered';
+                            case 'CANCELLED': return 'Cancelled';
+                            case 'REFUNDED': return 'Refunded';
+                            default: return status;
+                          }
+                        };
+                        
+                        const allowed = VALID_TRANSITIONS[selectedOrder.status] || [];
+                        return allowed.map(status => (
+                          <SelectItem key={status} value={status}>
+                            {getStatusLabel(status)}
+                          </SelectItem>
+                        ));
+                      })()}
                     </SelectContent>
                   </Select>
                 </div>

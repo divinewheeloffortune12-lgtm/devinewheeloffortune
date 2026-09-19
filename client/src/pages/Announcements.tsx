@@ -11,15 +11,29 @@ type Announcement = {
   createdAt: string 
 };
 
+import { useQueryClient } from '@tanstack/react-query';
+
 export default function Announcements() { 
   const [items, setItems] = useState<Announcement[]>([]); 
   const [loading, setLoading] = useState(true); 
+  const queryClient = useQueryClient();
   
   useEffect(() => { 
     api.get('/announcements')
-       .then(({ data }) => setItems(data.data))
+       .then(({ data }) => {
+         setItems(data.data);
+         if (data.data?.length) {
+           try {
+             let readIds = JSON.parse(localStorage.getItem('read_announcements') || '[]');
+             const newIds = data.data.map((a: any) => a._id);
+             readIds = Array.from(new Set([...readIds, ...newIds]));
+             localStorage.setItem('read_announcements', JSON.stringify(readIds));
+             queryClient.invalidateQueries({ queryKey: ['announcements'] });
+           } catch (e) {}
+         }
+       })
        .finally(() => setLoading(false)); 
-  }, []); 
+  }, [queryClient]); 
   
   const getIcon = (type: string) => {
     switch(type) {

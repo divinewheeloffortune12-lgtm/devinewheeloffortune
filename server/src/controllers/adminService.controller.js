@@ -1,13 +1,21 @@
 const Service = require('../models/Service');
 const cloudinary = require('../config/cloudinary');
 
+const uploadImage = (buffer) => new Promise((resolve, reject) => {
+  const stream = cloudinary.uploader.upload_stream(
+    { folder: 'astrology/services', resource_type: 'image' },
+    (error, result) => (error ? reject(error) : resolve(result)),
+  );
+  stream.end(buffer);
+});
+
 exports.createService = async (req, res, next) => {
   try {
     const { name, description, price, duration, isActive } = req.body;
     let image = req.body.image;
 
     if (req.file) {
-      const result = await cloudinary.uploader.upload(req.file.path, { folder: 'astrology/services' });
+      const result = await uploadImage(req.file.buffer);
       image = result.secure_url;
     }
 
@@ -36,7 +44,7 @@ exports.updateService = async (req, res, next) => {
     }
 
     if (req.file) {
-      const result = await cloudinary.uploader.upload(req.file.path, { folder: 'astrology/services' });
+      const result = await uploadImage(req.file.buffer);
       service.image = result.secure_url;
     } else if (req.body.image) {
       service.image = req.body.image;

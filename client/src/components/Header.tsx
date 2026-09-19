@@ -5,77 +5,82 @@ import { Menu, Sparkles, X, ChevronDown, UserRound, Bell, CalendarClock, Home, G
 import { CartIcon } from "@/components/CartIcon";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const Header = () => {
   const [open, setOpen] = useState(false);
-  const [announcementCount, setAnnouncementCount] = useState(0);
-  const [signedIn, setSignedIn] = useState(false);
-  const [user, setUser] = useState<any>(null);
-  const [categories, setCategories] = useState<any[]>([]);
-  const [services, setServices] = useState<any[]>([]);
   const location = useLocation();
+  const queryClient = useQueryClient();
   const homeHref = (anchor: string) => location.pathname === "/" ? anchor.replace("/", "") : anchor;
 
-  useEffect(() => { 
-    let live = true; 
-    api.get('/announcements').then(({ data }) => { 
-      if (live) setAnnouncementCount(Math.min(data.data.length, 9)); 
-    }).catch(() => undefined); 
-    
-    api.get('/categories').then(({ data }) => {
-      if (live && data?.data) setCategories(data.data);
-    }).catch(() => undefined);
-    
-    api.get('/bookings/services').then(({ data }) => {
-      if (live && data?.data) setServices(data.data);
-    }).catch(() => undefined);
-    
-    return () => { live = false; }; 
-  }, []);
+  const { data: authData, isLoading: isAuthLoading } = useQuery({
+    queryKey: ['auth-me'],
+    queryFn: async () => {
+      const token = localStorage.getItem("token") || localStorage.getItem("admin_token");
+      if (!token) return { signedIn: false, user: null };
+      try {
+        const res = await api.get('/auth/me');
+        if (res.data?.data) {
+          return { signedIn: true, user: res.data.data };
+        }
+        return { signedIn: false, user: null };
+      } catch {
+        return { signedIn: false, user: null };
+      }
+    },
+    staleTime: 5 * 60 * 1000,
+  });
 
-  // Check auth state — re-runs on route change, storage events, and custom auth events
-  const checkAuth = () => {
-    const token = localStorage.getItem("token") || localStorage.getItem("admin_token");
-    if (!token) {
-      setSignedIn(false);
-      setUser(null);
-      return;
-    }
-    api.get('/auth/me')
-       .then((res) => {
-         if (res.data?.data) {
-           setSignedIn(true);
-           setUser(res.data.data);
-         } else {
-           setSignedIn(false);
-           setUser(null);
-         }
-       })
-       .catch(() => {
-         setSignedIn(false);
-         setUser(null);
-       });
-  };
+  const signedIn = authData?.signedIn ?? false;
+  const user = authData?.user ?? null;
 
-  useEffect(() => {
-    checkAuth();
-  }, [location.pathname]);
+  const { data: categories = [] } = useQuery({
+    queryKey: ['categories'],
+    queryFn: async () => {
+      const res = await api.get('/categories');
+      return res.data?.data || [];
+    },
+    staleTime: 30 * 60 * 1000,
+  });
+
+  const { data: services = [] } = useQuery({
+    queryKey: ['services'],
+    queryFn: async () => {
+      const res = await api.get('/bookings/services');
+      return res.data?.data || [];
+    },
+    staleTime: 30 * 60 * 1000,
+  });
+
+  const { data: announcementCount = 0 } = useQuery({
+    queryKey: ['announcements'],
+    queryFn: async () => {
+      const res = await api.get('/announcements');
+      let readIds: string[] = [];
+      try {
+        readIds = JSON.parse(localStorage.getItem('read_announcements') || '[]');
+      } catch (e) {}
+      const unread = (res.data?.data || []).filter((a: any) => !readIds.includes(a._id));
+      return Math.min(unread.length, 9);
+    },
+    staleTime: 5 * 60 * 1000,
+  });
 
   useEffect(() => {
     // Listen for cross-tab storage changes and same-tab custom auth events
     const onStorageChange = (e: StorageEvent) => {
       if (e.key === 'token' || e.key === 'admin_token' || e.key === null) {
-        checkAuth();
+        queryClient.invalidateQueries({ queryKey: ['auth-me'] });
       }
     };
-    const onAuthChange = () => checkAuth();
+    const onAuthChange = () => queryClient.invalidateQueries({ queryKey: ['auth-me'] });
     window.addEventListener('storage', onStorageChange);
     window.addEventListener('auth-change', onAuthChange);
     return () => {
       window.removeEventListener('storage', onStorageChange);
       window.removeEventListener('auth-change', onAuthChange);
     };
-  }, []);
+  }, [queryClient]);
 
   const moreDropdown = [
     { label: "Gallery", href: "/#gallery" },
@@ -202,7 +207,12 @@ export const Header = () => {
           <div className="flex justify-end items-center gap-3">
             {/* Actions & Icons */}
             <div className="flex items-center gap-1 sm:gap-2">
-              {!signedIn ? (
+              {isAuthLoading ? (
+                <div className="hidden lg:flex items-center gap-4 pr-3 border-r border-black/10 mr-1 animate-pulse">
+                  <div className="h-4 w-10 bg-slate-200 rounded"></div>
+                  <div className="h-8 w-20 bg-slate-200 rounded-full"></div>
+                </div>
+              ) : !signedIn ? (
                 <div className="hidden lg:flex items-center gap-4 pr-3 border-r border-black/10 mr-1">
                   <Link to="/login" className="text-xs font-semibold uppercase tracking-widest text-foreground hover:text-primary transition-all border-b border-transparent hover:border-primary pb-0.5">Login</Link>
                   <Link to="/signup" className="text-xs font-semibold uppercase tracking-widest bg-foreground text-background hover:bg-primary px-5 py-2.5 rounded-full transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5">Sign Up</Link>
@@ -278,7 +288,12 @@ export const Header = () => {
                       <CalendarClock className="h-5 w-5 opacity-70" />
                       Book a Session
                     </Link>
-                    {signedIn && (
+                    {isAuthLoading ? (
+                      <div className="flex flex-col gap-3 px-5 py-4 animate-pulse">
+                        <div className="h-10 w-full bg-slate-200 rounded-xl"></div>
+                        <div className="h-10 w-full bg-slate-200 rounded-xl"></div>
+                      </div>
+                    ) : signedIn ? (
                       <>
                         <Link to="/profile" onClick={() => setOpen(false)} className="flex items-center gap-3 px-5 py-3.5 text-sm font-semibold text-foreground/80 hover:bg-black/5 hover:text-primary rounded-lg">
                           {user?.profileImage ? (
@@ -304,8 +319,7 @@ export const Header = () => {
                           Log out
                         </button>
                       </>
-                    )}
-                    {!signedIn && (
+                    ) : (
                       <div className="flex flex-col gap-3 px-5 py-4">
                         <Link to="/login" onClick={() => setOpen(false)} className="flex items-center justify-center w-full py-3.5 text-sm font-semibold text-foreground border border-black/10 hover:bg-black/5 rounded-xl transition-colors">Log In</Link>
                         <Link to="/signup" onClick={() => setOpen(false)} className="flex items-center justify-center w-full py-3.5 text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl shadow-sm transition-colors">Create Account</Link>

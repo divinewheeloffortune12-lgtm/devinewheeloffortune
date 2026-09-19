@@ -37,7 +37,7 @@ export default function ProductPage() {
        .then(({ data }) => { 
          if (live) {
            setProduct(data.data);
-           if (data.data.sizes?.length > 0) setSelectedSize(data.data.sizes[0]);
+           if ((data.data.sizes || []).length > 0) setSelectedSize(data.data.sizes[0]);
          }
        })
        .catch(() => { if (live) setProduct(null); })
@@ -60,12 +60,12 @@ export default function ProductPage() {
 
   const nextImage = () => {
     if (!product?.images) return;
-    setCurrentImageIndex((prev) => (prev + 1) % product.images!.length);
+    setCurrentImageIndex((prev) => (prev + 1) % (product.images || []).length);
   };
 
   const prevImage = () => {
     if (!product?.images) return;
-    setCurrentImageIndex((prev) => (prev - 1 + product.images!.length) % product.images!.length);
+    setCurrentImageIndex((prev) => (prev - 1 + (product.images || []).length) % (product.images || []).length);
   };
 
   if (loading) return <Layout><div className="min-h-[70vh] grid place-items-center"><Loader2 className="animate-spin text-primary"/></div></Layout>;

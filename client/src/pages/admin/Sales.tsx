@@ -75,10 +75,13 @@ export const AdminSales = () => {
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'PENDING': return <Package className="w-4 h-4 text-amber-500" />;
+      case 'PENDING_PAYMENT': return <Package className="w-4 h-4 text-slate-500" />;
+      case 'CONFIRMED': 
+      case 'PROCESSING': return <Package className="w-4 h-4 text-amber-500" />;
       case 'SHIPPED': return <Truck className="w-4 h-4 text-blue-500" />;
       case 'DELIVERED': return <CheckCircle2 className="w-4 h-4 text-emerald-500" />;
-      case 'CANCELLED': return <XCircle className="w-4 h-4 text-red-500" />;
+      case 'CANCELLED': 
+      case 'REFUNDED': return <XCircle className="w-4 h-4 text-red-500" />;
       default: return <Package className="w-4 h-4 text-slate-500" />;
     }
   };
@@ -199,18 +202,18 @@ export const AdminSales = () => {
                     <td className="p-4">
                       <div className="flex items-center gap-2">
                         {getStatusIcon(s.status)}
-                        <span className="text-xs font-semibold uppercase tracking-wider">{s.status || 'PENDING'}</span>
+                        <span className="text-xs font-semibold uppercase tracking-wider">{s.status || 'PENDING_PAYMENT'}</span>
                       </div>
                     </td>
                     <td className="p-4 text-slate-500">{new Date(s.createdAt).toLocaleDateString()}</td>
                     <td className="p-4 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        {s.status === 'PENDING' && (
+                        {['CONFIRMED', 'PROCESSING'].includes(s.status) && (
                           <Button variant="outline" size="sm" onClick={() => handleStatusUpdate(s._id, 'SHIPPED')} className="h-8 text-blue-600 border-blue-200 hover:bg-blue-50" disabled={isUpdating}>
                             Ship
                           </Button>
                         )}
-                        {['PENDING', 'SHIPPED'].includes(s.status) && (
+                        {['PENDING_PAYMENT', 'CONFIRMED', 'PROCESSING', 'SHIPPED'].includes(s.status) && (
                           <Button variant="outline" size="sm" onClick={() => handleStatusUpdate(s._id, 'CANCELLED')} className="h-8 text-red-600 border-red-200 hover:bg-red-50" disabled={isUpdating}>
                             Cancel
                           </Button>

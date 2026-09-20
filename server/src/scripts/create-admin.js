@@ -10,7 +10,6 @@ async function main() {
   await connectDB();
   if (await AdminUser.exists({ email })) throw new Error('An admin with this email already exists; reset its password through an audited admin-recovery process.');
   await AdminUser.create({ email, passwordHash: await bcrypt.hash(password, 12), role: 'super_admin', status: 'active' });
-  console.log(`Admin account created for ${email}`);
   process.exit(0);
 }
 main().catch((error) => { console.error(error.message); process.exit(1); });

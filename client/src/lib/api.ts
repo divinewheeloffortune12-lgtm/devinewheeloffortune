@@ -5,6 +5,7 @@ const API_BASE = import.meta.env.VITE_API_URL || "https://devinewheeloffortune.o
 export const api = axios.create({
   baseURL: API_BASE.endsWith('/api') ? API_BASE : `${API_BASE}/api`,
   withCredentials: true,
+  timeout: 30000, // 30 seconds timeout
   headers: { "Content-Type": "application/json" },
 });
 
@@ -37,6 +38,12 @@ api.interceptors.response.use(
           localStorage.removeItem('token');
         }
       }
+    }
+
+    // Handle Timeouts explicitly
+    if (error.code === 'ECONNABORTED' && error.message.includes('timeout')) {
+      // You could trigger a toast here, or just reject with a formatted message
+      return Promise.reject(new Error('The request timed out. Please check your internet connection or try again later.'));
     }
 
     // Retry logic for GET requests (specifically helpful for Render free tier cold starts)

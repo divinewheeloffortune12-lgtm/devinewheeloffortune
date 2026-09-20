@@ -8,7 +8,6 @@ const connectDB = async () => {
       serverSelectionTimeoutMS: 10_000,
       maxPoolSize: 100
     });
-    console.log(`MongoDB Connected: ${conn.connection.host}`);
     
     // Auto-seed Admin User (initial seed only — never force-reset password)
     try {
@@ -25,7 +24,6 @@ const connectDB = async () => {
             role: 'super_admin', 
             status: 'active' 
           });
-          console.log(`Auto-seeded admin: ${email}`);
         }
         // NOTE: Removed force-reset of admin password on every startup.
         // If you need to reset, use: npm run admin:create

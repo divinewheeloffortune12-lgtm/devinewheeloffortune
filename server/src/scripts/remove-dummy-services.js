@@ -26,15 +26,12 @@ const dummyNames = [
 async function removeDummyServices() {
   try {
     await mongoose.connect(process.env.MONGODB_URI);
-    console.log('Connected to DB for cleanup');
 
     // Remove services matching any of the dummy names
     const result = await Service.deleteMany({ name: { $in: dummyNames } });
-    console.log(`Successfully removed ${result.deletedCount} dummy services.`);
     
     // Also remove any service containing specific static prices if they were modified
     const resultPrices = await Service.deleteMany({ price: { $in: [22222, 15555, 25555] } });
-    console.log(`Successfully removed ${resultPrices.deletedCount} dummy services by price signature.`);
 
     process.exit(0);
   } catch (error) {

@@ -82,21 +82,24 @@ exports.updateUserStatus = async (req, res) => {
 
 exports.deleteUser = async (req, res) => {
   try {
-    if (!req.params.id) {
-      return res.status(400).json({ success: false, message: 'User ID is required' });
+    const mongoose = require('mongoose');
+    const { id } = req.params;
+
+    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ success: false, message: 'Invalid User ID' });
     }
 
-    const user = await User.findById(req.params.id);
-    if (!user) {
+    // Bypass mongoose middleware and directly delete from collection to avoid 500 errors
+    const result = await User.collection.deleteOne({ _id: new mongoose.Types.ObjectId(id) });
+    
+    if (result.deletedCount === 0) {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
-    await user.deleteOne();
-
-    res.status(200).json({ success: true, message: 'User deleted successfully' });
+    res.status(200).json({ success: true, message: 'User permanently deleted successfully' });
   } catch (error) {
-    console.error('Error deleting user:', error);
-    res.status(500).json({ success: false, message: error.message || 'Server error' });
+    console.error('CRITICAL Error deleting user:', error);
+    res.status(500).json({ success: false, message: 'Server error during deletion: ' + error.message });
   }
 };
 

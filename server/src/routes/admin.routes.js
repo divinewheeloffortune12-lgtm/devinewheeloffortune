@@ -99,6 +99,7 @@ router.get('/sales', async (req, res, next) => {
       filter.status = { $ne: 'PENDING_PAYMENT' };
     }
     if (req.query.paymentStatus && req.query.paymentStatus !== 'all') filter.paymentStatus = req.query.paymentStatus;
+    if (req.query.user) filter.user = req.query.user;
 
     const [orders, total] = await Promise.all([
       Order.find(filter)

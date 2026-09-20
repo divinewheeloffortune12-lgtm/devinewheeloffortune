@@ -21,6 +21,8 @@ export const AdminUsers = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [activeTab, setActiveTab] = useState("active");
+  const [selectedUserSales, setSelectedUserSales] = useState<any>(null);
+  const [isSalesLoading, setIsSalesLoading] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -79,6 +81,24 @@ export const AdminUsers = () => {
         title: "Deletion failed",
         description: "Could not delete user."
       });
+    }
+  };
+
+  const fetchUserSales = async (user: any) => {
+    setIsSalesLoading(true);
+    setSelectedUserSales({ user, orders: [] }); // Set initially to show dialog loader
+    try {
+      const { data } = await api.get(`/admin/sales?user=${user._id}`);
+      setSelectedUserSales({ user, orders: data.data || [] });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Could not fetch user purchases."
+      });
+      setSelectedUserSales(null);
+    } finally {
+      setIsSalesLoading(false);
     }
   };
 
@@ -177,9 +197,7 @@ export const AdminUsers = () => {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => {
-                          window.location.href = `/admin/sales?user=${user._id}`;
-                        }}
+                        onClick={() => fetchUserSales(user)}
                         className="text-slate-500 hover:text-primary hover:bg-primary/5"
                         title="View Purchases & Money Details"
                       >
@@ -323,6 +341,48 @@ export const AdminUsers = () => {
                   </div>
                 </div>
               </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* User Purchases Modal */}
+      <Dialog open={!!selectedUserSales} onOpenChange={() => setSelectedUserSales(null)}>
+        <DialogContent className="sm:max-w-[700px] max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="font-serif text-2xl text-slate-800">
+              Purchases - {selectedUserSales?.user?.name || "User"}
+            </DialogTitle>
+          </DialogHeader>
+          
+          {isSalesLoading ? (
+            <div className="flex justify-center py-10"><Loader2 className="w-6 h-6 animate-spin text-slate-400" /></div>
+          ) : selectedUserSales?.orders?.length === 0 ? (
+            <div className="py-8 text-center text-slate-500">No purchases found for this user.</div>
+          ) : (
+            <div className="space-y-4 py-4">
+              {selectedUserSales?.orders?.map((order: any) => (
+                <div key={order._id} className="border border-slate-100 rounded-xl p-4 bg-slate-50 flex justify-between items-center">
+                  <div>
+                    <p className="font-semibold text-slate-800">#{order.orderNumber || order._id.slice(-6).toUpperCase()}</p>
+                    <p className="text-sm text-slate-500 mt-1">{new Date(order.createdAt).toLocaleDateString()}</p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
+                        order.paymentStatus === 'PAID' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
+                      }`}>
+                        {order.paymentStatus || 'PENDING'}
+                      </span>
+                      <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">{order.status}</span>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-semibold text-lg text-slate-800">₹{order.totalAmount?.toLocaleString("en-IN")}</p>
+                    <p className="text-xs text-slate-500 mt-1">
+                      {order.products?.map((p: any) => p.product?.name).join(', ') || 'Items'}
+                    </p>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </DialogContent>

@@ -503,22 +503,22 @@ export const AdminProducts = () => {
         </div>
       ) : (
         <div className="space-y-4">
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-auto max-h-[70vh]">
+          <div className="bg-white/60 backdrop-blur-xl rounded-3xl border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-auto max-h-[70vh]">
           <table className="w-full text-left text-sm text-slate-600 min-w-[800px]">
-            <thead className="bg-slate-50 text-slate-900 border-b border-slate-200">
+            <thead className="bg-white/40 text-slate-800 border-b border-white/40 backdrop-blur-md">
               <tr>
-                <th className="p-4 font-medium w-16">Image</th>
-                <th className="p-4 font-medium">Name</th>
-                <th className="p-4 font-medium">Category</th>
-                <th className="p-4 font-medium">Price</th>
-                <th className="p-4 font-medium">Stock</th>
-                <th className="p-4 font-medium text-right">Actions</th>
+                <th className="p-5 font-bold uppercase tracking-widest text-[11px] text-slate-500 w-16">Image</th>
+                <th className="p-5 font-bold uppercase tracking-widest text-[11px] text-slate-500">Name</th>
+                <th className="p-5 font-bold uppercase tracking-widest text-[11px] text-slate-500">Category</th>
+                <th className="p-5 font-bold uppercase tracking-widest text-[11px] text-slate-500">Price</th>
+                <th className="p-5 font-bold uppercase tracking-widest text-[11px] text-slate-500">Stock</th>
+                <th className="p-5 font-bold uppercase tracking-widest text-[11px] text-slate-500 text-right">Actions</th>
               </tr>
             </thead>
             <tbody>
               {products.map((p: any) => (
-                <tr key={p._id} className="border-b border-slate-100 last:border-0 hover:bg-slate-50 transition-colors">
-                  <td className="p-4">
+                <tr key={p._id} className="border-b border-white/40 last:border-0 hover:bg-white/60 transition-colors">
+                  <td className="p-5">
                     {p.images && p.images[0] ? (
                       <img src={p.images[0]} alt={p.name} className="w-10 h-10 rounded-md object-cover border border-slate-200" />
                     ) : (
@@ -527,18 +527,24 @@ export const AdminProducts = () => {
                       </div>
                     )}
                   </td>
-                  <td className="p-4 font-medium text-slate-900">{p.name}</td>
-                  <td className="p-4">{p.category?.name || "Uncategorized"}</td>
-                  <td className="p-4">
+                  <td className="p-5 font-semibold text-slate-800">{p.name}</td>
+                  <td className="p-5 text-slate-600">
+                    <span className="px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-[0.2em] shadow-sm ring-1 ring-inset bg-slate-50 text-slate-600 ring-slate-500/20">
+                      {p.category?.name || "N/A"}
+                    </span>
+                  </td>
+                  <td className="p-5 font-semibold text-slate-800">
                     <div>₹{p.price}</div>
                     {p.discount > 0 && <div className="text-xs text-green-600 font-medium">{p.discount}% OFF</div>}
                   </td>
-                  <td className="p-4">
-                    <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${p.stock > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                      {p.stock > 0 ? `${p.stock} in stock` : 'Out of stock'}
-                    </span>
+                  <td className="p-5">
+                    {p.stock > 0 ? (
+                      <span className="text-emerald-600 font-bold">{p.stock} in stock</span>
+                    ) : (
+                      <span className="text-rose-600 font-bold">Out of stock</span>
+                    )}
                   </td>
-                  <td className="p-4 text-right flex justify-end gap-2">
+                  <td className="p-5 text-right flex items-center justify-end gap-2">
                     <Button 
                       variant="ghost" 
                       size="icon" 

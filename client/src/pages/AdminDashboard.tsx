@@ -75,12 +75,19 @@ const AdminDashboard = () => {
   }
 
   const getNavLinkClass = ({ isActive }: { isActive: boolean }) => 
-    `flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-      isActive ? 'bg-slate-800 text-white' : 'hover:bg-slate-800 text-slate-400 hover:text-white'
+    `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 ${
+      isActive 
+        ? 'bg-white/10 text-white shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]' 
+        : 'hover:bg-white/5 text-slate-400 hover:text-white hover:translate-x-1'
     }`;
 
   return (
-    <div className="min-h-screen bg-slate-50 flex overflow-hidden">
+    <div className="min-h-screen bg-slate-50 flex overflow-hidden font-sans relative">
+      {/* Dynamic Background Mesh */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-primary/5 blur-[120px]" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-blue-500/5 blur-[120px]" />
+      </div>
       {/* Mobile Sidebar Overlay */}
       {isSidebarOpen && (
         <div 
@@ -89,14 +96,14 @@ const AdminDashboard = () => {
         />
       )}
 
-      {/* Sidebar */}
+      {/* Sidebar - Glassmorphic Dark */}
       <aside className={`
         fixed md:relative inset-y-0 left-0 z-50
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'} 
-        transition-transform duration-300 ease-in-out 
-        w-64 bg-slate-900 text-slate-300 flex flex-col h-screen shrink-0 shadow-2xl md:shadow-none
+        transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]
+        w-64 bg-slate-950/80 backdrop-blur-xl text-slate-300 flex flex-col h-screen shrink-0 shadow-[4px_0_24px_rgba(0,0,0,0.1)] md:shadow-none border-r border-white/5
       `}>
-        <div className="p-6 border-b border-slate-800 flex items-center justify-between min-w-[256px]">
+        <div className="p-6 border-b border-white/10 flex items-center justify-between min-w-[256px]">
           <div>
             <h2 className="text-white font-serif text-xl">Divine Wheel</h2>
             <p className="text-xs text-slate-500 uppercase tracking-widest mt-1">Admin Portal</p>

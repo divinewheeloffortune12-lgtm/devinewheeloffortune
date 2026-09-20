@@ -36,104 +36,104 @@ export const DashboardHome = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {/* KPI 1 */}
-        <div className="bg-gradient-to-br from-white to-blue-50/30 p-6 rounded-2xl border border-blue-100 shadow-sm flex flex-col justify-between hover:shadow-lg hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-blue-100/50 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
+        <div className="bg-white/60 backdrop-blur-xl p-6 rounded-3xl border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col justify-between hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none group-hover:bg-blue-500/20 transition-colors duration-500"></div>
           <div className="flex items-center justify-between mb-6 relative z-10">
-            <div className="h-12 w-12 bg-white text-blue-600 rounded-xl flex items-center justify-center shadow-sm border border-blue-50">
+            <div className="h-12 w-12 bg-white/80 text-blue-600 rounded-2xl flex items-center justify-center shadow-sm border border-blue-50 group-hover:scale-110 transition-transform duration-500">
               <Users className="w-6 h-6" />
             </div>
           </div>
           <div className="relative z-10">
-            <p className="text-xs font-bold text-blue-500 uppercase tracking-widest mb-1">Total Users</p>
-            <h3 className="text-4xl font-bold text-slate-800">{stats?.totals?.users || 0}</h3>
+            <p className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] mb-1">Total Users</p>
+            <h3 className="text-4xl font-extrabold text-slate-800 tracking-tight">{stats?.totals?.users || 0}</h3>
           </div>
         </div>
 
         {/* KPI 2 */}
-        <div className="bg-gradient-to-br from-white to-purple-50/30 p-6 rounded-2xl border border-purple-100 shadow-sm flex flex-col justify-between hover:shadow-lg hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-purple-100/50 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
+        <div className="bg-white/60 backdrop-blur-xl p-6 rounded-3xl border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col justify-between hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none group-hover:bg-purple-500/20 transition-colors duration-500"></div>
           <div className="flex items-center justify-between mb-6 relative z-10">
-            <div className="h-12 w-12 bg-white text-purple-600 rounded-xl flex items-center justify-center shadow-sm border border-purple-50">
+            <div className="h-12 w-12 bg-white/80 text-purple-600 rounded-2xl flex items-center justify-center shadow-sm border border-purple-50 group-hover:scale-110 transition-transform duration-500">
               <Package className="w-6 h-6" />
             </div>
           </div>
           <div className="relative z-10">
-            <p className="text-xs font-bold text-purple-500 uppercase tracking-widest mb-1">Total Products</p>
-            <h3 className="text-4xl font-bold text-slate-800">{stats?.totals?.products || 0}</h3>
+            <p className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] mb-1">Total Products</p>
+            <h3 className="text-4xl font-extrabold text-slate-800 tracking-tight">{stats?.totals?.products || 0}</h3>
           </div>
         </div>
 
         {/* KPI 3 */}
-        <div className="bg-gradient-to-br from-white to-amber-50/30 p-6 rounded-2xl border border-amber-100 shadow-sm flex flex-col justify-between hover:shadow-lg hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-amber-100/50 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
+        <div className="bg-white/60 backdrop-blur-xl p-6 rounded-3xl border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col justify-between hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none group-hover:bg-amber-500/20 transition-colors duration-500"></div>
           <div className="flex items-center justify-between mb-6 relative z-10">
-            <div className="h-12 w-12 bg-white text-amber-600 rounded-xl flex items-center justify-center shadow-sm border border-amber-50">
+            <div className="h-12 w-12 bg-white/80 text-amber-600 rounded-2xl flex items-center justify-center shadow-sm border border-amber-50 group-hover:scale-110 transition-transform duration-500">
               <ShoppingBag className="w-6 h-6" />
             </div>
           </div>
           <div className="relative z-10">
-            <p className="text-xs font-bold text-amber-500 uppercase tracking-widest mb-1">Total Orders</p>
-            <h3 className="text-4xl font-bold text-slate-800">{stats?.totals?.sales || 0}</h3>
+            <p className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] mb-1">Total Orders</p>
+            <h3 className="text-4xl font-extrabold text-slate-800 tracking-tight">{stats?.totals?.sales || 0}</h3>
           </div>
         </div>
 
         {/* KPI 4 */}
-        <div className="bg-gradient-to-br from-white to-emerald-50/30 p-6 rounded-2xl border border-emerald-100 shadow-sm flex flex-col justify-between hover:shadow-lg hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-100/50 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
+        <div className="bg-white/60 backdrop-blur-xl p-6 rounded-3xl border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col justify-between hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none group-hover:bg-emerald-500/20 transition-colors duration-500"></div>
           <div className="flex items-center justify-between mb-6 relative z-10">
-            <div className="h-12 w-12 bg-white text-emerald-600 rounded-xl flex items-center justify-center shadow-sm border border-emerald-50">
+            <div className="h-12 w-12 bg-white/80 text-emerald-600 rounded-2xl flex items-center justify-center shadow-sm border border-emerald-50 group-hover:scale-110 transition-transform duration-500">
               <IndianRupee className="w-6 h-6" />
             </div>
           </div>
           <div className="relative z-10">
-            <p className="text-xs font-bold text-emerald-500 uppercase tracking-widest mb-1">Total Revenue</p>
-            <h3 className="text-4xl font-bold text-slate-800">₹{stats?.totals?.revenue?.toLocaleString("en-IN") || "0"}</h3>
+            <p className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] mb-1">Total Revenue</p>
+            <h3 className="text-4xl font-extrabold text-slate-800 tracking-tight">₹{stats?.totals?.revenue?.toLocaleString("en-IN") || "0"}</h3>
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-100 shadow-sm p-6 flex flex-col">
-          <h3 className="font-semibold text-slate-800 mb-6">Revenue Overview (Last 6 Months)</h3>
+        <div className="lg:col-span-2 bg-white/60 backdrop-blur-xl rounded-3xl border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-8 flex flex-col">
+          <h3 className="font-semibold text-slate-800 mb-6 text-lg tracking-tight">Revenue Overview (Last 6 Months)</h3>
           <div className="flex-1 min-h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.4}/>
+                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} dy={10} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} dx={-10} tickFormatter={(val) => `₹${val}`} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 13, fill: '#64748b', fontWeight: 500 }} dy={15} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 13, fill: '#64748b', fontWeight: 500 }} dx={-15} tickFormatter={(val) => `₹${val}`} />
                 <Tooltip 
-                  contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)' }}
-                  itemStyle={{ color: '#0f172a', fontWeight: 500 }}
+                  contentStyle={{ borderRadius: '16px', border: '1px solid rgba(255,255,255,0.2)', boxShadow: '0 8px 30px rgba(0,0,0,0.12)', backgroundColor: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(10px)' }}
+                  itemStyle={{ color: '#0f172a', fontWeight: 700 }}
                   formatter={(value: any) => [`₹${value.toLocaleString()}`, "Revenue"]}
                 />
-                <Area type="monotone" dataKey="revenue" stroke="#8b5cf6" strokeWidth={3} fillOpacity={1} fill="url(#colorRevenue)" />
+                <Area type="monotone" dataKey="revenue" stroke="#3b82f6" strokeWidth={4} fillOpacity={1} fill="url(#colorRevenue)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </div>
 
         <div className="flex flex-col gap-8">
-          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden flex-1">
-            <div className="p-5 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
-              <h3 className="font-semibold text-slate-800 text-sm">Recent Orders</h3>
+          <div className="bg-white/60 backdrop-blur-xl rounded-3xl border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden flex-1 flex flex-col">
+            <div className="p-6 border-b border-white/40 flex justify-between items-center bg-white/20">
+              <h3 className="font-semibold text-slate-800 text-lg tracking-tight">Recent Orders</h3>
             </div>
-            <div className="divide-y divide-slate-50">
+            <div className="divide-y divide-white/40 flex-1 overflow-y-auto">
               {stats?.recentSales?.map((order: any) => (
-                <div key={order._id} className="p-4 flex items-center justify-between hover:bg-slate-50/80 transition-colors">
+                <div key={order._id} className="p-5 flex items-center justify-between hover:bg-white/40 transition-colors group cursor-default">
                   <div>
-                    <p className="font-medium text-slate-800 text-sm">{order.user?.name || 'Guest User'}</p>
-                    <p className="text-xs text-slate-500">{order.orderNumber}</p>
+                    <p className="font-semibold text-slate-800 text-sm">{order.user?.name || 'Guest User'}</p>
+                    <p className="text-xs text-slate-500 mt-0.5">{order.orderNumber}</p>
                   </div>
                   <div className="text-right">
-                    <span className="text-sm font-semibold text-slate-700">₹{order.totalAmount?.toLocaleString("en-IN")}</span>
-                    <p className={`text-[10px] uppercase tracking-wider font-semibold mt-1 ${
-                      ['CANCELLED', 'REFUNDED'].includes(order.status) ? 'text-red-500' :
+                    <span className="text-sm font-bold text-slate-800">₹{order.totalAmount?.toLocaleString("en-IN")}</span>
+                    <p className={`text-[10px] uppercase tracking-[0.2em] font-bold mt-1.5 ${
+                      ['CANCELLED', 'REFUNDED'].includes(order.status) ? 'text-rose-500' :
                       order.status === 'DELIVERED' ? 'text-emerald-500' :
                       order.status === 'SHIPPED' ? 'text-blue-500' : 'text-amber-500'
                     }`}>
@@ -143,7 +143,7 @@ export const DashboardHome = () => {
                 </div>
               ))}
               {(!stats?.recentSales || stats.recentSales.length === 0) && (
-                <p className="p-6 text-center text-sm text-slate-400">No recent orders.</p>
+                <p className="p-8 text-center text-sm text-slate-400 font-medium">No recent orders.</p>
               )}
             </div>
           </div>

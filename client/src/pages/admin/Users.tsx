@@ -155,31 +155,31 @@ export const AdminUsers = () => {
           <p className="text-slate-500 font-medium">No users found.</p>
         </div>
       ) : (
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+        <div className="bg-white/60 backdrop-blur-xl rounded-3xl border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm text-slate-600 min-w-[800px]">
-              <thead className="bg-slate-50/50 text-slate-800 border-b border-slate-100">
+              <thead className="bg-white/40 text-slate-800 border-b border-white/40 backdrop-blur-md">
               <tr>
-                <th className="p-4 font-semibold">Name</th>
-                <th className="p-4 font-semibold">Email</th>
-                <th className="p-4 font-semibold">Mobile</th>
-                <th className="p-4 font-semibold">Status</th>
-                <th className="p-4 font-semibold text-right">Actions</th>
+                <th className="p-5 font-bold uppercase tracking-widest text-[11px] text-slate-500">Name</th>
+                <th className="p-5 font-bold uppercase tracking-widest text-[11px] text-slate-500">Email</th>
+                <th className="p-5 font-bold uppercase tracking-widest text-[11px] text-slate-500">Mobile</th>
+                <th className="p-5 font-bold uppercase tracking-widest text-[11px] text-slate-500">Status</th>
+                <th className="p-5 font-bold uppercase tracking-widest text-[11px] text-slate-500 text-right">Actions</th>
               </tr>
             </thead>
             <tbody>
               {users.filter((u: any) => activeTab === "active" ? u.status !== 'deleted' : u.status === 'deleted').map((user: any) => {
                 const tempBlocked = isBlocked24h(user);
                 return (
-                  <tr key={user._id} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50 transition-colors">
-                    <td className="p-4 font-medium text-slate-800">{user.name || "Not Filled"}</td>
-                    <td className="p-4 text-slate-500">{user.email || "Not Filled"}</td>
-                    <td className="p-4 text-slate-500">{user.mobile || "Not Filled"}</td>
-                    <td className="p-4">
-                      <span className={`px-2.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wider ${
-                        tempBlocked ? 'bg-orange-100 text-orange-700' :
-                        user.status === 'active' ? 'bg-emerald-100 text-emerald-700' : 
-                        user.status === 'blocked' ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-700'
+                  <tr key={user._id} className="border-b border-white/40 last:border-0 hover:bg-white/60 transition-colors">
+                    <td className="p-5 font-semibold text-slate-800">{user.name || "Not Filled"}</td>
+                    <td className="p-5 text-slate-600">{user.email || "Not Filled"}</td>
+                    <td className="p-5 text-slate-600">{user.mobile || "Not Filled"}</td>
+                    <td className="p-5">
+                      <span className={`px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-[0.2em] shadow-sm ring-1 ring-inset ${
+                        tempBlocked ? 'bg-orange-50 text-orange-600 ring-orange-500/20' :
+                        user.status === 'active' ? 'bg-emerald-50 text-emerald-600 ring-emerald-500/20' : 
+                        user.status === 'blocked' ? 'bg-rose-50 text-rose-600 ring-rose-500/20' : 'bg-slate-50 text-slate-600 ring-slate-500/20'
                       }`}>
                         {tempBlocked ? 'Blocked (24h)' : user.status}
                       </span>

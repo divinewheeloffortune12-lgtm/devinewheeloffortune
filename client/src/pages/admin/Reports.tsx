@@ -106,8 +106,9 @@ export const AdminReports = () => {
         </div>
       ) : (
         <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-          <table className="w-full text-left text-sm text-slate-600">
-            <thead className="bg-slate-50/50 text-slate-800 border-b border-slate-100">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm text-slate-600 min-w-[800px]">
+              <thead className="bg-slate-50/50 text-slate-800 border-b border-slate-100">
               <tr>
                 <th className="p-4 font-semibold">User</th>
                 <th className="p-4 font-semibold">Subject</th>
@@ -151,6 +152,7 @@ export const AdminReports = () => {
             </tbody>
           </table>
         </div>
+      </div>
       )}
       </TabsContent>
 

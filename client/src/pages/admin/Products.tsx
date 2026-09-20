@@ -504,7 +504,7 @@ export const AdminProducts = () => {
       ) : (
         <div className="space-y-4">
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-auto max-h-[70vh]">
-          <table className="w-full text-left text-sm text-slate-600">
+          <table className="w-full text-left text-sm text-slate-600 min-w-[800px]">
             <thead className="bg-slate-50 text-slate-900 border-b border-slate-200">
               <tr>
                 <th className="p-4 font-medium w-16">Image</th>

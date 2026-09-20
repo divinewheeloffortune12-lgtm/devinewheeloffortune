@@ -144,7 +144,7 @@ export const ServiceBookings = () => {
         <TabsContent value="bookings">
           <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left">
+              <table className="w-full text-sm text-left min-w-[1000px]">
                 <thead className="text-xs text-slate-500 uppercase bg-slate-50/50 border-b border-slate-100">
                   <tr>
                     <th className="px-6 py-4 font-semibold">Booking ID</th>

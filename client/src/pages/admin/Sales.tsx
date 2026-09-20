@@ -171,7 +171,7 @@ export const AdminSales = () => {
           <div className="p-10 text-center text-slate-500">No sales records found.</div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-slate-600">
+            <table className="w-full text-left text-sm text-slate-600 min-w-[1000px]">
               <thead className="bg-slate-50/50 text-slate-800 border-b border-slate-100">
                 <tr>
                   <th className="p-4 font-semibold whitespace-nowrap">Order ID</th>

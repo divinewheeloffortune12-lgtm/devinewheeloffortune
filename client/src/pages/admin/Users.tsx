@@ -156,8 +156,9 @@ export const AdminUsers = () => {
         </div>
       ) : (
         <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-          <table className="w-full text-left text-sm text-slate-600">
-            <thead className="bg-slate-50/50 text-slate-800 border-b border-slate-100">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm text-slate-600 min-w-[800px]">
+              <thead className="bg-slate-50/50 text-slate-800 border-b border-slate-100">
               <tr>
                 <th className="p-4 font-semibold">Name</th>
                 <th className="p-4 font-semibold">Email</th>
@@ -242,8 +243,9 @@ export const AdminUsers = () => {
                   </tr>
                 );
               })}
-            </tbody>
-          </table>
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 

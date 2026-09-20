@@ -81,8 +81,21 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 flex overflow-hidden">
+      {/* Mobile Sidebar Overlay */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-slate-900/50 z-40 md:hidden backdrop-blur-sm transition-opacity"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className={`${isSidebarOpen ? 'w-64 translate-x-0' : 'w-0 -translate-x-full'} transition-all duration-300 ease-in-out bg-slate-900 text-slate-300 flex flex-col h-screen shrink-0 relative z-20 overflow-hidden`}>
+      <aside className={`
+        fixed md:relative inset-y-0 left-0 z-50
+        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'} 
+        transition-transform duration-300 ease-in-out 
+        w-64 bg-slate-900 text-slate-300 flex flex-col h-screen shrink-0 shadow-2xl md:shadow-none
+      `}>
         <div className="p-6 border-b border-slate-800 flex items-center justify-between min-w-[256px]">
           <div>
             <h2 className="text-white font-serif text-xl">Divine Wheel</h2>
@@ -147,18 +160,18 @@ const AdminDashboard = () => {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col h-screen w-full relative">
         {/* Top Navbar */}
-        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 md:px-6 shrink-0 z-10 shadow-sm">
+        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 md:px-6 shrink-0 z-10 shadow-sm sticky top-0">
           <div className="flex items-center gap-4">
             <button 
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="p-2 rounded-md text-slate-500 hover:bg-slate-100 transition-colors"
+              className="p-2 rounded-md text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-colors md:hidden"
               aria-label="Toggle Sidebar"
             >
               <Menu className="w-5 h-5" />
             </button>
-            <div className="hidden sm:flex items-center gap-2 text-slate-500 bg-slate-50 px-3 py-1.5 rounded-full border border-slate-100">
-              <Clock className="w-4 h-4" />
-              <span className="text-sm font-medium">{currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
+            <div className="hidden sm:flex items-center gap-2 text-slate-500 bg-slate-50 px-4 py-2 rounded-lg border border-slate-200 shadow-inner">
+              <Clock className="w-4 h-4 text-primary" />
+              <span className="text-sm font-medium tracking-wide">{currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
             </div>
           </div>
            <div className="flex items-center gap-4">

@@ -30,56 +30,64 @@ export const DashboardHome = () => {
   return (
     <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500">
       <div>
-        <h2 className="text-3xl font-serif text-slate-800 font-medium tracking-tight">Dashboard Overview</h2>
-        <p className="text-slate-500 mt-1 text-sm">Here is what's happening with your store today.</p>
+        <h2 className="text-3xl font-serif text-slate-800 font-semibold tracking-tight">Dashboard Overview</h2>
+        <p className="text-slate-500 mt-2 text-sm">Welcome back! Here's what's happening with your store today.</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
-          <div className="flex items-center justify-between mb-4">
-            <div className="h-10 w-10 bg-blue-50 text-blue-500 rounded-xl flex items-center justify-center">
-              <Users className="w-5 h-5" />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* KPI 1 */}
+        <div className="bg-gradient-to-br from-white to-blue-50/30 p-6 rounded-2xl border border-blue-100 shadow-sm flex flex-col justify-between hover:shadow-lg hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-blue-100/50 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
+          <div className="flex items-center justify-between mb-6 relative z-10">
+            <div className="h-12 w-12 bg-white text-blue-600 rounded-xl flex items-center justify-center shadow-sm border border-blue-50">
+              <Users className="w-6 h-6" />
             </div>
           </div>
-          <div>
-            <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1">Total Users</p>
-            <h3 className="text-3xl font-semibold text-slate-800">{stats?.totals?.users || 0}</h3>
+          <div className="relative z-10">
+            <p className="text-xs font-bold text-blue-500 uppercase tracking-widest mb-1">Total Users</p>
+            <h3 className="text-4xl font-bold text-slate-800">{stats?.totals?.users || 0}</h3>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
-          <div className="flex items-center justify-between mb-4">
-            <div className="h-10 w-10 bg-purple-50 text-purple-500 rounded-xl flex items-center justify-center">
-              <Package className="w-5 h-5" />
+        {/* KPI 2 */}
+        <div className="bg-gradient-to-br from-white to-purple-50/30 p-6 rounded-2xl border border-purple-100 shadow-sm flex flex-col justify-between hover:shadow-lg hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-purple-100/50 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
+          <div className="flex items-center justify-between mb-6 relative z-10">
+            <div className="h-12 w-12 bg-white text-purple-600 rounded-xl flex items-center justify-center shadow-sm border border-purple-50">
+              <Package className="w-6 h-6" />
             </div>
           </div>
-          <div>
-            <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1">Total Products</p>
-            <h3 className="text-3xl font-semibold text-slate-800">{stats?.totals?.products || 0}</h3>
+          <div className="relative z-10">
+            <p className="text-xs font-bold text-purple-500 uppercase tracking-widest mb-1">Total Products</p>
+            <h3 className="text-4xl font-bold text-slate-800">{stats?.totals?.products || 0}</h3>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
-          <div className="flex items-center justify-between mb-4">
-            <div className="h-10 w-10 bg-orange-50 text-orange-500 rounded-xl flex items-center justify-center">
-              <ShoppingBag className="w-5 h-5" />
+        {/* KPI 3 */}
+        <div className="bg-gradient-to-br from-white to-amber-50/30 p-6 rounded-2xl border border-amber-100 shadow-sm flex flex-col justify-between hover:shadow-lg hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-amber-100/50 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
+          <div className="flex items-center justify-between mb-6 relative z-10">
+            <div className="h-12 w-12 bg-white text-amber-600 rounded-xl flex items-center justify-center shadow-sm border border-amber-50">
+              <ShoppingBag className="w-6 h-6" />
             </div>
           </div>
-          <div>
-            <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1">Total Orders</p>
-            <h3 className="text-3xl font-semibold text-slate-800">{stats?.totals?.sales || 0}</h3>
+          <div className="relative z-10">
+            <p className="text-xs font-bold text-amber-500 uppercase tracking-widest mb-1">Total Orders</p>
+            <h3 className="text-4xl font-bold text-slate-800">{stats?.totals?.sales || 0}</h3>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
-          <div className="flex items-center justify-between mb-4">
-            <div className="h-10 w-10 bg-emerald-50 text-emerald-500 rounded-xl flex items-center justify-center">
-              <IndianRupee className="w-5 h-5" />
+        {/* KPI 4 */}
+        <div className="bg-gradient-to-br from-white to-emerald-50/30 p-6 rounded-2xl border border-emerald-100 shadow-sm flex flex-col justify-between hover:shadow-lg hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-100/50 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
+          <div className="flex items-center justify-between mb-6 relative z-10">
+            <div className="h-12 w-12 bg-white text-emerald-600 rounded-xl flex items-center justify-center shadow-sm border border-emerald-50">
+              <IndianRupee className="w-6 h-6" />
             </div>
           </div>
-          <div>
-            <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1">Total Revenue</p>
-            <h3 className="text-3xl font-semibold text-slate-800">₹{stats?.totals?.revenue?.toLocaleString("en-IN") || "0"}</h3>
+          <div className="relative z-10">
+            <p className="text-xs font-bold text-emerald-500 uppercase tracking-widest mb-1">Total Revenue</p>
+            <h3 className="text-4xl font-bold text-slate-800">₹{stats?.totals?.revenue?.toLocaleString("en-IN") || "0"}</h3>
           </div>
         </div>
       </div>

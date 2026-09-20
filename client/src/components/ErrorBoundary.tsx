@@ -23,6 +23,16 @@ export class ErrorBoundary extends Component<Props, State> {
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error("Uncaught error:", error, errorInfo);
+    
+    // Automatically reload if a Vite dynamically imported chunk fails to load 
+    // (usually happens after a new deployment when users have old index.html cached)
+    if (
+      error.message.includes('Failed to fetch dynamically imported module') ||
+      error.message.includes('dynamically imported module') ||
+      error.message.includes('Importing a module script failed')
+    ) {
+      window.location.reload();
+    }
   }
 
   public render() {

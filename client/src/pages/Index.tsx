@@ -45,8 +45,9 @@ const Index = () => {
     queryKey: ['categories'],
     queryFn: async () => {
       const response = await api.get('/categories');
-      return response.data.data;
-    }
+      return (response.data.data || []).filter((c: any) => c && c.name);
+    },
+    staleTime: 60 * 1000
   });
 
   const { data: servicesData, isLoading: servicesLoading } = useQuery({

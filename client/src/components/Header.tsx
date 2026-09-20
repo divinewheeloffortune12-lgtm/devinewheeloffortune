@@ -38,9 +38,9 @@ export const Header = () => {
     queryKey: ['categories'],
     queryFn: async () => {
       const res = await api.get('/categories');
-      return res.data?.data || [];
+      return (res.data?.data || []).filter((c: any) => c && c.name);
     },
-    staleTime: 30 * 60 * 1000,
+    staleTime: 60 * 1000, // 1 minute
   });
 
   const { data: services = [] } = useQuery({

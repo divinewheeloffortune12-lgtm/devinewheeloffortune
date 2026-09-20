@@ -67,7 +67,10 @@ export default function Shop() {
         },
       })
       .then(({ data }) => {
-        if (live) setProducts(data.data);
+        if (live) {
+          const validProducts = data.data.filter((p: any) => p.availability !== false && p.isDeleted !== true);
+          setProducts(validProducts);
+        }
       })
       .catch((error) =>
         toast({

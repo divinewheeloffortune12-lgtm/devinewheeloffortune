@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Loader2, Plus, Edit, Trash2 } from "lucide-react";
 import { api } from "@/lib/api";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -12,6 +13,7 @@ export const ServiceBookings = () => {
   const [bookings, setBookings] = useState<any[]>([]);
   const [services, setServices] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const queryClient = useQueryClient();
   
   // Service Form State
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -82,13 +84,18 @@ export const ServiceBookings = () => {
       }
 
       if (editingService) {
-        await api.put(`/admin/services/${editingService._id}`, fd);
+        await api.put(`/admin/services/${editingService._id}`, fd, {
+          headers: { "Content-Type": "multipart/form-data" }
+        });
         toast({ title: "Service updated successfully" });
       } else {
-        await api.post("/admin/services", fd);
+        await api.post("/admin/services", fd, {
+          headers: { "Content-Type": "multipart/form-data" }
+        });
         toast({ title: "Service created successfully" });
       }
       
+      queryClient.invalidateQueries({ queryKey: ['services-list'] });
       setIsDialogOpen(false);
       fetchData(); // Refresh list
     } catch (error: any) {
@@ -106,6 +113,7 @@ export const ServiceBookings = () => {
     if (!window.confirm("Are you sure you want to delete this service?")) return;
     try {
       await api.delete(`/admin/services/${id}`);
+      queryClient.invalidateQueries({ queryKey: ['services-list'] });
       toast({ title: "Service deleted" });
       setServices(services.filter(s => s._id !== id));
     } catch (error: any) {

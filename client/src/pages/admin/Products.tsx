@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -58,6 +59,7 @@ export const AdminProducts = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -131,6 +133,7 @@ export const AdminProducts = () => {
         headers: { "Content-Type": "multipart/form-data" }
       });
       
+      queryClient.invalidateQueries({ queryKey: ['products'] });
       toast({ title: "Product created successfully" });
       setIsDialogOpen(false);
       form.reset();
@@ -151,6 +154,7 @@ export const AdminProducts = () => {
     if (!confirm("Are you sure you want to delete this product?")) return;
     try {
       await api.delete(`/admin/products/${id}`);
+      queryClient.invalidateQueries({ queryKey: ['products'] });
       toast({ title: "Product deleted" });
       fetchProducts();
     } catch (error: any) {
@@ -174,6 +178,7 @@ export const AdminProducts = () => {
         ));
       }
       
+      queryClient.invalidateQueries({ queryKey: ['products'] });
       toast({ title: "Product visibility updated" });
     } catch (error: any) {
       toast({ 

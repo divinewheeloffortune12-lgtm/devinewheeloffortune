@@ -37,6 +37,8 @@ export const Profile = () => {
   const [userData, setUserData] = useState<{ name: string; email: string; authProvider: string; profileUpdates?: string[]; mobile?: string; address?: Record<string, string>; likedProducts?: any[] } | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [updateLimitReached, setUpdateLimitReached] = useState(false);
+  const [cancellingOrderId, setCancellingOrderId] = useState<string | null>(null);
+  const [cancelReason, setCancelReason] = useState<string>("");
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof profileSchema>>({

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -38,6 +39,7 @@ export const AdminCategories = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -134,6 +136,7 @@ export const AdminCategories = () => {
         setCategories(prev => [...prev, data.data]);
       }
       
+      queryClient.invalidateQueries({ queryKey: ['categories'] });
       setIsDialogOpen(false);
       setSelectedImage(null);
       setPreviewUrl(null);
@@ -152,6 +155,7 @@ export const AdminCategories = () => {
     if (!confirm("Are you sure you want to permanently delete this category? All associated products will also be deleted.")) return;
     try {
       await api.delete(`/admin/categories/${id}`);
+      queryClient.invalidateQueries({ queryKey: ['categories'] });
       toast({ title: "Category and associated products deleted." });
       fetchCategories();
     } catch (error) {

@@ -16,7 +16,7 @@ const razorpay = new Razorpay({
 
 exports.getAllServices = async (req, res, next) => {
   try {
-    const services = await Service.find({ isActive: true });
+    const services = await Service.find({ isActive: true }).lean();
     res.json({ success: true, data: services });
   } catch (error) {
     next(error);

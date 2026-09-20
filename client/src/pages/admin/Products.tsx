@@ -54,6 +54,14 @@ export const AdminProducts = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
+  
+  // Pagination & Filtering state
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalProducts, setTotalProducts] = useState(0);
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const limit = 10;
+  
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -85,13 +93,20 @@ export const AdminProducts = () => {
 
   useEffect(() => {
     fetchProducts();
+  }, [page, selectedCategory]);
+
+  useEffect(() => {
     fetchCategories();
   }, []);
 
   const fetchProducts = async () => {
     try {
-      const { data } = await api.get("/admin/products");
+      setIsLoading(true);
+      const url = `/admin/products?page=${page}&limit=${limit}${selectedCategory !== 'all' ? `&category=${selectedCategory}` : ''}`;
+      const { data } = await api.get(url);
       setProducts(data.data);
+      setTotalPages(data.totalPages || 1);
+      setTotalProducts(data.total || data.data.length);
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -167,11 +182,17 @@ export const AdminProducts = () => {
   };
 
   const toggleAvailability = async (id: string, currentAvailability: boolean) => {
+    const intendedState = !currentAvailability;
+    
+    // Optimistic UI Update
+    setProducts(prevProducts => prevProducts.map((p: any) => 
+      p._id === id ? { ...p, availability: intendedState } : p
+    ));
+
     try {
-      const intendedState = !currentAvailability;
       const response = await api.patch(`/admin/products/${id}/availability`, { availability: intendedState });
       
-      // Update local state using the authoritative server response
+      // Sync back with server if necessary
       if (response.data?.success && response.data?.data) {
         setProducts(prevProducts => prevProducts.map((p: any) => 
           p._id === id ? { ...p, availability: response.data.data.availability } : p
@@ -186,8 +207,10 @@ export const AdminProducts = () => {
         title: "Update failed",
         description: error.response?.data?.message || "Please try again."
       });
-      // Fallback fetch in case of failure to ensure UI consistency
-      fetchProducts();
+      // Revert Optimistic UI Update
+      setProducts(prevProducts => prevProducts.map((p: any) => 
+        p._id === id ? { ...p, availability: currentAvailability } : p
+      ));
     }
   };
 
@@ -197,15 +220,15 @@ export const AdminProducts = () => {
 
   return (
     <div className="max-w-6xl mx-auto space-y-8">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-serif text-slate-900">Products</h2>
-          <p className="text-slate-500 mt-1">Manage inventory and product details.</p>
+          <p className="text-slate-500 mt-1">Manage inventory and product details. ({totalProducts} total)</p>
         </div>
         
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="gap-2">
+            <Button className="gap-2 shrink-0">
               <Plus className="w-4 h-4" /> Add Product
             </Button>
           </DialogTrigger>
@@ -451,12 +474,36 @@ export const AdminProducts = () => {
         </Dialog>
       </div>
 
-      {products.length === 0 ? (
+      {/* Category Filter Tabs */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+        <Button 
+          variant={selectedCategory === "all" ? "default" : "outline"} 
+          size="sm" 
+          onClick={() => { setSelectedCategory("all"); setPage(1); }}
+          className="rounded-full shrink-0"
+        >
+          All
+        </Button>
+        {categories.map((c: any) => (
+          <Button 
+            key={c._id}
+            variant={selectedCategory === c._id ? "default" : "outline"} 
+            size="sm" 
+            onClick={() => { setSelectedCategory(c._id); setPage(1); }}
+            className="rounded-full shrink-0"
+          >
+            {c.name}
+          </Button>
+        ))}
+      </div>
+
+      {products.length === 0 && !isLoading ? (
         <div className="bg-white rounded-xl p-10 text-center border border-slate-200 shadow-sm">
-          <p className="text-slate-500">No products found. Add your first product to get started.</p>
+          <p className="text-slate-500">No products found for this category.</p>
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-auto max-h-[80vh]">
+        <div className="space-y-4">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-auto max-h-[70vh]">
           <table className="w-full text-left text-sm text-slate-600">
             <thead className="bg-slate-50 text-slate-900 border-b border-slate-200">
               <tr>
@@ -512,6 +559,34 @@ export const AdminProducts = () => {
               ))}
             </tbody>
           </table>
+        </div>
+        
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between border-t border-slate-200 pt-4 px-2">
+            <div className="text-sm text-slate-500">
+              Showing page {page} of {totalPages}
+            </div>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setPage(p => Math.max(1, p - 1))}
+                disabled={page === 1}
+              >
+                Previous
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                disabled={page === totalPages}
+              >
+                Next
+              </Button>
+            </div>
+          </div>
+        )}
         </div>
       )}
     </div>

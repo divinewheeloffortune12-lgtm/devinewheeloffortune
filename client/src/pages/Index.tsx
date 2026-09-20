@@ -73,11 +73,11 @@ const Index = () => {
   return (
     <Layout>
       <ClickSpark sparkColor="#d8b4fe" sparkSize={12} sparkRadius={20} sparkCount={10} duration={500} />
-      <section className="relative min-h-[88svh] overflow-hidden bg-black mt-16 lg:mt-16">
+      <section className="relative min-h-[88svh] overflow-hidden bg-slate-900 mt-16 lg:mt-16">
         <video className="absolute inset-0 h-full w-full object-cover contrast-125 saturate-110 brightness-110 filter" autoPlay muted loop playsInline preload="metadata" aria-label="Nattasha Sharrma welcoming you to Divine Wheel Of Fortune">
           <source src="/herovideo.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-black/20" />
+        <div className="absolute inset-0 bg-slate-900/10" />
         <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-background to-transparent" />
         
         <div className="container-full relative flex min-h-[88svh] items-end justify-start pb-8 pt-32 md:pb-12 z-10">
@@ -242,8 +242,8 @@ const Index = () => {
                   to={`/products?category=${item._id}`} 
                   className="group relative overflow-hidden rounded-3xl block h-[320px]"
                 >
-                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-500 z-10" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent z-10" />
+                  <div className="absolute inset-0 bg-slate-900/10 group-hover:bg-slate-900/5 transition-colors duration-500 z-10" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/30 to-transparent z-10" />
                   <img 
                     src={item.image} 
                     alt={item.name}

@@ -5,7 +5,7 @@ const slugify = (value) => value.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-'
 
 const uploadImage = (buffer) => new Promise((resolve, reject) => {
   const stream = cloudinary.uploader.upload_stream(
-    { folder: 'astrology_ecommerce/categories', resource_type: 'image' },
+    { folder: 'astrology_ecommerce/categories', resource_type: 'image', format: 'webp', transformation: [{ width: 1200, crop: 'limit', quality: 'auto' }] },
     (error, result) => (error ? reject(error) : resolve(result)),
   );
   stream.end(buffer);

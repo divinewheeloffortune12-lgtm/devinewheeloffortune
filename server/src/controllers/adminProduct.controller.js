@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 
 const uploadImage = (buffer) => new Promise((resolve, reject) => {
   const stream = cloudinary.uploader.upload_stream(
-    { folder: 'astrology_ecommerce/products', resource_type: 'image' },
+    { folder: 'astrology_ecommerce/products', resource_type: 'image', format: 'webp', transformation: [{ width: 1200, crop: 'limit', quality: 'auto' }] },
     (error, result) => (error ? reject(error) : resolve(result)),
   );
   stream.end(buffer);
@@ -122,7 +122,8 @@ exports.getProducts = async (req, res) => {
       .populate('category', 'name')
       .skip(skip)
       .limit(limit)
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean();
 
     const total = await Product.countDocuments(query);
 

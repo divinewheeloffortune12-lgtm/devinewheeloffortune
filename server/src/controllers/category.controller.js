@@ -2,7 +2,7 @@ const Category = require('../models/Category');
 
 exports.getCategories = async (req, res) => {
   try {
-    const categories = await Category.find({ status: 'active' }).sort({ sortOrder: 1 });
+    const categories = await Category.find({ status: 'active' }).sort({ sortOrder: 1 }).lean();
     res.status(200).json({ success: true, data: categories });
   } catch (error) {
     console.error(error);

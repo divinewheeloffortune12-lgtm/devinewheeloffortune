@@ -3,7 +3,7 @@ const cloudinary = require('../config/cloudinary');
 
 const uploadImage = (buffer) => new Promise((resolve, reject) => {
   const stream = cloudinary.uploader.upload_stream(
-    { folder: 'astrology/services', resource_type: 'image' },
+    { folder: 'astrology/services', resource_type: 'image', format: 'webp', transformation: [{ width: 1200, crop: 'limit', quality: 'auto' }] },
     (error, result) => (error ? reject(error) : resolve(result)),
   );
   stream.end(buffer);
@@ -78,7 +78,7 @@ exports.deleteService = async (req, res, next) => {
 
 exports.getAllServices = async (req, res, next) => {
   try {
-    const services = await Service.find().sort({ createdAt: -1 });
+    const services = await Service.find().sort({ createdAt: -1 }).lean();
     res.json({ success: true, data: services });
   } catch (error) {
     next(error);

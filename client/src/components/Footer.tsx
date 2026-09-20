@@ -20,19 +20,19 @@ export const Footer = () => {
           <div className="lg:col-span-3">
             <h3 className="text-sm font-bold text-foreground mb-6">About Us</h3>
             <ul className="space-y-4 text-[13px] text-foreground/70 font-medium">
-              <li><a href="#" className="hover:text-primary transition-colors">Company History</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Meet the Team</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Employee Handbook</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Careers</a></li>
+              <li><Link to="/about" className="hover:text-primary transition-colors">Our Story</Link></li>
+              <li><Link to="/contact" className="hover:text-primary transition-colors">Contact</Link></li>
+              <li><Link to="/services" className="hover:text-primary transition-colors">Services</Link></li>
+              <li><Link to="/shop" className="hover:text-primary transition-colors">Shop</Link></li>
             </ul>
           </div>
 
           <div className="lg:col-span-3">
             <h3 className="text-sm font-bold text-foreground mb-6">Helpful Links</h3>
             <ul className="space-y-4 text-[13px] text-foreground/70 font-medium">
-              <li><a href="/#faq" className="hover:text-primary transition-colors">FAQs</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Support</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Live Chat</a></li>
+              <li><Link to="/faq" className="hover:text-primary transition-colors">FAQs</Link></li>
+              <li><Link to="/blog" className="hover:text-primary transition-colors">Blog</Link></li>
+              <li><Link to="/announcements" className="hover:text-primary transition-colors">Announcements</Link></li>
             </ul>
           </div>
 

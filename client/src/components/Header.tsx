@@ -35,7 +35,7 @@ export const Header = () => {
   const signedIn = authData?.signedIn ?? false;
   const user = authData?.user ?? null;
 
-  const { data: categories = [] } = useQuery({
+  const { data: categories = [], isLoading: isCategoriesLoading } = useQuery({
     queryKey: ['categories'],
     queryFn: async () => {
       const res = await api.get('/categories');
@@ -44,7 +44,7 @@ export const Header = () => {
     staleTime: 60 * 1000, // 1 minute
   });
 
-  const { data: services = [] } = useQuery({
+  const { data: services = [], isLoading: isServicesLoading } = useQuery({
     queryKey: ['services'],
     queryFn: async () => {
       const res = await api.get('/bookings/services');
@@ -84,7 +84,6 @@ export const Header = () => {
   }, [queryClient]);
 
   const moreDropdown = [
-    { label: "Gallery", href: "/#gallery" },
     { label: "Blog", href: "/blog" },
     { label: "FAQ", href: "/faq" },
   ];
@@ -117,17 +116,28 @@ export const Header = () => {
                 </a>
                 <div className="absolute top-full left-0 w-full opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 bg-white shadow-xl border-t border-black/5 z-50">
                   <div className="container-full mx-auto px-4 py-8 grid grid-cols-4 gap-6">
-                    {categories.slice(0, 8).map(cat => (
-                      <Link key={cat._id} to={`/products?category=${cat.slug}`} className="group/item flex items-center gap-4 hover:bg-slate-50 p-3 rounded-xl transition-colors">
-                        <img src={cat.image || 'https://placehold.co/150x150'} alt={cat.name} className="w-16 h-16 rounded-lg object-cover shadow-sm border border-slate-100" />
-                        <div>
-                          <p className="font-medium text-sm text-slate-800 group-hover/item:text-primary transition-colors">{cat.name}</p>
-                          {cat.note && <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-1">{cat.note}</p>}
+                    {isCategoriesLoading ? (
+                      Array.from({ length: 4 }).map((_, i) => (
+                        <div key={i} className="flex items-center gap-4 p-3 animate-pulse">
+                          <div className="w-16 h-16 rounded-lg bg-slate-200"></div>
+                          <div className="flex-1 space-y-2">
+                            <div className="h-4 bg-slate-200 rounded w-3/4"></div>
+                            <div className="h-3 bg-slate-200 rounded w-1/2"></div>
+                          </div>
                         </div>
-                      </Link>
-                    ))}
-                    {categories.length === 0 && (
+                      ))
+                    ) : categories.length === 0 ? (
                       <p className="text-sm text-slate-500 col-span-4 py-4 text-center">No categories found.</p>
+                    ) : (
+                      categories.slice(0, 8).map(cat => (
+                        <Link key={cat._id} to={`/products?category=${cat.slug}`} className="group/item flex items-center gap-4 hover:bg-slate-50 p-3 rounded-xl transition-colors">
+                          <img src={cat.image || 'https://placehold.co/150x150'} alt={cat.name} className="w-16 h-16 rounded-lg object-cover shadow-sm border border-slate-100" />
+                          <div>
+                            <p className="font-medium text-sm text-slate-800 group-hover/item:text-primary transition-colors">{cat.name}</p>
+                            {cat.note && <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-1">{cat.note}</p>}
+                          </div>
+                        </Link>
+                      ))
                     )}
                   </div>
                 </div>
@@ -140,26 +150,37 @@ export const Header = () => {
                 </Link>
                 <div className="absolute top-full left-0 w-full opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 bg-white shadow-xl border-t border-black/5 z-50">
                   <div className="container-full mx-auto px-4 py-8 grid grid-cols-4 gap-6">
-                    {services.slice(0, 8).map(srv => (
-                      <Link key={srv._id} to={`/services`} state={{ preselectService: srv.name }} className="group/item flex items-center gap-4 hover:bg-slate-50 p-4 rounded-xl transition-colors border border-transparent hover:border-black/5 shadow-sm hover:shadow-md">
-                        <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover/item:scale-110 transition-transform shrink-0">
-                          <Sparkles className="w-5 h-5" />
+                    {isServicesLoading ? (
+                      Array.from({ length: 4 }).map((_, i) => (
+                        <div key={i} className="flex items-center gap-4 p-4 animate-pulse">
+                          <div className="w-12 h-12 rounded-full bg-slate-200"></div>
+                          <div className="flex-1 space-y-2">
+                            <div className="h-4 bg-slate-200 rounded w-full"></div>
+                            <div className="h-3 bg-slate-200 rounded w-1/3"></div>
+                          </div>
                         </div>
-                        <div>
-                          <p className="font-medium text-sm text-slate-800 group-hover/item:text-primary transition-colors leading-tight line-clamp-2">{srv.name}</p>
-                          <p className="text-[11px] text-slate-500 uppercase tracking-widest mt-1 font-semibold">₹{srv.price}</p>
-                        </div>
-                      </Link>
-                    ))}
-                    {services.length > 0 && (
+                      ))
+                    ) : services.length === 0 ? (
+                      <p className="text-sm text-slate-500 col-span-4 py-4 text-center">No services found.</p>
+                    ) : (
+                      services.slice(0, 8).map((srv: any) => (
+                        <Link key={srv._id} to={`/services`} state={{ preselectService: srv.name }} className="group/item flex items-center gap-4 hover:bg-slate-50 p-4 rounded-xl transition-colors border border-transparent hover:border-black/5 shadow-sm hover:shadow-md">
+                          <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover/item:scale-110 transition-transform shrink-0">
+                            <Sparkles className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <p className="font-medium text-sm text-slate-800 group-hover/item:text-primary transition-colors leading-tight line-clamp-2">{srv.name}</p>
+                            <p className="text-[11px] text-slate-500 uppercase tracking-widest mt-1 font-semibold">₹{srv.price}</p>
+                          </div>
+                        </Link>
+                      ))
+                    )}
+                    {services.length > 0 && !isServicesLoading && (
                       <Link to="/services" className="group/item flex flex-col items-center justify-center gap-2 bg-slate-50 hover:bg-primary/5 p-4 rounded-xl transition-colors border border-transparent hover:border-primary/20 shadow-sm hover:shadow-md h-full min-h-[80px]">
                         <span className="font-medium text-sm text-primary flex items-center gap-2">
                           View All Services <ArrowRight className="w-4 h-4 transition-transform group-hover/item:translate-x-1" />
                         </span>
                       </Link>
-                    )}
-                    {services.length === 0 && (
-                      <p className="text-sm text-slate-500 col-span-4 py-4 text-center">No services found.</p>
                     )}
                   </div>
                 </div>
@@ -283,7 +304,6 @@ export const Header = () => {
                   <Link to="/products" onClick={() => setOpen(false)} className="flex items-center gap-3 px-5 py-3.5 text-sm font-semibold text-foreground/80 hover:bg-black/5 hover:text-primary rounded-lg"><ShoppingBag className="w-4 h-4 opacity-70" /> Shop</Link>
                   <Link to="/about" onClick={() => setOpen(false)} className="flex items-center gap-3 px-5 py-3.5 text-sm font-semibold text-foreground/80 hover:bg-black/5 hover:text-primary rounded-lg"><Info className="w-4 h-4 opacity-70" /> About</Link>
                   <Link to="/contact" onClick={() => setOpen(false)} className="flex items-center gap-3 px-5 py-3.5 text-sm font-semibold text-foreground/80 hover:bg-black/5 hover:text-primary rounded-lg"><Phone className="w-4 h-4 opacity-70" /> Contact</Link>
-                  <a href={homeHref("/#gallery")} onClick={() => setOpen(false)} className="flex items-center gap-3 px-5 py-3.5 text-sm font-semibold text-foreground/80 hover:bg-black/5 hover:text-primary rounded-lg"><ImageIcon className="w-4 h-4 opacity-70" /> Gallery</a>
                   <Link to="/blog" onClick={() => setOpen(false)} className="flex items-center gap-3 px-5 py-3.5 text-sm font-semibold text-foreground/80 hover:bg-black/5 hover:text-primary rounded-lg"><FileText className="w-4 h-4 opacity-70" /> Blog</Link>
                   <Link to="/faq" onClick={() => setOpen(false)} className="flex items-center gap-3 px-5 py-3.5 text-sm font-semibold text-foreground/80 hover:bg-black/5 hover:text-primary rounded-lg"><HelpCircle className="w-4 h-4 opacity-70" /> FAQ</Link>
 

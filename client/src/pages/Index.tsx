@@ -59,6 +59,15 @@ const Index = () => {
     staleTime: 60 * 1000
   });
 
+  const { data: latestBlogs = [], isLoading: blogsLoading } = useQuery({
+    queryKey: ['latest-blogs'],
+    queryFn: async () => {
+      const res = await api.get('/blogs?limit=3');
+      return res.data?.data || [];
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
   const shopCategories = categoriesData || [];
   
   const parallaxServices = (servicesData || []).map((service: any, index: number) => ({
@@ -285,19 +294,34 @@ const Index = () => {
         <div className="container-full relative z-10">
           <SectionHeading eyebrow="From the journal" title="Notes for your inner life." />
           <div className="mt-12 grid gap-px bg-black/5 md:grid-cols-3 shadow-lg rounded-2xl overflow-hidden border border-black/5">
-            {[["Tarot", "How to frame a question for a meaningful reading"], ["Energy", "A gentle ritual for releasing what no longer serves"], ["Sacred living", "Choosing crystals with attention and intuition"]].map(([tag, title], index) => (
-              <article key={title} className="bg-white/80 backdrop-blur-md p-10 hover:bg-white transition-colors relative group overflow-hidden">
-                {index === 0 && (
-                  <div className="absolute inset-0 z-0 opacity-[0.05] group-hover:scale-105 transition-transform duration-700" style={{ backgroundImage: "url('/images/mala.png')", backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat" }} />
-                )}
-                <div className="relative z-10">
-                  <span className="text-7xl font-serif text-primary/10 absolute top-0 right-0 group-hover:scale-110 group-hover:text-primary/20 transition-all duration-500">0{index + 1}</span>
-                  <p className="mt-8 text-xs uppercase tracking-editorial text-primary font-semibold">{tag}</p>
-                  <h3 className="mt-4 text-2xl leading-snug text-foreground group-hover:text-primary transition-colors">{title}</h3>
-                  <button className="mt-10 inline-flex items-center gap-2 text-sm font-semibold text-primary">Read article <ArrowRight className="h-4 w-4 transform group-hover:translate-x-1 transition-transform" /></button>
+            {blogsLoading ? (
+              Array.from({ length: 3 }).map((_, index) => (
+                <div key={index} className="bg-white p-10 animate-pulse">
+                  <div className="h-4 w-16 bg-slate-200 rounded mb-6 mt-8"></div>
+                  <div className="h-6 w-full bg-slate-200 rounded mb-3"></div>
+                  <div className="h-6 w-2/3 bg-slate-200 rounded mb-10"></div>
+                  <div className="h-4 w-24 bg-slate-200 rounded"></div>
                 </div>
-              </article>
-            ))}
+              ))
+            ) : latestBlogs.length === 0 ? (
+              <div className="col-span-3 bg-white p-16 text-center text-slate-500">
+                <p>No articles published yet. Check back soon.</p>
+              </div>
+            ) : (
+              latestBlogs.map((blog: any, index: number) => (
+                <article key={blog._id} className="bg-white/80 backdrop-blur-md p-10 hover:bg-white transition-colors relative group overflow-hidden flex flex-col justify-between">
+                  {index === 0 && blog.image && (
+                    <div className="absolute inset-0 z-0 opacity-[0.05] group-hover:scale-105 transition-transform duration-700" style={{ backgroundImage: `url('${blog.image}')`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat" }} />
+                  )}
+                  <div className="relative z-10">
+                    <span className="text-7xl font-serif text-primary/10 absolute top-0 right-0 group-hover:scale-110 group-hover:text-primary/20 transition-all duration-500">0{index + 1}</span>
+                    <p className="mt-8 text-xs uppercase tracking-editorial text-primary font-semibold">{blog.keywords?.[0] || 'Article'}</p>
+                    <h3 className="mt-4 text-2xl leading-snug text-foreground group-hover:text-primary transition-colors line-clamp-3">{blog.title}</h3>
+                    <Link to={`/blog/${blog.slug}`} className="mt-10 inline-flex items-center gap-2 text-sm font-semibold text-primary">Read article <ArrowRight className="h-4 w-4 transform group-hover:translate-x-1 transition-transform" /></Link>
+                  </div>
+                </article>
+              ))
+            )}
           </div>
         </div>
       </section>

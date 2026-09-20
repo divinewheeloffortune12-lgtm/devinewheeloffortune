@@ -3,7 +3,7 @@ const User = require('../models/User');
 exports.getUsers = async (req, res) => {
   try {
     const page = parseInt(req.query.page, 10) || 1;
-    const limit = parseInt(req.query.limit, 10) || 10;
+    const limit = parseInt(req.query.limit, 10) || 1000;
     const skip = (page - 1) * limit;
 
     const query = {};
@@ -82,18 +82,10 @@ exports.updateUserStatus = async (req, res) => {
 
 exports.deleteUser = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
+    const user = await User.findByIdAndDelete(req.params.id);
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
-
-    // Soft delete — keep email intact so re-signup reactivates (see auth.controller register)
-    user.status = 'deleted';
-    // Invalidate old credentials so deleted user can't login with stale tokens/passwords
-    user.passwordHash = undefined;
-    user.googleId = undefined;
-    user.authProvider = 'local';
-    await user.save();
 
     res.status(200).json({ success: true, message: 'User deleted successfully' });
   } catch (error) {

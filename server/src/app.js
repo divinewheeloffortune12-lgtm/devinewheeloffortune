@@ -16,6 +16,7 @@ const productRoutes = require('./routes/product.routes');
 const contactRoutes = require('./routes/contact.routes');
 const announcementRoutes = require('./routes/announcement.routes');
 const bookingRoutes = require('./routes/booking.routes');
+const blogRoutes = require('./routes/blog.routes');
 const { apiLimiter } = require('./middleware/rateLimiter');
 const { requireTrustedOrigin } = require('./middleware/csrf.middleware');
 
@@ -121,6 +122,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/bookings', bookingRoutes);
+app.use('/api/blogs', cacheMiddleware(300), blogRoutes);
 
 // Basic health check route
 app.get('/api/health', (req, res) => {

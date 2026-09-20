@@ -2,13 +2,19 @@ import { useState, useEffect } from "react";
 import { api } from "@/lib/api";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
-import { Loader2, UserX, Clock, Eye, Download } from "lucide-react";
+import { Loader2, UserX, Clock, Eye, Download, MoreVertical, Trash2, ShieldBan, ShieldAlert, CheckCircle } from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export const AdminUsers = () => {
   const [users, setUsers] = useState([]);
@@ -168,35 +174,40 @@ export const AdminUsers = () => {
                         <Eye className="w-4 h-4" />
                       </Button>
                       
-                      {user.status === 'active' ? (
-                        <>
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => toggleStatus(user._id, 'blocked_24h')}
-                            className="text-orange-600 border-orange-200 hover:bg-orange-50 font-medium text-xs h-8"
-                          >
-                            <Clock className="w-3 h-3 mr-1" /> 24h Block
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-slate-500">
+                            <span className="sr-only">Open menu</span>
+                            <MoreVertical className="h-4 w-4" />
                           </Button>
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => toggleStatus(user._id, 'blocked')}
-                            className="text-red-600 border-red-200 hover:bg-red-50 font-medium text-xs h-8"
-                          >
-                            Block
-                          </Button>
-                        </>
-                      ) : user.status !== 'deleted' ? (
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => toggleStatus(user._id, 'active')}
-                          className="text-emerald-600 border-emerald-200 hover:bg-emerald-50 font-medium text-xs h-8"
-                        >
-                          Unblock
-                        </Button>
-                      ) : null}
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-40">
+                          {user.status === 'active' ? (
+                            <>
+                              <DropdownMenuItem onClick={() => toggleStatus(user._id, 'blocked_24h')} className="text-orange-600 focus:text-orange-600 focus:bg-orange-50 cursor-pointer">
+                                <Clock className="mr-2 h-4 w-4" />
+                                <span>24h Block</span>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => toggleStatus(user._id, 'blocked')} className="text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer">
+                                <ShieldBan className="mr-2 h-4 w-4" />
+                                <span>Block</span>
+                              </DropdownMenuItem>
+                            </>
+                          ) : user.status !== 'deleted' ? (
+                            <DropdownMenuItem onClick={() => toggleStatus(user._id, 'active')} className="text-emerald-600 focus:text-emerald-600 focus:bg-emerald-50 cursor-pointer">
+                              <CheckCircle className="mr-2 h-4 w-4" />
+                              <span>Unblock</span>
+                            </DropdownMenuItem>
+                          ) : null}
+                          
+                          {user.status !== 'deleted' && (
+                            <DropdownMenuItem onClick={() => handleDeleteUser(user._id)} className="text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer mt-1 border-t border-slate-100 pt-2">
+                              <Trash2 className="mr-2 h-4 w-4" />
+                              <span>Delete User</span>
+                            </DropdownMenuItem>
+                          )}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </td>
                   </tr>
                 );
@@ -256,6 +267,10 @@ export const AdminUsers = () => {
                     <p className="text-[10px] uppercase text-slate-400">Address Line 2</p>
                     <p className="font-medium text-slate-700">{selectedUser.address?.addressLine2 || "Not Filled"}</p>
                   </div>
+                  <div className="col-span-2">
+                    <p className="text-[10px] uppercase text-slate-400">Landmark</p>
+                    <p className="font-medium text-slate-700">{selectedUser.address?.landmark || "Not Filled"}</p>
+                  </div>
                   <div>
                     <p className="text-[10px] uppercase text-slate-400">City</p>
                     <p className="font-medium text-slate-700">{selectedUser.address?.city || "Not Filled"}</p>
@@ -275,16 +290,27 @@ export const AdminUsers = () => {
                 </div>
               </div>
 
-              {selectedUser.status !== 'deleted' && (
-                <div className="col-span-2 mt-4 flex justify-end border-t border-slate-100 pt-4">
-                  <Button 
-                    variant="destructive" 
-                    onClick={() => handleDeleteUser(selectedUser._id)}
-                  >
-                    Delete User
-                  </Button>
+              <div className="col-span-2 mt-2">
+                <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Account Details</p>
+                <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-[10px] uppercase text-slate-400">Email Verified</p>
+                    <p className="font-medium text-slate-700">{selectedUser.emailVerified ? "Yes" : "No"}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] uppercase text-slate-400">Role</p>
+                    <p className="font-medium text-slate-700 capitalize">{selectedUser.role || "user"}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] uppercase text-slate-400">Liked Products</p>
+                    <p className="font-medium text-slate-700">{selectedUser.likedProducts?.length || 0}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] uppercase text-slate-400">Profile Updates</p>
+                    <p className="font-medium text-slate-700">{selectedUser.profileUpdates?.length || 0}</p>
+                  </div>
                 </div>
-              )}
+              </div>
             </div>
           )}
         </DialogContent>

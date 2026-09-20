@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { api } from "@/lib/api";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
-import { Loader2, UserX, Clock, Eye, Download, MoreVertical, Trash2, ShieldBan, ShieldAlert, CheckCircle } from "lucide-react";
+import { Loader2, UserX, Clock, Eye, Download, MoreVertical, Trash2, ShieldBan, ShieldAlert, CheckCircle, Receipt } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -174,6 +174,18 @@ export const AdminUsers = () => {
                         <Eye className="w-4 h-4" />
                       </Button>
                       
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          window.location.href = `/admin/sales?user=${user._id}`;
+                        }}
+                        className="text-slate-500 hover:text-primary hover:bg-primary/5"
+                        title="View Purchases & Money Details"
+                      >
+                        <Receipt className="w-4 h-4" />
+                      </Button>
+                      
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-slate-500">
@@ -219,7 +231,7 @@ export const AdminUsers = () => {
 
       {/* User Details Modal */}
       <Dialog open={!!selectedUser} onOpenChange={() => setSelectedUser(null)}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="sm:max-w-[500px] max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="font-serif text-2xl text-slate-800">User Details</DialogTitle>
           </DialogHeader>

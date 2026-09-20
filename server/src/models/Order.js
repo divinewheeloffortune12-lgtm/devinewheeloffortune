@@ -58,9 +58,14 @@ const orderSchema = new mongoose.Schema({
     changedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'AdminUser' },
     reason: { type: String },
   }],
+  expiresAt: {
+    type: Date,
+    default: () => new Date(Date.now() + 30 * 60 * 1000) // 30 mins
+  }
 }, { timestamps: true });
 
 // Performance indexes
+orderSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 orderSchema.index({ user: 1, createdAt: -1 });
 orderSchema.index({ razorpayOrderId: 1 });
 orderSchema.index({ paymentStatus: 1 });

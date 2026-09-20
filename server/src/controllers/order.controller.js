@@ -198,15 +198,19 @@ exports.verifyPayment = async (req, res, next) => {
     // Update order status atomically
     const updatedOrder = await Order.findOneAndUpdate(
       { _id: order._id, paymentStatus: 'PENDING' },
-      {
-        $set: {
-          paymentStatus: 'PAID',
+      { 
+        $set: { 
+          paymentStatus: 'PAID', 
           status: 'CONFIRMED',
           razorpayPaymentId: razorpay_payment_id,
-          paidAt: new Date(),
+          paidAt: new Date()
         },
+        $unset: { expiresAt: 1 },
         $push: {
-          statusHistory: { status: 'CONFIRMED', changedAt: new Date(), reason: 'Payment verified' }
+          statusHistory: {
+            status: 'CONFIRMED',
+            reason: 'Payment successful'
+          }
         }
       },
       { new: true }

@@ -22,6 +22,12 @@ const serviceBookingSchema = new mongoose.Schema({
   razorpayOrderId: { type: String, unique: true, sparse: true },
   razorpayPaymentId: { type: String, unique: true, sparse: true },
   
+  expiresAt: {
+    type: Date,
+    default: () => new Date(Date.now() + 30 * 60 * 1000) // 30 mins
+  }
 }, { timestamps: true });
+
+serviceBookingSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
 module.exports = mongoose.model('ServiceBooking', serviceBookingSchema);

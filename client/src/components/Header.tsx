@@ -49,7 +49,7 @@ export const Header = () => {
       const res = await api.get('/bookings/services');
       return res.data?.data || [];
     },
-    staleTime: 30 * 60 * 1000,
+    staleTime: 60 * 1000,
   });
 
   const { data: announcementCount = 0 } = useQuery({

@@ -55,7 +55,8 @@ const Index = () => {
     queryFn: async () => {
       const response = await api.get('/bookings/services');
       return response.data.data;
-    }
+    },
+    staleTime: 60 * 1000
   });
 
   const shopCategories = categoriesData || [];
@@ -147,7 +148,7 @@ const Index = () => {
         </div>
       </section>
 
-      <MarqueeSection />
+      {/* <MarqueeSection /> */}
 
       <section id="about" className="py-20 md:py-32">
         <div className="container-full grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">

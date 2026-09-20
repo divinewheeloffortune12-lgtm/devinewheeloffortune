@@ -59,11 +59,17 @@ exports.createProduct = async (req, res) => {
       throw uploadError;
     }
 
+    let finalSlug = slug;
+    let slugExists = await Product.exists({ slug: finalSlug });
+    if (slugExists) {
+      finalSlug = `${slug}-${Math.floor(1000 + Math.random() * 9000)}`;
+    }
+
     let newProduct;
     try {
       newProduct = await Product.create({
         name,
-        slug,
+        slug: finalSlug,
         category,
         price: parsedPrice,
         discount: parsedDiscount,
@@ -142,13 +148,15 @@ exports.deleteProduct = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Product not found' });
     }
 
-    // Soft delete
-    product.isDeleted = true;
-    product.deletedAt = new Date();
-    product.deletedBy = req.admin._id;
-    await product.save();
+    // Hard delete
+    await Product.findByIdAndDelete(req.params.id);
 
-    res.status(200).json({ success: true, message: 'Product deleted' });
+    // Optional: remove images from cloudinary
+    if (product.imagePublicIds && product.imagePublicIds.length > 0) {
+      Promise.allSettled(product.imagePublicIds.map(id => cloudinary.uploader.destroy(id))).catch(console.error);
+    }
+
+    res.status(200).json({ success: true, message: 'Product permanently deleted' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: 'Server error' });
@@ -288,8 +296,16 @@ exports.updateProduct = async (req, res) => {
       finalPublicIds.push(u.public_id);
     });
 
+    let finalSlug = slug;
+    if (slug !== product.slug) {
+      let slugExists = await Product.exists({ slug: finalSlug, _id: { $ne: product._id } });
+      if (slugExists) {
+        finalSlug = `${slug}-${Math.floor(1000 + Math.random() * 9000)}`;
+      }
+    }
+
     product.name = name;
-    product.slug = slug;
+    product.slug = finalSlug;
     product.category = category;
     product.price = parsedPrice;
     product.discount = parsedDiscount;

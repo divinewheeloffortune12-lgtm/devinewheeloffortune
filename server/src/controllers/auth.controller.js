@@ -1,7 +1,6 @@
 const User = require('../models/User');
 const AdminUser = require('../models/Admin');
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
 const { validationResult } = require('express-validator');
 const { OAuth2Client } = require('google-auth-library');
 
@@ -41,103 +40,9 @@ const sendTokenResponse = (user, type, statusCode, res) => {
 };
 
 
-exports.register = async (req, res) => {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ success: false, errors: errors.array() });
-    }
-
-    const { name, email, password } = req.body;
-    const normalizedEmail = String(email).trim().toLowerCase();
-
-    // Check if user already exists
-    let user = await User.findOne({ email: normalizedEmail });
-    if (user) {
-      if (user.status === 'deleted') {
-        const salt = await bcrypt.genSalt(10);
-        user.passwordHash = await bcrypt.hash(password, salt);
-        user.name = name;
-        user.status = 'active';
-        user.authProvider = 'local';
-        await user.save();
-        return sendTokenResponse(user, 'user', 201, res);
-      }
-      if (user.authProvider === 'google') {
-         return res.status(400).json({ success: false, message: 'Account already exists. Please login with Google.' });
-      }
-      return res.status(400).json({ success: false, message: 'User already exists' });
-    }
-
-    const salt = await bcrypt.genSalt(10);
-    const passwordHash = await bcrypt.hash(password, salt);
-
-    user = await User.create({
-      name,
-      email: normalizedEmail,
-      passwordHash,
-      authProvider: 'local'
-    });
-
-    sendTokenResponse(user, 'user', 201, res);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: 'Server error' });
-  }
-};
-
-exports.login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res.status(400).json({ success: false, message: 'Please provide email and password' });
-    }
-
-    let user = await User.findOne({ email: String(email).trim().toLowerCase() }).select('+passwordHash');
-    
-    // Auto-signup logic: If user doesn't exist or is deleted, create/reactivate the account automatically
-    if (!user || user.status === 'deleted') {
-      const salt = await bcrypt.genSalt(10);
-      const passwordHash = await bcrypt.hash(password, salt);
-      const name = String(email).split('@')[0]; // fallback name
-
-      if (user && user.status === 'deleted') {
-        user.status = 'active';
-        user.name = user.name || name;
-        user.passwordHash = passwordHash;
-        user.authProvider = 'local';
-        await user.save();
-      } else {
-        user = await User.create({
-          name,
-          email: String(email).trim().toLowerCase(),
-          passwordHash,
-          authProvider: 'local'
-        });
-      }
-      return sendTokenResponse(user, 'user', 201, res);
-    }
-
-    if (user.authProvider === 'google' && !user.passwordHash) {
-       return res.status(401).json({ success: false, message: 'Please login with Google.' });
-    }
-
-    const isMatch = await bcrypt.compare(password, user.passwordHash);
-    if (!isMatch) {
-      return res.status(401).json({ success: false, message: 'Invalid credentials' });
-    }
-
-    sendTokenResponse(user, 'user', 200, res);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: 'Server error' });
-  }
-};
-
 exports.googleAuth = async (req, res) => {
   try {
-    const { credential } = req.body;
+    const { credential, intent } = req.body; // intent should be 'login' or 'signup'
     
     if (!credential || typeof credential !== 'string' || !process.env.GOOGLE_CLIENT_ID) {
       return res.status(400).json({ success: false, message: 'Google token required' });
@@ -152,27 +57,37 @@ exports.googleAuth = async (req, res) => {
     const { email, name, sub: googleId, email_verified } = payload;
     const normalizedEmail = String(email).toLowerCase();
 
-    // First try to find user by googleId
-    let user = await User.findOne({ googleId });
+    let user = await User.findOne({ email: normalizedEmail });
 
-    if (!user) {
-      // If not found by googleId, try to find by email
-      user = await User.findOne({ email: normalizedEmail });
-
+    if (intent === 'login') {
+      if (!user) {
+        return res.status(404).json({ success: false, message: 'Account not found. Please sign up first.' });
+      }
+      if (user.status === 'deleted') {
+        return res.status(401).json({ success: false, message: 'Account has been deactivated.' });
+      }
+      
+      // If user exists but is local (due to old data), convert them to Google auth
+      if (!user.googleId) {
+        user.googleId = googleId;
+        user.authProvider = 'google';
+        user.emailVerified = email_verified || user.emailVerified;
+        user.passwordHash = undefined; // Remove password
+        await user.save();
+      }
+    } else if (intent === 'signup') {
       if (user) {
         if (user.status === 'deleted') {
+          // Reactivate account
           user.status = 'active';
           user.name = name;
           user.googleId = googleId;
-          user.authProvider = user.authProvider === 'local' ? 'both' : 'google';
+          user.authProvider = 'google';
           user.emailVerified = email_verified || user.emailVerified;
+          user.passwordHash = undefined;
           await user.save();
-        } else if (!user.googleId) {
-          // If user exists but is local, link the googleId
-          user.googleId = googleId;
-          user.authProvider = 'both';
-          user.emailVerified = email_verified || user.emailVerified;
-          await user.save();
+        } else {
+          return res.status(400).json({ success: false, message: 'Account already exists. Please log in.' });
         }
       } else {
         // Create new user
@@ -185,8 +100,7 @@ exports.googleAuth = async (req, res) => {
         });
       }
     } else {
-      // If user found by googleId, we could optionally update their email/name if it changed, 
-      // but for now we just proceed to log them in.
+      return res.status(400).json({ success: false, message: 'Invalid intent specified.' });
     }
 
     sendTokenResponse(user, 'user', 200, res);

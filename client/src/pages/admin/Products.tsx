@@ -456,7 +456,7 @@ export const AdminProducts = () => {
           <p className="text-slate-500">No products found. Add your first product to get started.</p>
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-auto max-h-[80vh]">
           <table className="w-full text-left text-sm text-slate-600">
             <thead className="bg-slate-50 text-slate-900 border-b border-slate-200">
               <tr>

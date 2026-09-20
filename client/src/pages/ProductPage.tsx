@@ -187,7 +187,7 @@ export default function ProductPage() {
                 <p className="text-[10px] uppercase tracking-[0.15em] text-slate-400 font-semibold mb-1">Availability</p>
                 <div className="flex items-center gap-2">
                   <span className={`w-2 h-2 rounded-full ${product.stock > 0 ? 'bg-emerald-500' : 'bg-red-500'}`}></span>
-                  <p className="font-medium text-slate-800">{product.stock > 0 ? `${product.stock} units available` : 'Out of stock'}</p>
+                  <p className="font-medium text-slate-800">{product.stock > 0 ? 'In stock' : 'Out of stock'}</p>
                 </div>
               </div>
             </div>

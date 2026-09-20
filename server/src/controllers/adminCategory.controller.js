@@ -42,9 +42,15 @@ exports.create = async (req, res, next) => {
       return res.status(400).json({ success: false, error: { code: 'VALIDATION_ERROR', message: 'Invalid parent category.' } }); 
     }
     
+    let uniqueSlug = finalSlug;
+    let slugExists = await Category.exists({ slug: uniqueSlug });
+    if (slugExists) {
+      uniqueSlug = `${finalSlug}-${Math.floor(1000 + Math.random() * 9000)}`;
+    }
+    
     const data = await Category.create({ 
       name: name.trim(), 
-      slug: finalSlug, 
+      slug: uniqueSlug, 
       description, 
       image: imageUrl, 
       note, 
@@ -80,7 +86,14 @@ exports.update = async (req, res, next) => {
       category.image = req.body.image;
     }
 
-    if (req.body.slug !== undefined) category.slug = slugify(req.body.slug); 
+    if (req.body.slug !== undefined) {
+      let candidateSlug = slugify(req.body.slug);
+      let slugExists = await Category.exists({ slug: candidateSlug, _id: { $ne: category._id } });
+      if (slugExists) {
+        candidateSlug = `${candidateSlug}-${Math.floor(1000 + Math.random() * 9000)}`;
+      }
+      category.slug = candidateSlug;
+    }
     if (req.body.parent !== undefined) { 
       if (req.body.parent && (!mongoose.isValidObjectId(req.body.parent) || req.body.parent === req.params.id)) {
         return res.status(400).json({ success: false, error: { code: 'VALIDATION_ERROR', message: 'Invalid parent category.' } }); 
@@ -101,11 +114,18 @@ exports.archive = async (req, res, next) => {
     if (!category) return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Category not found.' } }); 
     
     const Product = require('../models/Product');
-    // Soft delete all products in this category
-    await Product.updateMany(
-      { category: category._id }, 
-      { $set: { isDeleted: true, deletedAt: new Date() } }
-    );
+    // Hard delete all products in this category
+    const productsToDelete = await Product.find({ category: category._id });
+    const productIds = productsToDelete.map(p => p._id);
+    
+    // Cleanup product images from cloudinary
+    productsToDelete.forEach(product => {
+      if (product.imagePublicIds && product.imagePublicIds.length > 0) {
+        Promise.allSettled(product.imagePublicIds.map(id => cloudinary.uploader.destroy(id))).catch(console.error);
+      }
+    });
+
+    await Product.deleteMany({ category: category._id });
     
     // Completely delete the category as requested by user
     await Category.findByIdAndDelete(category._id);

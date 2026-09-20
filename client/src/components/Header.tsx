@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, Sparkles, X, ChevronDown, UserRound, Bell, CalendarClock, Home, Grid, ShoppingBag, Info, Phone, ArrowRight } from "lucide-react";
+import { Menu, Sparkles, X, ChevronDown, UserRound, Bell, CalendarClock, Home, Grid, ShoppingBag, Info, Phone, ArrowRight, Loader2, Image as ImageIcon, FileText, HelpCircle } from "lucide-react";
 import { CartIcon } from "@/components/CartIcon";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api";
@@ -9,6 +9,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const Header = () => {
   const [open, setOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const location = useLocation();
   const queryClient = useQueryClient();
   const homeHref = (anchor: string) => location.pathname === "/" ? anchor.replace("/", "") : anchor;
@@ -282,6 +283,9 @@ export const Header = () => {
                   <Link to="/products" onClick={() => setOpen(false)} className="flex items-center gap-3 px-5 py-3.5 text-sm font-semibold text-foreground/80 hover:bg-black/5 hover:text-primary rounded-lg"><ShoppingBag className="w-4 h-4 opacity-70" /> Shop</Link>
                   <Link to="/about" onClick={() => setOpen(false)} className="flex items-center gap-3 px-5 py-3.5 text-sm font-semibold text-foreground/80 hover:bg-black/5 hover:text-primary rounded-lg"><Info className="w-4 h-4 opacity-70" /> About</Link>
                   <Link to="/contact" onClick={() => setOpen(false)} className="flex items-center gap-3 px-5 py-3.5 text-sm font-semibold text-foreground/80 hover:bg-black/5 hover:text-primary rounded-lg"><Phone className="w-4 h-4 opacity-70" /> Contact</Link>
+                  <a href={homeHref("/#gallery")} onClick={() => setOpen(false)} className="flex items-center gap-3 px-5 py-3.5 text-sm font-semibold text-foreground/80 hover:bg-black/5 hover:text-primary rounded-lg"><ImageIcon className="w-4 h-4 opacity-70" /> Gallery</a>
+                  <Link to="/blog" onClick={() => setOpen(false)} className="flex items-center gap-3 px-5 py-3.5 text-sm font-semibold text-foreground/80 hover:bg-black/5 hover:text-primary rounded-lg"><FileText className="w-4 h-4 opacity-70" /> Blog</Link>
+                  <Link to="/faq" onClick={() => setOpen(false)} className="flex items-center gap-3 px-5 py-3.5 text-sm font-semibold text-foreground/80 hover:bg-black/5 hover:text-primary rounded-lg"><HelpCircle className="w-4 h-4 opacity-70" /> FAQ</Link>
 
                   <div className="border-t border-black/5 mt-4 pt-6 px-5 flex flex-col gap-4">
                     <Link to="/services" onClick={() => setOpen(false)} className="flex items-center gap-3 px-5 py-3.5 text-sm font-semibold text-foreground/80 hover:bg-black/5 hover:text-primary rounded-lg">
@@ -305,24 +309,31 @@ export const Header = () => {
                           )}
                           My Profile
                         </Link>
-                        <button onClick={async () => {
-                          setOpen(false);
+                        <button 
+                          disabled={isLoggingOut}
+                          onClick={async () => {
+                          setIsLoggingOut(true);
                           try {
                             await api.post('/auth/logout');
                             localStorage.removeItem('token');
+                            window.dispatchEvent(new Event('auth-change'));
                             window.location.href = '/';
                           } catch (err) {
                             localStorage.removeItem('token');
+                            window.dispatchEvent(new Event('auth-change'));
                             window.location.href = '/';
+                          } finally {
+                            setIsLoggingOut(false);
+                            setOpen(false);
                           }
-                        }} className="flex items-center gap-3 px-5 py-3.5 text-sm font-semibold text-red-600 hover:bg-red-50 hover:text-red-700 rounded-lg text-left">
+                        }} className="flex items-center gap-3 px-5 py-3.5 text-sm font-semibold text-red-600 hover:bg-red-50 hover:text-red-700 rounded-lg text-left disabled:opacity-50">
+                          {isLoggingOut ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
                           Log out
                         </button>
                       </>
                     ) : (
                       <div className="flex flex-col gap-3 px-5 py-4">
-                        <Link to="/login" onClick={() => setOpen(false)} className="flex items-center justify-center w-full py-3.5 text-sm font-semibold text-foreground border border-black/10 hover:bg-black/5 rounded-xl transition-colors">Log In</Link>
-                        <Link to="/signup" onClick={() => setOpen(false)} className="flex items-center justify-center w-full py-3.5 text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl shadow-sm transition-colors">Create Account</Link>
+                        <Link to="/login" onClick={() => setOpen(false)} className="flex items-center justify-center w-full py-3.5 text-sm font-semibold text-foreground border border-black/10 hover:bg-black/5 rounded-xl transition-colors">Log In / Sign Up</Link>
                       </div>
                     )}
                   </div>

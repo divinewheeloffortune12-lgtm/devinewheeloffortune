@@ -32,6 +32,10 @@ const blogSchema = new mongoose.Schema({
     type: String,
     enum: ['draft', 'published'],
     default: 'published'
+  },
+  showOnHomepage: {
+    type: Boolean,
+    default: true
   }
 }, { timestamps: true });
 

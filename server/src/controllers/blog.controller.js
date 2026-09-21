@@ -8,6 +8,9 @@ exports.getBlogs = async (req, res) => {
     const skip = (page - 1) * limit;
 
     const query = { status: 'published' };
+    if (req.query.showOnHomepage === 'true') {
+      query.showOnHomepage = true;
+    }
     
     const blogs = await Blog.find(query)
       .sort({ createdAt: -1 })

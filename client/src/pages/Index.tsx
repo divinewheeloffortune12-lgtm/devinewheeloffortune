@@ -62,7 +62,7 @@ const Index = () => {
   const { data: latestBlogs = [], isLoading: blogsLoading } = useQuery({
     queryKey: ['latest-blogs'],
     queryFn: async () => {
-      const res = await api.get('/blogs?limit=3');
+      const res = await api.get('/blogs?limit=3&showOnHomepage=true');
       return res.data?.data || [];
     },
     staleTime: 5 * 60 * 1000,

@@ -42,6 +42,8 @@ export default function Shop() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
   const [search, setSearch] = useState(params.get("q") || "");
   const [authPrompt, setAuthPrompt] = useState(false);
   const { toast } = useToast();
@@ -64,12 +66,18 @@ export default function Shop() {
           category: category || undefined,
           q: current.get("q") || undefined,
           limit: 24,
+          page: page,
         },
       })
       .then(({ data }) => {
         if (live) {
           const validProducts = data.data.filter((p: any) => p.availability !== false && p.isDeleted !== true);
-          setProducts(validProducts);
+          if (page === 1) {
+            setProducts(validProducts);
+          } else {
+            setProducts((prev) => [...prev, ...validProducts]);
+          }
+          setHasMore(data.page < data.totalPages);
         }
       })
       .catch((error) =>
@@ -85,11 +93,13 @@ export default function Shop() {
     return () => {
       live = false;
     };
-  }, [category, queryString, toast]);
+  }, [category, queryString, toast, page]);
+  
   const chooseCategory = (id = "") => {
     const next = new URLSearchParams(params);
     if (id) next.set("category", id);
     else next.delete("category");
+    setPage(1);
     setParams(next);
   };
   const submitSearch = (event: React.FormEvent) => {
@@ -97,6 +107,7 @@ export default function Shop() {
     const next = new URLSearchParams(params);
     if (search.trim()) next.set("q", search.trim());
     else next.delete("q");
+    setPage(1);
     setParams(next);
   };
 
@@ -294,6 +305,18 @@ export default function Shop() {
               </article>
             ))}
           </div>
+          {hasMore && products.length >= 24 && (
+            <div className="mt-12 flex justify-center">
+              <Button 
+                onClick={() => setPage(p => p + 1)} 
+                variant="outline" 
+                size="lg" 
+                className="rounded-full px-8"
+              >
+                Load More
+              </Button>
+            </div>
+          )}
         )}
       </main>
       <Dialog open={authPrompt} onOpenChange={setAuthPrompt}>

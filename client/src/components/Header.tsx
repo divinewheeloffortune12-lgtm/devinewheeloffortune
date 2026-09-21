@@ -98,8 +98,8 @@ export const Header = () => {
               <span className="grid h-8 w-8 place-items-center rounded-full border border-primary/30 bg-primary/10 text-primary">
                 <Sparkles className="h-4 w-4" />
               </span>
-              <span className="font-serif text-base tracking-wide whitespace-nowrap">
-                Divine Wheel <span className="hidden lg:inline font-light text-foreground/80">Of Fortune</span>
+              <span className="font-serif text-sm lg:text-base tracking-wide whitespace-nowrap">
+                Divine Wheel <span className="font-light text-foreground/80">Of Fortune</span>
               </span>
             </Link>
 

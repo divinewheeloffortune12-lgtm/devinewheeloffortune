@@ -8,8 +8,8 @@ const bcrypt = require('bcryptjs');
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const generateToken = (id, type) => {
-  if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) {
-    throw new Error('JWT_SECRET must be configured with at least 32 characters');
+  if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 8) {
+    throw new Error('JWT_SECRET must be configured with at least 8 characters');
   }
   return jwt.sign({ id, type }, process.env.JWT_SECRET, {
     expiresIn: '7d', // Auto logout after 1 week

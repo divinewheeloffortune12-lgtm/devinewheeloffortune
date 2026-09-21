@@ -75,9 +75,12 @@ export default function Shop() {
           if (page === 1) {
             setProducts(validProducts);
           } else {
-            setProducts((prev) => [...prev, ...validProducts]);
+            setProducts((prev) => {
+              const newProducts = validProducts.filter((vp: any) => !prev.some((p: any) => p._id === vp._id));
+              return [...prev, ...newProducts];
+            });
           }
-          setHasMore(data.page < data.totalPages);
+          setHasMore(data.pagination?.page < data.pagination?.totalPages);
         }
       })
       .catch((error) =>

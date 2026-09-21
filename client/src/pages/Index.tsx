@@ -13,6 +13,7 @@ import Aurora from "@/components/ui/Aurora";
 import FoldText from "@/components/ui/FoldText";
 import ClickSpark from "@/components/ui/ClickSpark";
 import { FeaturedProducts } from "@/components/FeaturedProducts";
+import { optimizeImage } from "@/lib/utils";
 
 // Removing hardcoded services array; will fetch dynamically.
 
@@ -223,7 +224,7 @@ const Index = () => {
           </div>
         ) : shopCategories.length > 0 ? (
           <Carousel_003 
-            images={shopCategories.length >= 3 ? [...shopCategories, ...shopCategories].map((c: Category) => ({ src: c.image, alt: c.name, name: c.name, note: c.note })) : shopCategories.map((c: Category) => ({ src: c.image, alt: c.name, name: c.name, note: c.note }))} 
+            images={shopCategories.length >= 3 ? [...shopCategories, ...shopCategories].map((c: Category) => ({ src: optimizeImage(c.image || '', { width: 800 }), alt: c.name, name: c.name, note: c.note })) : shopCategories.map((c: Category) => ({ src: optimizeImage(c.image || '', { width: 800 }), alt: c.name, name: c.name, note: c.note }))} 
             showNavigation 
             showPagination 
             loop={shopCategories.length >= 2} 
@@ -254,8 +255,9 @@ const Index = () => {
                   <div className="absolute inset-0 bg-slate-900/10 group-hover:bg-slate-900/5 transition-colors duration-500 z-10" />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/30 to-transparent z-10" />
                   <img 
-                    src={item.image} 
+                    src={optimizeImage(item.image || '', { width: 600 })} 
                     alt={item.name}
+                    loading="lazy"
                     className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 p-8 z-20 flex flex-col justify-end">
@@ -311,7 +313,7 @@ const Index = () => {
               latestBlogs.map((blog: any, index: number) => (
                 <article key={blog._id} className="bg-white/80 backdrop-blur-md p-10 hover:bg-white transition-colors relative group overflow-hidden flex flex-col justify-between">
                   {index === 0 && blog.image && (
-                    <div className="absolute inset-0 z-0 opacity-[0.05] group-hover:scale-105 transition-transform duration-700" style={{ backgroundImage: `url('${blog.image}')`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat" }} />
+                    <div className="absolute inset-0 z-0 opacity-[0.05] group-hover:scale-105 transition-transform duration-700" style={{ backgroundImage: `url('${optimizeImage(blog.image, { width: 800 })}')`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat" }} />
                   )}
                   <div className="relative z-10">
                     <span className="text-7xl font-serif text-primary/10 absolute top-0 right-0 group-hover:scale-110 group-hover:text-primary/20 transition-all duration-500">0{index + 1}</span>

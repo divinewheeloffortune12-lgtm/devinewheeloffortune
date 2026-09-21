@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { Link } from "react-router-dom";
 import { ArrowRight, ShoppingBag } from "lucide-react";
+import { optimizeImage } from "@/lib/utils";
 
 type Product = { 
   _id: string; 
@@ -43,7 +44,7 @@ export const FeaturedProducts = () => {
         <Link key={product._id} to={`/product/${product.slug}`} className="group relative block overflow-hidden rounded-3xl bg-white shadow-sm hover:shadow-xl transition-all duration-300">
           <div className="aspect-[4/5] bg-slate-100 relative overflow-hidden">
             {product.images && product.images[0] ? (
-              <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+              <img src={optimizeImage(product.images[0], { width: 500 })} alt={product.name} loading="lazy" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-slate-400">No image</div>
             )}

@@ -163,7 +163,9 @@ export const ServiceBookings = () => {
                 <thead className="text-xs text-slate-500 uppercase bg-slate-50/50 border-b border-slate-100">
                   <tr>
                     <th className="px-6 py-4 font-semibold">Booking ID</th>
-                    <th className="px-6 py-4 font-semibold">Customer Details</th>
+                    <th className="px-6 py-4 font-semibold">Customer</th>
+                    <th className="px-6 py-4 font-semibold">Mobile</th>
+                    <th className="px-6 py-4 font-semibold">Email</th>
                     <th className="px-6 py-4 font-semibold">Service</th>
                     <th className="px-6 py-4 font-semibold">Address & Notes</th>
                     <th className="px-6 py-4 font-semibold">Amount</th>
@@ -176,11 +178,9 @@ export const ServiceBookings = () => {
                   {bookings.map((booking) => (
                     <tr key={booking._id} className="hover:bg-slate-50/50 transition-colors">
                       <td className="px-6 py-4 font-mono text-xs">{booking._id}</td>
-                      <td className="px-6 py-4">
-                        <div className="font-medium text-slate-900">{booking.customerName}</div>
-                        <div className="text-xs text-slate-500 mt-1">{booking.mobile}</div>
-                        <div className="text-xs text-slate-500">{booking.email}</div>
-                      </td>
+                      <td className="px-6 py-4 font-medium text-slate-900">{booking.customerName}</td>
+                      <td className="px-6 py-4 text-slate-600">{booking.mobile}</td>
+                      <td className="px-6 py-4 text-slate-600">{booking.email}</td>
                       <td className="px-6 py-4 text-slate-600">{booking.service?.name}</td>
                       <td className="px-6 py-4 text-slate-600 truncate max-w-[200px]">
                         <div>{booking.address}</div>

@@ -93,7 +93,7 @@ export const Header = () => {
       <nav className="container-full mx-auto px-4 md:px-6">
         <div className="flex h-16 items-center justify-between gap-4">
           
-          <div className="flex items-center gap-8">
+          <div className="flex items-center gap-4 xl:gap-8">
             <Link to="/" className="flex items-center gap-2 text-foreground hover:text-primary transition-colors shrink-0">
               <span className="grid h-8 w-8 place-items-center rounded-full border border-primary/30 bg-primary/10 text-primary">
                 <Sparkles className="h-4 w-4" />
@@ -104,7 +104,7 @@ export const Header = () => {
             </Link>
 
             {/* Desktop Navigation - Left Aligned */}
-            <div className="hidden lg:flex items-center gap-10">
+            <div className="hidden lg:flex items-center gap-5 xl:gap-10">
               <Link to="/" className="flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-wider text-foreground/80 transition-all hover:text-primary">
                 <Home className="w-4 h-4 opacity-70" /> Home
               </Link>
@@ -235,9 +235,9 @@ export const Header = () => {
                   <div className="h-8 w-20 bg-slate-200 rounded-full"></div>
                 </div>
               ) : !signedIn ? (
-                <div className="hidden lg:flex items-center gap-4 pr-3 border-r border-black/10 mr-1">
-                  <Link to="/login" className="text-xs font-semibold uppercase tracking-widest text-foreground hover:text-primary transition-all border-b border-transparent hover:border-primary pb-0.5">Login</Link>
-                  <Link to="/signup" className="text-xs font-semibold uppercase tracking-widest bg-foreground text-background hover:bg-primary px-5 py-2.5 rounded-full transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5">Sign Up</Link>
+                <div className="hidden lg:flex items-center gap-3 xl:gap-4 pr-3 border-r border-black/10 mr-1">
+                  <Link to="/login" className="text-xs font-semibold uppercase tracking-widest text-foreground hover:text-primary transition-all border-b border-transparent hover:border-primary pb-0.5 whitespace-nowrap">Login</Link>
+                  <Link to="/signup" className="text-xs font-semibold uppercase tracking-widest bg-foreground text-background hover:bg-primary px-5 py-2.5 rounded-full transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5 whitespace-nowrap">Sign Up</Link>
                 </div>
               ) : (
                 <Link to="/profile" aria-label="My profile" className="flex items-center justify-center h-10 w-10 rounded-full hover:bg-primary/10 text-foreground/80 hover:text-primary transition-colors overflow-hidden border border-black/10">

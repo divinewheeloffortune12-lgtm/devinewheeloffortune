@@ -16,33 +16,26 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+
 export const AdminUsers = () => {
-  const [users, setUsers] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [activeTab, setActiveTab] = useState("active");
   const [selectedUserSales, setSelectedUserSales] = useState<any>(null);
   const [isSalesLoading, setIsSalesLoading] = useState(false);
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
-  const fetchUsers = async () => {
-    try {
+  const { data: usersData, isLoading } = useQuery({
+    queryKey: ['admin-users'],
+    queryFn: async () => {
       const { data } = await api.get("/admin/users");
-      setUsers(data.data);
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Error fetching users",
-        description: "Could not load user data."
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      return data.data;
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const users = usersData || [];
 
   const toggleStatus = async (id: string, newStatus: string) => {
     try {
@@ -51,7 +44,7 @@ export const AdminUsers = () => {
         title: "Status updated",
         description: `User is now ${newStatus.replace('_', ' ')}.`
       });
-      fetchUsers();
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
     } catch (error) {
       toast({
         variant: "destructive",
@@ -74,7 +67,8 @@ export const AdminUsers = () => {
       await api.delete(`/admin/users/${id}`);
       toast({ title: "User Deleted" });
       setSelectedUser(null);
-      fetchUsers();
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-deleted-users'] });
     } catch (error) {
       toast({
         variant: "destructive",

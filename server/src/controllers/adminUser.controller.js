@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const DeletedUser = require('../models/DeletedUser');
 
 exports.getUsers = async (req, res) => {
   try {
@@ -15,11 +16,27 @@ exports.getUsers = async (req, res) => {
     }
 
     // Never return passwordHashes
-    const users = await User.find(query)
+    let users = await User.find(query)
       .select('-passwordHash -googleId')
       .skip(skip)
       .limit(limit)
       .sort({ updatedAt: -1 });
+
+    // Fetch deleted users so they show up in the Deleted Users tab
+    const deletedUsers = await DeletedUser.find(query).sort({ deletedAt: -1 });
+    const mappedDeletedUsers = deletedUsers.map(du => ({
+      _id: du.originalId,
+      name: du.name,
+      email: du.email,
+      mobile: du.mobile,
+      role: du.role,
+      authProvider: du.authProvider,
+      status: 'deleted',
+      createdAt: du.originalCreatedAt,
+      deletedAt: du.deletedAt
+    }));
+
+    users = [...users, ...mappedDeletedUsers];
 
     const total = await User.countDocuments(query);
 
@@ -88,6 +105,22 @@ exports.deleteUser = async (req, res) => {
     if (!id || !mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ success: false, message: 'Invalid User ID' });
     }
+
+    const userToDel = await User.findById(id);
+    if (!userToDel) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // Save to DeletedUser collection before hard delete
+    await DeletedUser.create({
+      originalId: userToDel._id,
+      name: userToDel.name,
+      email: userToDel.email,
+      mobile: userToDel.mobile,
+      role: userToDel.role,
+      authProvider: userToDel.authProvider,
+      originalCreatedAt: userToDel.createdAt
+    });
 
     // Bypass mongoose middleware and directly delete from collection to avoid 500 errors
     const result = await User.collection.deleteOne({ _id: new mongoose.Types.ObjectId(id) });

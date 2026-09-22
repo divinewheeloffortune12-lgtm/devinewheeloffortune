@@ -104,12 +104,12 @@ const Cart = () => {
                     {/* Product Image */}
                     <Link
                       to={`/product/${item.product.slug}`}
-                      className="w-28 h-32 md:w-36 md:h-44 flex-shrink-0 overflow-hidden bg-muted/30 group"
+                      className="w-28 h-32 md:w-36 md:h-44 flex-shrink-0 overflow-hidden bg-slate-50 border border-slate-100 rounded-xl group"
                     >
                       <img
                         src={item.product.images[0]}
                         alt={item.product.name}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        className="w-full h-full object-contain p-4 mix-blend-multiply transition-transform duration-500 group-hover:scale-110"
                       />
                     </Link>
 

@@ -48,7 +48,7 @@ export const ProductCard = ({ product, index = 0, variant = "default" }: Product
         <Tilt tiltMaxAngleX={5} tiltMaxAngleY={5} transitionSpeed={2500} scale={1.02} className="relative mb-5" glareEnable={true} glareMaxOpacity={0.1} glarePosition="all" glareBorderRadius="0">
           <div
             className={cn(
-              "relative overflow-hidden bg-muted/50",
+              "relative overflow-hidden bg-slate-50 border border-slate-100 rounded-t-2xl",
               variant === "large" ? "aspect-[3/4]" : "aspect-[4/5]"
             )}
           >
@@ -64,7 +64,7 @@ export const ProductCard = ({ product, index = 0, variant = "default" }: Product
                   <img
                     src={img}
                     alt={`${product.name} - view ${i + 1}`}
-                    className="w-full h-full object-cover transition-all duration-[1s] ease-out group-hover:scale-105"
+                    className="w-full h-full object-contain p-4 mix-blend-multiply transition-all duration-[1s] ease-out group-hover:scale-105"
                   />
                 </SwiperSlide>
               ))}
@@ -73,7 +73,7 @@ export const ProductCard = ({ product, index = 0, variant = "default" }: Product
             <img
               src={(product.images || [])[0]}
               alt={product.name}
-              className="w-full h-full object-cover transition-all duration-[1s] ease-out group-hover:scale-105"
+              className="w-full h-full object-contain p-4 mix-blend-multiply transition-all duration-[1s] ease-out group-hover:scale-105"
             />
           )}
 

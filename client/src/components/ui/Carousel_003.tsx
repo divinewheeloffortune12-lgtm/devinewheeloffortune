@@ -26,7 +26,7 @@ const Carousel_003 = ({
   autoplay = false,
   spaceBetween = 0,
 }: {
-  images: { src: string; alt: string; name: string; note: string }[];
+  images: { src: string; alt: string; name: string; note: string; link?: string }[];
   className?: string;
   showPagination?: boolean;
   showNavigation?: boolean;
@@ -111,18 +111,18 @@ const Carousel_003 = ({
         >
           {images.map((image, index) => (
             <SwiperSlide key={index} className="group overflow-hidden rounded-2xl bg-black/40 backdrop-blur-md border border-white/10 shadow-2xl transition-all hover:border-primary/50">
-              <div className="h-[300px] w-full overflow-hidden relative">
+              <a href={image.link || "/products"} className="block h-[300px] w-full overflow-hidden relative cursor-pointer">
                 <img
                   className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
                   src={image.src}
                   alt={image.alt}
                 />
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                  <a href="/products" className="bg-white text-foreground px-6 py-2 rounded-full font-medium tracking-wide text-sm transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 shadow-xl border border-white/20">
+                  <span className="bg-white text-foreground px-6 py-2 rounded-full font-medium tracking-wide text-sm transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 shadow-xl border border-white/20">
                     Shop {image.name}
-                  </a>
+                  </span>
                 </div>
-              </div>
+              </a>
             </SwiperSlide>
           ))}
           {showNavigation && (

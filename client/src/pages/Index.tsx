@@ -84,15 +84,23 @@ const Index = () => {
     <Layout>
       <ClickSpark sparkColor="#d8b4fe" sparkSize={12} sparkRadius={20} sparkCount={10} duration={500} />
       <section className="relative min-h-[88svh] overflow-hidden bg-slate-900 mt-16 lg:mt-16">
+        {/* Magical Aurora background that shows while video buffers */}
+        <div className="absolute inset-0 z-0">
+          <Aurora colorStops={["#3B82F6", "#8B5CF6", "#D946EF"]} speed={0.5} amplitude={1.2} />
+        </div>
+        
         <video 
-          className="absolute inset-0 h-full w-full object-cover contrast-125 saturate-110 brightness-110 filter" 
-          autoPlay muted loop playsInline preload="metadata" 
-          poster="/images/placeholder.png"
+          className="absolute inset-0 h-full w-full object-cover contrast-125 saturate-110 brightness-110 filter z-10 transition-opacity duration-1000" 
+          autoPlay muted loop playsInline preload="auto"
           aria-label="Nattasha Sharrma welcoming you to Divine Wheel Of Fortune"
+          onLoadedData={(e) => {
+            (e.target as HTMLVideoElement).style.opacity = '1';
+          }}
+          style={{ opacity: 0 }}
         >
           <source src="/herovideo.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-slate-900/10" />
+        <div className="absolute inset-0 bg-slate-900/10 z-20 pointer-events-none" />
         <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-background to-transparent" />
         
         <div className="container-full relative flex min-h-[88svh] items-end justify-start pb-8 pt-32 md:pb-12 z-10">
@@ -226,7 +234,7 @@ const Index = () => {
           </div>
         ) : shopCategories.length > 0 ? (
           <Carousel_003 
-            images={shopCategories.length >= 3 ? [...shopCategories, ...shopCategories].map((c: Category) => ({ src: optimizeImage(c.image || '', { width: 800 }), alt: c.name, name: c.name, note: c.note })) : shopCategories.map((c: Category) => ({ src: optimizeImage(c.image || '', { width: 800 }), alt: c.name, name: c.name, note: c.note }))} 
+            images={shopCategories.length >= 3 ? [...shopCategories, ...shopCategories].map((c: Category) => ({ src: optimizeImage(c.image || '', { width: 800 }), alt: c.name, name: c.name, note: c.note, link: `/products?category=${c._id}` })) : shopCategories.map((c: Category) => ({ src: optimizeImage(c.image || '', { width: 800 }), alt: c.name, name: c.name, note: c.note, link: `/products?category=${c._id}` }))} 
             showNavigation 
             showPagination 
             loop={shopCategories.length >= 2} 

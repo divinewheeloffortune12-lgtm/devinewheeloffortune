@@ -1,6 +1,6 @@
 import axios, { AxiosError } from "axios";
 
-const API_BASE = import.meta.env.VITE_API_URL || "https://devinewheeloffortune.onrender.com";
+const API_BASE = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:5000" : "https://devinewheeloffortune.onrender.com");
 
 export const api = axios.create({
   baseURL: API_BASE.endsWith('/api') ? API_BASE : `${API_BASE}/api`,

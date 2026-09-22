@@ -84,6 +84,7 @@ export const Header = () => {
   }, [queryClient]);
 
   const moreDropdown = [
+    { label: "Our Work & Policies", href: "/policies" },
     { label: "Blog", href: "/blog" },
     { label: "FAQ", href: "/faq" },
   ];
@@ -301,6 +302,7 @@ export const Header = () => {
                   <Link to="/products" onClick={() => setOpen(false)} className="flex items-center gap-3 px-5 py-3.5 text-sm font-semibold text-foreground/80 hover:bg-black/5 hover:text-primary rounded-lg"><ShoppingBag className="w-4 h-4 opacity-70" /> Shop</Link>
                   <Link to="/about" onClick={() => setOpen(false)} className="flex items-center gap-3 px-5 py-3.5 text-sm font-semibold text-foreground/80 hover:bg-black/5 hover:text-primary rounded-lg"><Info className="w-4 h-4 opacity-70" /> About</Link>
                   <Link to="/contact" onClick={() => setOpen(false)} className="flex items-center gap-3 px-5 py-3.5 text-sm font-semibold text-foreground/80 hover:bg-black/5 hover:text-primary rounded-lg"><Phone className="w-4 h-4 opacity-70" /> Contact</Link>
+                  <Link to="/policies" onClick={() => setOpen(false)} className="flex items-center gap-3 px-5 py-3.5 text-sm font-semibold text-foreground/80 hover:bg-black/5 hover:text-primary rounded-lg"><FileText className="w-4 h-4 opacity-70" /> Our Work & Policies</Link>
                   <Link to="/blog" onClick={() => setOpen(false)} className="flex items-center gap-3 px-5 py-3.5 text-sm font-semibold text-foreground/80 hover:bg-black/5 hover:text-primary rounded-lg"><FileText className="w-4 h-4 opacity-70" /> Blog</Link>
                   <Link to="/faq" onClick={() => setOpen(false)} className="flex items-center gap-3 px-5 py-3.5 text-sm font-semibold text-foreground/80 hover:bg-black/5 hover:text-primary rounded-lg"><HelpCircle className="w-4 h-4 opacity-70" /> FAQ</Link>
 

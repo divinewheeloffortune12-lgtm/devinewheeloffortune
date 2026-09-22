@@ -171,8 +171,25 @@ export default function Shop() {
       </section>
       <main className="container-full py-10 md:py-16">
         {loading ? (
-          <div className="py-24 flex justify-center">
-            <Loader2 className="animate-spin text-primary" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="flex flex-col rounded-[2rem] border border-border/60 bg-white shadow-sm overflow-hidden animate-pulse">
+                <div className="aspect-[4/5] bg-slate-100"></div>
+                <div className="p-5 sm:p-6 flex flex-col flex-1 mt-2">
+                  <div className="h-3 w-1/3 bg-slate-100 rounded mb-4"></div>
+                  <div className="h-6 w-3/4 bg-slate-100 rounded mb-3"></div>
+                  <div className="h-4 w-full bg-slate-100 rounded mb-2"></div>
+                  <div className="h-4 w-5/6 bg-slate-100 rounded mb-6"></div>
+                  <div className="mt-auto pt-5 border-t border-slate-50 flex gap-2 mb-5">
+                    <div className="h-6 w-24 bg-slate-100 rounded"></div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 mt-2">
+                    <div className="h-10 bg-slate-100 rounded-full w-full"></div>
+                    <div className="h-10 bg-slate-100 rounded-full w-full"></div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         ) : products.length === 0 ? (
           <div className="py-24 text-center">

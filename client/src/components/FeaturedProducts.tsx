@@ -26,9 +26,18 @@ export const FeaturedProducts = () => {
 
   if (isLoading) {
     return (
-      <div className="flex space-x-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         {[1,2,3,4].map(i => (
-          <div key={i} className="w-1/4 h-80 bg-slate-200 rounded-3xl animate-pulse"></div>
+          <div key={i} className="flex flex-col rounded-[2rem] border border-border/60 bg-white shadow-sm overflow-hidden animate-pulse">
+            <div className="aspect-[4/5] bg-slate-100"></div>
+            <div className="p-5 sm:p-6 flex flex-col flex-1 mt-2">
+              <div className="h-3 w-1/3 bg-slate-100 rounded mb-4"></div>
+              <div className="h-6 w-3/4 bg-slate-100 rounded mb-3"></div>
+              <div className="mt-auto pt-5 border-t border-slate-50 flex gap-2">
+                <div className="h-6 w-24 bg-slate-100 rounded"></div>
+              </div>
+            </div>
+          </div>
         ))}
       </div>
     );

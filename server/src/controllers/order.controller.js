@@ -297,6 +297,7 @@ exports.razorpayWebhook = async (req, res, next) => {
               razorpayPaymentId: razorpay_payment_id,
               paidAt: new Date(),
             },
+            $unset: { expiresAt: 1 },
             $push: {
               statusHistory: { status: 'CONFIRMED', changedAt: new Date(), reason: 'Webhook: payment captured' }
             }
@@ -313,7 +314,8 @@ exports.razorpayWebhook = async (req, res, next) => {
             paymentStatus: 'PAID',
             status: 'CONFIRMED',
             razorpayPaymentId: razorpay_payment_id,
-          }
+          },
+          $unset: { expiresAt: 1 }
         }
       );
     }

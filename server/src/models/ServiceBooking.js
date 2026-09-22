@@ -24,7 +24,7 @@ const serviceBookingSchema = new mongoose.Schema({
   
   expiresAt: {
     type: Date,
-    default: () => new Date(Date.now() + 30 * 60 * 1000) // 30 mins
+    default: () => new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
   }
 }, { timestamps: true });
 

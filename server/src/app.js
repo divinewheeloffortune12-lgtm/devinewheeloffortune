@@ -8,6 +8,7 @@ dotenv.config();
 const connectDB = require('./config/db');
 const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
+const compression = require('compression');
 
 const authRoutes = require('./routes/auth.routes');
 const categoryRoutes = require('./routes/category.routes');
@@ -81,6 +82,7 @@ app.use(cors({
 // Must be registered BEFORE express.json() parses the body.
 app.use('/api/orders/webhook', express.raw({ type: 'application/json' }));
 
+app.use(compression());
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 app.use(cookieParser());

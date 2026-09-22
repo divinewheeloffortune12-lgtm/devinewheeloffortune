@@ -95,8 +95,8 @@ export const Header = () => {
           
           <div className="flex items-center gap-4 xl:gap-8">
             <Link to="/" className="relative flex items-center justify-center p-[2px] rounded-full bg-gradient-to-tr from-primary via-purple-500 to-amber-400 shadow-[0_0_15px_rgba(212,175,55,0.4)] transition-all hover:scale-105 hover:shadow-[0_0_25px_rgba(212,175,55,0.6)] shrink-0 group" aria-label="Home">
-              <div className="bg-white rounded-full p-1 h-11 w-11 flex items-center justify-center overflow-hidden relative z-10">
-                <img src="/logo.png" alt="Divine Wheel of Fortune" className="h-full w-full object-cover transition-transform group-hover:scale-110" />
+              <div className="bg-white rounded-full h-11 w-11 flex items-center justify-center overflow-hidden relative z-10">
+                <img src="/logo.png" alt="Divine Wheel of Fortune" className="h-full w-full object-cover scale-125 transition-transform group-hover:scale-150" />
               </div>
             </Link>
 

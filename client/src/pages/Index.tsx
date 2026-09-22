@@ -84,7 +84,12 @@ const Index = () => {
     <Layout>
       <ClickSpark sparkColor="#d8b4fe" sparkSize={12} sparkRadius={20} sparkCount={10} duration={500} />
       <section className="relative min-h-[88svh] overflow-hidden bg-slate-900 mt-16 lg:mt-16">
-        <video className="absolute inset-0 h-full w-full object-cover contrast-125 saturate-110 brightness-110 filter" autoPlay muted loop playsInline preload="auto" aria-label="Nattasha Sharrma welcoming you to Divine Wheel Of Fortune">
+        <video 
+          className="absolute inset-0 h-full w-full object-cover contrast-125 saturate-110 brightness-110 filter" 
+          autoPlay muted loop playsInline preload="metadata" 
+          poster="/images/placeholder.png"
+          aria-label="Nattasha Sharrma welcoming you to Divine Wheel Of Fortune"
+        >
           <source src="/herovideo.mp4" type="video/mp4" />
         </video>
         <div className="absolute inset-0 bg-slate-900/10" />

@@ -215,7 +215,22 @@ export const AdminProducts = () => {
   };
 
   if (isLoading) {
-    return <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-slate-400" /></div>;
+        return (
+      <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500 p-8">
+        <div className="flex justify-between items-center">
+          <div className="space-y-2">
+            <div className="h-8 w-48 bg-slate-200 animate-pulse rounded"></div>
+            <div className="h-4 w-64 bg-slate-200 animate-pulse rounded"></div>
+          </div>
+          <div className="h-10 w-32 bg-slate-200 animate-pulse rounded"></div>
+        </div>
+        <div className="bg-white/60 rounded-3xl border border-slate-100 p-6 space-y-4">
+          <div className="h-12 w-full bg-slate-200 animate-pulse rounded"></div>
+          <div className="h-16 w-full bg-slate-200 animate-pulse rounded"></div>
+          <div className="h-16 w-full bg-slate-200 animate-pulse rounded"></div>
+        </div>
+      </div>
+    );
   }
 
   return (

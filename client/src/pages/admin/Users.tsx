@@ -15,6 +15,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Skeleton } from "@/components/ui/skeleton";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
@@ -97,7 +98,27 @@ export const AdminUsers = () => {
   };
 
   if (isLoading) {
-    return <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-slate-400" /></div>;
+    return (
+      <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500">
+        <div className="flex justify-between items-center">
+          <div className="space-y-2">
+            <Skeleton className="h-8 w-48" />
+            <Skeleton className="h-4 w-64" />
+          </div>
+          <Skeleton className="h-10 w-32" />
+        </div>
+        <div className="flex gap-4 border-b border-slate-200">
+          <Skeleton className="h-8 w-32 mb-2" />
+          <Skeleton className="h-8 w-32 mb-2" />
+        </div>
+        <div className="bg-white/60 rounded-3xl border border-white/60 p-6 space-y-4">
+          <Skeleton className="h-12 w-full" />
+          <Skeleton className="h-16 w-full" />
+          <Skeleton className="h-16 w-full" />
+          <Skeleton className="h-16 w-full" />
+        </div>
+      </div>
+    );
   }
 
   return (

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Instagram, Sparkles, Mail, Phone, MapPin, Twitter, Facebook, Globe } from "lucide-react";
+import { Instagram, Sparkles, Mail, Phone, MapPin, Facebook, Youtube, Link2 } from "lucide-react";
 
 export const Footer = () => {
   return (
@@ -42,16 +42,19 @@ export const Footer = () => {
             <ul className="space-y-5 text-[13px] text-foreground/80 font-medium">
               <li>
                 <a href="mailto:hello@divinewheeloffortune.com" className="flex items-center gap-3 hover:text-primary transition-colors">
-                  <Mail className="h-4 w-4 text-primary" /> hello@divine.com
+                  <Mail className="h-4 w-4 text-primary opacity-70" /> hello@divinewheeloffortune.com
                 </a>
               </li>
               <li>
-                <a href="#" className="flex items-center gap-3 hover:text-primary transition-colors">
-                  <Phone className="h-4 w-4 text-primary" /> +91 98765 43210
-                </a>
+                <div className="flex flex-col gap-1">
+                  <a href="https://wa.me/919876978500" target="_blank" rel="noreferrer" className="flex items-center gap-3 hover:text-primary transition-colors">
+                    <Phone className="h-4 w-4 text-primary opacity-70" /> +91 98769 78500
+                  </a>
+                  <span className="text-[10px] ml-7 text-muted-foreground">(Serious Inquiries Only)</span>
+                </div>
               </li>
               <li className="flex items-center gap-3">
-                <MapPin className="h-4 w-4 text-primary" /> India, Sessions worldwide
+                <MapPin className="h-4 w-4 text-primary opacity-70" /> India, Sessions worldwide
               </li>
             </ul>
           </div>
@@ -59,23 +62,21 @@ export const Footer = () => {
 
         <div className="border-t border-black/10 py-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs font-semibold text-foreground/70 z-20 relative">
           <div className="flex items-center gap-5">
-            <a href="#" className="hover:text-primary transition-colors"><Facebook className="h-4 w-4" /></a>
-            <a href="#" className="hover:text-primary transition-colors"><Instagram className="h-4 w-4" /></a>
-            <a href="#" className="hover:text-primary transition-colors"><Twitter className="h-4 w-4" /></a>
-            <a href="#" className="hover:text-primary transition-colors"><Globe className="h-4 w-4" /></a>
+            <a href="https://www.facebook.com/people/Divine-Wheel-Of-Fortune/100063898071698/" target="_blank" rel="noreferrer" className="hover:text-primary transition-colors" aria-label="Facebook">
+              <Facebook className="h-5 w-5 opacity-70" />
+            </a>
+            <a href="https://instagram.com/divine_wheel_of_fortune" target="_blank" rel="noreferrer" className="hover:text-primary transition-colors" aria-label="Instagram">
+              <Instagram className="h-5 w-5 opacity-70" />
+            </a>
+            <a href="https://www.youtube.com/@Natasshasharrma_says" target="_blank" rel="noreferrer" className="hover:text-primary transition-colors" aria-label="Youtube">
+              <Youtube className="h-5 w-5 opacity-70" />
+            </a>
+            <a href="https://superprofile.bio/divinewheeloffortune" target="_blank" rel="noreferrer" className="hover:text-primary transition-colors" aria-label="Superprofile">
+              <Link2 className="h-5 w-5 opacity-70" />
+            </a>
           </div>
-          <p>© {new Date().getFullYear()} Divine. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Divine Wheel Of Fortune. All rights reserved.</p>
         </div>
-      </div>
-
-      {/* Massive background text */}
-      <div className="absolute bottom-0 inset-x-0 overflow-hidden pointer-events-none flex justify-center items-end z-0 h-3/4 pb-4">
-        <h1 
-          className="text-[10vw] font-serif leading-[0.75] tracking-tighter font-bold whitespace-nowrap select-none text-transparent" 
-          style={{ WebkitTextStroke: '2px rgba(0,0,0,0.08)' }}
-        >
-          NATTASHA
-        </h1>
       </div>
     </footer>
   );

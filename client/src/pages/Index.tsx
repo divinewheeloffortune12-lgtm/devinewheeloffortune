@@ -84,7 +84,7 @@ const Index = () => {
     <Layout>
       <ClickSpark sparkColor="#d8b4fe" sparkSize={12} sparkRadius={20} sparkCount={10} duration={500} />
       <section className="relative min-h-[88svh] overflow-hidden bg-slate-900 mt-16 lg:mt-16">
-        <video className="absolute inset-0 h-full w-full object-cover contrast-125 saturate-110 brightness-110 filter" autoPlay muted loop playsInline preload="metadata" aria-label="Nattasha Sharrma welcoming you to Divine Wheel Of Fortune">
+        <video className="absolute inset-0 h-full w-full object-cover contrast-125 saturate-110 brightness-110 filter" autoPlay muted loop playsInline preload="auto" aria-label="Nattasha Sharrma welcoming you to Divine Wheel Of Fortune">
           <source src="/herovideo.mp4" type="video/mp4" />
         </video>
         <div className="absolute inset-0 bg-slate-900/10" />
@@ -162,19 +162,16 @@ const Index = () => {
 
       <section id="about" className="py-20 md:py-32">
         <div className="container-full grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
-          <div className="flex flex-col">
-            <div className="relative w-full max-h-[80vh] flex justify-center items-center rounded-3xl shadow-xl shadow-black/5 border border-black/5 bg-black/5">
-              <video className="max-w-full max-h-[80vh] w-auto h-auto rounded-3xl object-contain" autoPlay muted loop playsInline preload="metadata"><source src="/about.mp4" type="video/mp4" /></video>
-            </div>
+          <div className="flex flex-col h-full justify-center">
             <motion.div 
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, ease: "easeOut" }}
-              className="mt-6 px-8 py-6 text-center rounded-[2rem] bg-gradient-to-r from-purple-100/80 to-indigo-50/80 shadow-sm border border-purple-200/50 hover:shadow-md transition-shadow"
+              className="px-8 py-16 text-center rounded-[2rem] bg-gradient-to-r from-purple-100/80 to-indigo-50/80 shadow-sm border border-purple-200/50 hover:shadow-md transition-shadow flex flex-col justify-center items-center h-full min-h-[300px]"
             >
-              <p className="font-serif text-3xl text-foreground">Nattasha Sharrma</p>
-              <p className="mt-2 text-xs uppercase tracking-[0.2em] text-primary font-bold">Intuitive guide & energy practitioner</p>
+              <p className="font-serif text-4xl text-foreground mb-4">Nattasha Sharrma</p>
+              <p className="text-sm uppercase tracking-[0.2em] text-primary font-bold">Intuitive guide & energy practitioner</p>
             </motion.div>
           </div>
           <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>

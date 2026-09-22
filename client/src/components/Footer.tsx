@@ -23,7 +23,7 @@ export const Footer = () => {
               <li><Link to="/about" className="hover:text-primary transition-colors">Our Story</Link></li>
               <li><Link to="/contact" className="hover:text-primary transition-colors">Contact</Link></li>
               <li><Link to="/services" className="hover:text-primary transition-colors">Services</Link></li>
-              <li><Link to="/shop" className="hover:text-primary transition-colors">Shop</Link></li>
+              <li><Link to="/products" className="hover:text-primary transition-colors">Shop</Link></li>
             </ul>
           </div>
 
@@ -33,6 +33,7 @@ export const Footer = () => {
               <li><Link to="/faq" className="hover:text-primary transition-colors">FAQs</Link></li>
               <li><Link to="/blog" className="hover:text-primary transition-colors">Blog</Link></li>
               <li><Link to="/announcements" className="hover:text-primary transition-colors">Announcements</Link></li>
+              <li><Link to="/policies" className="hover:text-primary transition-colors">Policies</Link></li>
             </ul>
           </div>
 

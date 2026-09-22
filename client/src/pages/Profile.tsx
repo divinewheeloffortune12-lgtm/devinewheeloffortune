@@ -5,7 +5,7 @@ import * as z from "zod";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2, ShieldCheck, MapPin, User, Lock, Package, CreditCard, Receipt, Download, LogOut, Heart } from "lucide-react";
+import { Loader2, ShieldCheck, MapPin, User, Lock, Package, CreditCard, Receipt, Download, LogOut, Heart, CalendarClock } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -36,6 +36,7 @@ export const Profile = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userData, setUserData] = useState<{ name: string; email: string; authProvider: string; profileUpdates?: string[]; mobile?: string; address?: Record<string, string>; likedProducts?: any[] } | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
+  const [bookings, setBookings] = useState<any[]>([]);
   const [updateLimitReached, setUpdateLimitReached] = useState(false);
   const [cancellingOrderId, setCancellingOrderId] = useState<string | null>(null);
   const [cancelReason, setCancelReason] = useState<string>("");
@@ -62,10 +63,15 @@ export const Profile = () => {
 
   const fetchProfile = async () => {
     try {
-      const [profileResponse, ordersResponse] = await Promise.all([api.get("/profile"), api.get("/profile/orders")]);
+      const [profileResponse, ordersResponse, bookingsResponse] = await Promise.all([
+        api.get("/profile"), 
+        api.get("/profile/orders"),
+        api.get("/bookings/my-bookings").catch(() => ({ data: { data: [] } }))
+      ]);
       const data = profileResponse.data;
       setUserData(data.data);
       setOrders(ordersResponse.data.data);
+      setBookings(bookingsResponse.data.data || []);
       
       // Check limits
       const now = new Date();
@@ -385,6 +391,34 @@ export const Profile = () => {
             </div>
           )}
           <p className="mt-6 pt-4 border-t border-slate-50 text-xs text-slate-500 flex items-center gap-2"><CreditCard className="w-4 h-4" /> Payment card details are never stored or displayed for your security.</p>
+        </section>
+
+        {/* Bookings Section */}
+        <section className="mt-8 bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-100">
+          <h2 className="text-xl font-medium text-slate-900 flex items-center gap-2"><CalendarClock className="w-5 h-5 text-slate-400" /> Service Bookings</h2>
+          {bookings.length === 0 ? <p className="mt-4 text-sm text-slate-500">You have no service bookings.</p> : (
+            <div className="mt-5 space-y-4">
+              {bookings.map((booking: any) => (
+                <div key={booking._id} className="rounded-xl border border-slate-100 p-5 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+                  <div>
+                    <p className="font-semibold text-slate-900">{booking.service?.name || "Service Booking"}</p>
+                    <p className="text-sm text-slate-500 mt-1">Booked on {new Date(booking.createdAt).toLocaleDateString()}</p>
+                    {booking.notes && <p className="text-xs text-slate-400 mt-1">Notes: {booking.notes}</p>}
+                  </div>
+                  <div className="flex flex-col sm:items-end gap-1">
+                    <p className="font-semibold text-slate-900">₹{booking.amount}</p>
+                    <span className={`px-2 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider ${
+                      booking.paymentStatus === 'PAID' ? 'bg-emerald-100 text-emerald-700' :
+                      booking.paymentStatus === 'PENDING' ? 'bg-amber-100 text-amber-700' :
+                      'bg-red-100 text-red-700'
+                    }`}>
+                      {booking.paymentStatus}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </section>
 
         {/* Liked Products Section */}

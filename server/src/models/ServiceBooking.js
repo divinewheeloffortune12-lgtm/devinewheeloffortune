@@ -3,6 +3,9 @@ const mongoose = require('mongoose');
 const serviceBookingSchema = new mongoose.Schema({
   customerName: { type: String, required: true },
   mobile: { type: String, required: true },
+  email: { type: String, required: true },
+  notes: { type: String },
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   service: { type: mongoose.Schema.Types.ObjectId, ref: 'Service', required: true },
   address: { type: String, required: true },
   

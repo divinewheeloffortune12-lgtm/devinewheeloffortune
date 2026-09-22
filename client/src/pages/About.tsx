@@ -41,15 +41,66 @@ export default function About() {
               A space created for clarity, healing, and connection.
             </h2>
             
-            <div className="space-y-6 text-base md:text-lg leading-relaxed text-slate-600">
+            <div className="space-y-6 text-base md:text-lg leading-relaxed text-slate-600 max-h-[60vh] overflow-y-auto pr-4 custom-scrollbar">
               <p>
-                Nattasha Sharrma is the healer and spiritual guide behind Divine Wheel of Fortune, a space created for anyone seeking clarity, healing, and a deeper connection to their own path. Through astrology, tarot reading, numerology, and energy healing practices like reiki and theta healing, she helps people navigate life's biggest questions, from relationships and career to inner blockages that quietly hold them back.
+                <strong>Nattasha Sharrma</strong> is an internationally certified holistic healer, spiritual master, Reiki Grand Master, Tarot Visionary, intuitive psychic reader, astrologer, numerologist, spiritual teacher, trainer and occult practitioner. Her work brings together ancient wisdom, energy healing, intuitive guidance and spiritual practices to create a deeply personal and multidimensional approach to inner exploration and transformation.
               </p>
               <p>
-                What sets Nattasha's work apart is how personal it feels. Every tarot reading, every healing session, every piece of guidance is shaped around the person in front of her, not a generic script. She draws from a wide range of traditions—palm reading, chakra healing, past life regression, ancestral healing, and moon ritual work—so that whatever you're going through, there's a path suited to you.
+                With a diverse background spanning Reiki, Tarot, Akashic Records, Astrology, Numerology, Theta DNA Healing, Past Life Regression, Hypnotherapy, Crystal Healing, Sound Healing, Chakra Balancing, Pendulum Dowsing, Palm Reading, Manifestation, Shadow Work and Cord Cutting, Nattasha works with a wide range of spiritual and energetic modalities.
               </p>
               <p>
-                Divine Wheel of Fortune is also home to a curated collection of healing tools: rudraksha, crystals, malas, and sacred mantra books, chosen to support the same journey of clarity and transformation. Whether you're booking a session or exploring the shop, everything here is rooted in one simple intention: helping you reconnect with yourself and move forward with confidence.
+                Her philosophy is simple: every individual has a unique journey, and no single spiritual system has to define that journey. Rather than limiting her work to one modality, Nattasha draws upon different systems according to the individual's needs, questions, experiences and spiritual path.
+              </p>
+
+              <h3 className="text-2xl font-serif text-slate-900 mt-8 mb-4">A Multidimensional Spiritual Practice</h3>
+              <p>
+                Nattasha's spiritual journey encompasses both healing and divination, as well as inner work, manifestation and spiritual education. Her intuitive practice includes Tarot Reading, Psychic and Intuitive Guidance, Astrology, Numerology, Palmistry, Pendulum Dowsing, Akashic Records and specialised symbolic reading practices.
+              </p>
+              <p>
+                Her healing and energy work includes Reiki, Dragon Reiki, Dragon Healing, Theta Healing, Crystal Healing, Sound Healing, Chakra Balancing, Money Reiki, Soul Healing and Space Healing. She also explores deeper areas of personal and spiritual development through Shadow Work, Inner Child Work, Cord Cutting, Past Life Regression, Hypnotherapy and subconscious exploration.
+              </p>
+              <p>
+                Alongside these practices, Nattasha works with selected occult and esoteric traditions, including Yogini and Yakshini Sadhana, Talismans, Karelian Vidya, Sacred Feminine practices and Moon Rituals.
+              </p>
+
+              <h3 className="text-2xl font-serif text-slate-900 mt-8 mb-4">Beyond Healing — A Teacher and Guide</h3>
+              <p>
+                Teaching is an important part of Nattasha's spiritual journey. She believes that spiritual knowledge can be explored through understanding, practice, discipline and experience. Her role as a teacher is to help students develop their own understanding of the modalities they choose to study.
+              </p>
+              <p>
+                She offers training and guidance in areas including Reiki, Tarot, Akashic Records, Pendulum Dowsing, Theta Healing, Crystal Healing, Dragon Reiki, Dragon Healing, Manifestation Practices, Meditation, Yog Nidra, Energy Work and selected spiritual and occult practices.
+              </p>
+              <p className="italic font-medium text-slate-800">
+                Understand → Learn → Practise → Experience → Integrate
+              </p>
+              <p>
+                For Nattasha, spiritual education is not simply about collecting knowledge. It is about developing awareness, responsibility, intuition and a deeper understanding of one's own journey.
+              </p>
+
+              <h3 className="text-2xl font-serif text-slate-900 mt-8 mb-4">Her Approach</h3>
+              <p>
+                At the heart of Nattasha's work is the belief that spirituality is not something that needs to fit into a single box.
+              </p>
+              <ul className="list-disc pl-5 space-y-2 italic text-slate-700">
+                <li>Some journeys begin with a question.</li>
+                <li>Some begin with a search for clarity.</li>
+                <li>Some begin with healing.</li>
+                <li>Some begin with curiosity.</li>
+                <li>And some begin with the desire to understand oneself at a deeper level.</li>
+              </ul>
+              <p>
+                Whether through Tarot, Reiki, Akashic Records, Astrology, Numerology, energy healing, Cord Cutting, manifestation, shadow work or spiritual education, Nattasha creates a space for people to explore their experiences through a spiritual and intuitive perspective.
+              </p>
+
+              <h3 className="text-2xl font-serif text-slate-900 mt-8 mb-4">A Journey of Awareness</h3>
+              <p>
+                Nattasha Sharrma's work ultimately centres around one fundamental idea: <strong className="text-primary italic font-normal">Awareness creates the possibility for transformation.</strong>
+              </p>
+              <p>
+                Her purpose is to guide individuals towards greater clarity, self-awareness, intuition and spiritual understanding — while also empowering those who wish to learn and develop their own spiritual practice.
+              </p>
+              <p className="text-sm font-semibold text-primary mt-6 text-center">
+                Healing • Intuition • Energy • Divination • Occult Wisdom • Manifestation • Spiritual Education • Transformation
               </p>
             </div>
             
@@ -57,7 +108,7 @@ export default function About() {
               <Link to="/services" className="inline-flex items-center justify-center gap-2 bg-primary text-white font-semibold px-6 py-4 rounded-full hover:bg-primary/90 transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5">
                 Explore services <ArrowRight className="w-4 h-4" />
               </Link>
-              <a href="/#shop" className="inline-flex items-center justify-center gap-2 bg-white text-slate-800 border border-slate-200 font-semibold px-6 py-4 rounded-full hover:bg-slate-50 transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5">
+              <a href="/products" className="inline-flex items-center justify-center gap-2 bg-white text-slate-800 border border-slate-200 font-semibold px-6 py-4 rounded-full hover:bg-slate-50 transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5">
                 Visit the sacred shop
               </a>
             </div>

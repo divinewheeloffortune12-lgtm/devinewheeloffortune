@@ -45,7 +45,7 @@ const Services = () => {
   
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState({ name: "", mobile: "", address: "" });
+  const [formData, setFormData] = useState({ name: "", mobile: "", email: "", address: "", notes: "" });
   const [isProcessing, setIsProcessing] = useState(false);
   const location = useLocation();
 
@@ -94,7 +94,7 @@ const Services = () => {
       if (verifyRes.data.success) {
         toast.success("Booking confirmed successfully!");
         setIsModalOpen(false);
-        setFormData({ name: "", mobile: "", address: "" });
+        setFormData({ name: "", mobile: "", email: "", address: "", notes: "" });
       } else {
         toast.error("Payment verification failed.");
       }
@@ -124,6 +124,8 @@ const Services = () => {
       const orderResponse = await api.post('/bookings/create-order', {
         customerName: formData.name,
         mobile: formData.mobile,
+        email: formData.email,
+        notes: formData.notes,
         address: formData.address,
         serviceId: selectedService._id
       });
@@ -250,7 +252,7 @@ const Services = () => {
               You are booking <strong>{selectedService?.name}</strong>. Provide your details below.
             </DialogDescription>
           </DialogHeader>
-          <form onSubmit={handleSubmit} className="grid gap-4 py-4">
+          <form onSubmit={handleSubmit} className="grid gap-4 py-4 max-h-[70vh] overflow-y-auto px-1">
             <div className="grid gap-2">
               <Label htmlFor="name">Full Name</Label>
               <Input id="name" required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} placeholder="Jane Doe" disabled={isProcessing} />
@@ -260,8 +262,16 @@ const Services = () => {
               <Input id="mobile" required type="tel" value={formData.mobile} onChange={e => setFormData({...formData, mobile: e.target.value})} placeholder="10-digit number" disabled={isProcessing} />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="address">Address</Label>
-              <Input id="address" required value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} placeholder="Full address" disabled={isProcessing} />
+              <Label htmlFor="email">Email</Label>
+              <Input id="email" required type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} placeholder="jane@example.com" disabled={isProcessing} />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="address">Address / Location</Label>
+              <Input id="address" required value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} placeholder="Your address" disabled={isProcessing} />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="notes">Notes / Purpose (Optional)</Label>
+              <Input id="notes" value={formData.notes} onChange={e => setFormData({...formData, notes: e.target.value})} placeholder="Any specific requirements?" disabled={isProcessing} />
             </div>
             <Button type="submit" className="w-full mt-2" disabled={isProcessing}>
               {isProcessing ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}

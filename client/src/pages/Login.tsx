@@ -31,11 +31,27 @@ const Login = () => {
         });
         navigate(redirect);
       } catch (error: unknown) {
-         toast({
-          variant: "destructive",
-          title: "Login failed",
-          description: getErrorMessage(error, "An error occurred with Google login."),
-        });
+         const errorMsg = getErrorMessage(error, "An error occurred with Google login.");
+         if (errorMsg.toLowerCase().includes("account not found") || errorMsg.toLowerCase().includes("sign up first")) {
+            toast({
+              variant: "warning",
+              title: "Account not found",
+              description: (
+                <div className="flex flex-col gap-2 mt-1">
+                  <p>We couldn't find an account associated with this Google account.</p>
+                  <Link to="/signup" className="text-yellow-700 hover:text-yellow-900 underline font-semibold w-fit">
+                    Continue to Sign up →
+                  </Link>
+                </div>
+              ),
+            });
+         } else {
+           toast({
+            variant: "destructive",
+            title: "Login failed",
+            description: errorMsg,
+          });
+        }
       } finally { setIsLoading(false); }
   };
 

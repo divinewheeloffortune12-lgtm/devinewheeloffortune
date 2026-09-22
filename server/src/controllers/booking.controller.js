@@ -25,13 +25,16 @@ exports.getAllServices = async (req, res, next) => {
 
 exports.createBookingOrder = async (req, res, next) => {
   try {
-    const { customerName, mobile, serviceId, address } = req.body;
+    const { customerName, mobile, email, notes, serviceId, address } = req.body;
     
     if (!customerName || typeof customerName !== 'string' || customerName.trim().length < 2) {
       throw Object.assign(new Error('A valid name is required'), { statusCode: 400 });
     }
     if (!mobile || typeof mobile !== 'string' || mobile.trim().length < 10) {
       throw Object.assign(new Error('A valid mobile number is required'), { statusCode: 400 });
+    }
+    if (!email || typeof email !== 'string' || !email.includes('@')) {
+      throw Object.assign(new Error('A valid email address is required'), { statusCode: 400 });
     }
     if (!serviceId || !mongoose.isValidObjectId(serviceId)) {
       throw Object.assign(new Error('A valid service must be selected'), { statusCode: 400 });
@@ -71,6 +74,9 @@ exports.createBookingOrder = async (req, res, next) => {
     const booking = new ServiceBooking({
       customerName: customerName.trim(),
       mobile: mobile.trim(),
+      email: email.trim(),
+      notes: notes ? notes.trim() : '',
+      user: req.user ? req.user._id : undefined,
       service: service._id,
       address: address.trim(),
       amount,
@@ -154,6 +160,34 @@ exports.verifyBookingPayment = async (req, res, next) => {
       data: { bookingId: booking._id }
     });
     
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.getUserBookings = async (req, res, next) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ success: false, message: 'Unauthorized' });
+    }
+    
+    // Fetch bookings for the logged in user
+    // We want to hide FAILED bookings that are older than 12 hours
+    const twelveHoursAgo = new Date(Date.now() - 12 * 60 * 60 * 1000);
+    
+    const bookings = await ServiceBooking.find({
+      user: req.user._id,
+      $or: [
+        { paymentStatus: { $in: ['PAID', 'CONFIRMED', 'COMPLETED'] } },
+        { paymentStatus: 'PENDING' },
+        { paymentStatus: 'FAILED', createdAt: { $gt: twelveHoursAgo } }
+      ]
+    })
+    .populate('service', 'name price image duration')
+    .sort({ createdAt: -1 })
+    .lean();
+    
+    res.json({ success: true, data: bookings });
   } catch (error) {
     next(error);
   }

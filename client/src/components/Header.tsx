@@ -94,12 +94,9 @@ export const Header = () => {
         <div className="flex h-16 items-center justify-between gap-4">
           
           <div className="flex items-center gap-4 xl:gap-8">
-            <Link to="/" className="flex items-center gap-2 text-foreground hover:text-primary transition-colors shrink-0">
-              <span className="grid h-8 w-8 place-items-center rounded-full border border-primary/30 bg-primary/10 text-primary">
-                <Sparkles className="h-4 w-4" />
-              </span>
-              <span className="hidden md:inline font-serif text-sm lg:text-base tracking-wide whitespace-nowrap">
-                Divine Wheel <span className="font-light text-foreground/80">Of Fortune</span>
+            <Link to="/" className="flex items-center text-foreground hover:text-primary transition-colors shrink-0" aria-label="Home">
+              <span className="grid h-10 w-10 place-items-center rounded-full border border-primary/30 bg-primary/10 text-primary">
+                <Sparkles className="h-5 w-5" />
               </span>
             </Link>
 

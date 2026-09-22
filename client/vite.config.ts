@@ -27,6 +27,14 @@ export default defineConfig(({ mode }) => ({
     modulePreload: false,
     chunkSizeWarningLimit: 1000,
     sourcemap: true,
-    target: 'esnext'
+    target: 'esnext',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+          ui: ['framer-motion', 'lucide-react', 'swiper']
+        }
+      }
+    }
   },
 }));

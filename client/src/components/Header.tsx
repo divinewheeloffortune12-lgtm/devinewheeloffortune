@@ -95,9 +95,7 @@ export const Header = () => {
           
           <div className="flex items-center gap-4 xl:gap-8">
             <Link to="/" className="flex items-center text-foreground hover:text-primary transition-colors shrink-0" aria-label="Home">
-              <span className="grid h-10 w-10 place-items-center rounded-full border border-primary/30 bg-primary/10 text-primary">
-                <Sparkles className="h-5 w-5" />
-              </span>
+              <img src="/logo.png" alt="Divine Wheel of Fortune" className="h-12 w-auto object-contain" />
             </Link>
 
             {/* Desktop Navigation - Left Aligned */}

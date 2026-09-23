@@ -449,33 +449,43 @@ export const ServiceBookings = () => {
               
               {selectedBooking && (
                 <div className="space-y-6">
-                  <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className="grid grid-cols-2 gap-6 bg-slate-50 p-4 rounded-xl border border-slate-100">
                     <div>
-                      <p className="text-slate-500 font-medium">Booking ID</p>
-                      <p className="font-mono mt-1">{selectedBooking._id}</p>
+                      <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1">Customer Details</p>
+                      <p className="font-medium text-slate-800">{selectedBooking.customerName || "Unknown User"}</p>
+                      <div className="mt-2 space-y-1">
+                        {selectedBooking.email && (
+                          <p className="text-sm text-slate-600 flex items-center gap-2">
+                            <span className="font-medium text-slate-500">Email:</span> {selectedBooking.email}
+                          </p>
+                        )}
+                        {selectedBooking.mobile && (
+                          <p className="text-sm text-slate-600 flex items-center gap-2">
+                            <span className="font-medium text-slate-500">Mobile:</span> {selectedBooking.mobile}
+                          </p>
+                        )}
+                      </div>
                     </div>
                     <div>
-                      <p className="text-slate-500 font-medium">Date</p>
-                      <p className="mt-1">{new Date(selectedBooking.createdAt).toLocaleString()}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="border-t border-slate-100 pt-4 grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <p className="text-slate-500 font-medium">Customer Name</p>
-                      <p className="mt-1 font-medium">{selectedBooking.customerName}</p>
-                    </div>
-                    <div>
-                      <p className="text-slate-500 font-medium">Service</p>
-                      <p className="mt-1 font-medium">{selectedBooking.service?.name}</p>
-                    </div>
-                    <div>
-                      <p className="text-slate-500 font-medium">Mobile</p>
-                      <p className="mt-1">{selectedBooking.mobile}</p>
-                    </div>
-                    <div>
-                      <p className="text-slate-500 font-medium">Email</p>
-                      <p className="mt-1">{selectedBooking.email}</p>
+                      <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1">Booking Information</p>
+                      <div className="space-y-1 mt-1">
+                        <p className="text-sm text-slate-600 flex items-start gap-2">
+                          <span className="font-medium text-slate-500 min-w-[80px]">Booking ID:</span> 
+                          <span className="break-all">{selectedBooking._id}</span>
+                        </p>
+                        <p className="text-sm text-slate-600 flex items-center gap-2">
+                          <span className="font-medium text-slate-500 min-w-[80px]">Date:</span> 
+                          {new Date(selectedBooking.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+                        </p>
+                        <p className="text-sm text-slate-600 flex items-center gap-2">
+                          <span className="font-medium text-slate-500 min-w-[80px]">Time:</span> 
+                          {new Date(selectedBooking.createdAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
+                        </p>
+                        <p className="text-sm text-slate-600 flex items-start gap-2 pt-1 border-t border-slate-200/60 mt-1">
+                          <span className="font-medium text-slate-500 min-w-[80px]">Service:</span> 
+                          <span className="font-medium text-primary">{selectedBooking.service?.name}</span>
+                        </p>
+                      </div>
                     </div>
                   </div>
 

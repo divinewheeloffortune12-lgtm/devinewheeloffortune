@@ -430,20 +430,45 @@ export const AdminSales = () => {
             <div className="space-y-6 pt-4">
               <div className="grid grid-cols-2 gap-6 bg-slate-50 p-4 rounded-xl border border-slate-100">
                 <div>
-                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1">Customer</p>
-                  <p className="font-medium text-slate-800">{selectedOrder.user?.name || "Unknown"}</p>
-                  <p className="text-sm text-slate-600">{selectedOrder.user?.email}</p>
-                  {selectedOrder.user?.mobile && <p className="text-sm text-slate-600">{selectedOrder.user.mobile}</p>}
+                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1">Customer Details</p>
+                  <p className="font-medium text-slate-800">{selectedOrder.user?.name || "Unknown User"}</p>
+                  <div className="mt-2 space-y-1">
+                    {selectedOrder.user?.email && (
+                      <p className="text-sm text-slate-600 flex items-center gap-2">
+                        <span className="font-medium text-slate-500">Email:</span> {selectedOrder.user.email}
+                      </p>
+                    )}
+                    {selectedOrder.user?.mobile && (
+                      <p className="text-sm text-slate-600 flex items-center gap-2">
+                        <span className="font-medium text-slate-500">Mobile:</span> {selectedOrder.user.mobile}
+                      </p>
+                    )}
+                  </div>
                 </div>
                 <div>
-                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1">Order Date</p>
-                  <p className="font-medium text-slate-800">{new Date(selectedOrder.createdAt).toLocaleString()}</p>
+                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1">Order Information</p>
+                  <div className="space-y-1 mt-1">
+                    <p className="text-sm text-slate-600 flex items-start gap-2">
+                      <span className="font-medium text-slate-500 min-w-[70px]">Order ID:</span> 
+                      <span className="break-all">{selectedOrder._id}</span>
+                    </p>
+                    <p className="text-sm text-slate-600 flex items-center gap-2">
+                      <span className="font-medium text-slate-500 min-w-[70px]">Date:</span> 
+                      {new Date(selectedOrder.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+                    </p>
+                    <p className="text-sm text-slate-600 flex items-center gap-2">
+                      <span className="font-medium text-slate-500 min-w-[70px]">Time:</span> 
+                      {new Date(selectedOrder.createdAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
+                    </p>
+                  </div>
                 </div>
               </div>
 
               <div>
                 <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-2 border-b border-slate-100 pb-2">Shipping Address</p>
-                <p className="text-sm text-slate-700 leading-relaxed">{selectedOrder.shippingAddress || "No address provided."}</p>
+                <div className="bg-white border border-slate-100 p-3 rounded-lg text-sm text-slate-700 leading-relaxed shadow-sm">
+                  {selectedOrder.shippingAddress || "No address provided."}
+                </div>
               </div>
 
               {selectedOrder.notes && (

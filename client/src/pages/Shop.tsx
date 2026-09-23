@@ -40,7 +40,95 @@ type Product = {
 import { SectionHeader } from "@/components/ui/SectionHeader";
 
 export default function Shop() {
-// ...
+  const [params, setParams] = useSearchParams();
+  const queryString = params.toString();
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [search, setSearch] = useState(params.get("q") || "");
+  const [authPrompt, setAuthPrompt] = useState(false);
+  const { toast } = useToast();
+  const category = params.get("category") || "";
+  const { addItem } = useCart();
+  const { likedProducts, toggleLike } = useLikes();
+  useEffect(() => {
+    api
+      .get("/categories")
+      .then(({ data }) => setCategories(data.data))
+      .catch(() => setCategories([]));
+  }, []);
+  useEffect(() => {
+    let live = true;
+    setLoading(true);
+    const current = new URLSearchParams(queryString);
+    api
+      .get("/products", {
+        params: {
+          category: category || undefined,
+          q: current.get("q") || undefined,
+          limit: 24,
+          page: page,
+        },
+      })
+      .then(({ data }) => {
+        if (live) {
+          const validProducts = data.data.filter((p: any) => p.availability !== false && p.isDeleted !== true);
+          if (page === 1) {
+            setProducts(validProducts);
+          } else {
+            setProducts((prev) => {
+              const newProducts = validProducts.filter((vp: any) => !prev.some((p: any) => p._id === vp._id));
+              return [...prev, ...newProducts];
+            });
+          }
+          setHasMore(data.pagination?.page < data.pagination?.totalPages);
+        }
+      })
+      .catch((error) =>
+        toast({
+          variant: "destructive",
+          title: "Could not load products",
+          description: getErrorMessage(error, "Please try again."),
+        }),
+      )
+      .finally(() => {
+        if (live) setLoading(false);
+      });
+    return () => {
+      live = false;
+    };
+  }, [category, queryString, toast, page]);
+  
+  const chooseCategory = (id = "") => {
+    const next = new URLSearchParams(params);
+    if (id) next.set("category", id);
+    else next.delete("category");
+    setPage(1);
+    setParams(next);
+  };
+  const submitSearch = (event: React.FormEvent) => {
+    event.preventDefault();
+    const next = new URLSearchParams(params);
+    if (search.trim()) next.set("q", search.trim());
+    else next.delete("q");
+    setPage(1);
+    setParams(next);
+  };
+
+  const addToCart = (product: Product) => {
+    const formattedProduct = { ...product, id: product._id };
+    addItem(formattedProduct as any, 1);
+    toast({ title: "Added to bag" });
+  };
+
+  const buyNow = (product: Product) => {
+    const formattedProduct = { ...product, id: product._id };
+    addItem(formattedProduct as any, 1);
+    window.location.href = "/checkout";
+  };
+
   return (
     <Layout>
       <SectionHeader 

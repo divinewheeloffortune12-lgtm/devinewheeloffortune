@@ -181,7 +181,7 @@ const Index = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, ease: "easeOut" }}
-              className="relative w-full aspect-[4/5] sm:aspect-square md:aspect-[4/5] flex justify-center items-center rounded-[2rem] shadow-sm border border-purple-200/50 hover:shadow-md transition-shadow overflow-hidden bg-gradient-to-r from-purple-100/80 to-indigo-50/80 group"
+              className="relative w-full flex justify-center items-center rounded-[2rem] shadow-[0_0_20px_rgba(168,85,247,0.4)] border-4 border-purple-400 hover:shadow-[0_0_30px_rgba(168,85,247,0.6)] transition-all overflow-hidden bg-gradient-to-r from-purple-100/80 to-indigo-50/80 group"
             >
               <img 
                 src="/about-image.png" 

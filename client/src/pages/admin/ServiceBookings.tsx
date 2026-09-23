@@ -458,16 +458,12 @@ export const ServiceBookings = () => {
                       <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1">Customer Details</p>
                       <p className="font-medium text-slate-800">{selectedBooking.customerName || "Unknown User"}</p>
                       <div className="mt-2 space-y-1">
-                        {(selectedBooking.email || selectedBooking.user?.email) && (
-                          <p className="text-sm text-slate-600 flex items-center gap-2">
-                            <span className="font-medium text-slate-500">Email:</span> {selectedBooking.email || selectedBooking.user?.email}
-                          </p>
-                        )}
-                        {selectedBooking.mobile && (
-                          <p className="text-sm text-slate-600 flex items-center gap-2">
-                            <span className="font-medium text-slate-500">Mobile:</span> {selectedBooking.mobile}
-                          </p>
-                        )}
+                        <p className="text-sm text-slate-600 flex items-center gap-2">
+                          <span className="font-medium text-slate-500">Email:</span> {selectedBooking.email || selectedBooking.user?.email || "Not provided"}
+                        </p>
+                        <p className="text-sm text-slate-600 flex items-center gap-2">
+                          <span className="font-medium text-slate-500">Mobile:</span> {selectedBooking.mobile || selectedBooking.user?.mobile || "Not provided"}
+                        </p>
                       </div>
                     </div>
                     <div>

@@ -392,11 +392,11 @@ export const ServiceBookings = () => {
                       <td className="px-6 py-4 font-mono text-xs">{booking._id}</td>
                       <td className="px-6 py-4 text-slate-500">{new Date(booking.createdAt).toLocaleDateString()}</td>
                       <td className="px-6 py-4">
-                        <div className="font-medium text-slate-900">{booking.customerName}</div>
+                        <div className="font-medium text-slate-900">{booking.customerName || booking.user?.name || "Unknown"}</div>
                         <div className="text-xs text-slate-500">{booking.email}</div>
                         <div className="text-xs text-slate-500">{booking.mobile}</div>
                       </td>
-                      <td className="px-6 py-4 text-slate-600">{booking.service?.name}</td>
+                      <td className="px-6 py-4 text-slate-600">{booking.service?.name || "Unknown Service"}</td>
                       <td className="px-6 py-4 font-medium">₹{booking.amount}</td>
                       <td className="px-6 py-4">
                         <div className="flex gap-1 flex-wrap">

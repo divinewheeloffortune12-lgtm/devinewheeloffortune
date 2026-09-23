@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { api } from "@/lib/api";
-import { Loader2, Receipt, TrendingUp, ChevronLeft, ChevronRight, Package, Truck, CheckCircle2, XCircle, Download } from "lucide-react";
+import { Loader2, Receipt, TrendingUp, ChevronLeft, ChevronRight, Package, Truck, CheckCircle2, XCircle, Download, Printer } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -554,6 +554,15 @@ export const AdminSales = () => {
                   </Select>
                 </div>
                 <p className="text-[10px] text-muted-foreground mt-2">Updating the status will immediately reflect on the user's profile.</p>
+              </div>
+
+              <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
+                <Button variant="outline" onClick={() => setSelectedOrder(null)}>
+                  Close
+                </Button>
+                <Button onClick={() => printOrder(selectedOrder)} className="flex items-center gap-2">
+                  <Printer className="w-4 h-4" /> Print Details
+                </Button>
               </div>
             </div>
           )}

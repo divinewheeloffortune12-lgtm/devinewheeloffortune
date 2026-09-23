@@ -1,21 +1,16 @@
 import { Layout } from "@/components/Layout";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
-import Aurora from "@/components/ui/Aurora";
+import { SectionHeader } from "@/components/ui/SectionHeader";
 
 export default function About() {
   return (
     <Layout>
-      <section className="relative overflow-hidden pt-32 pb-16 text-center bg-black text-white">
-        <div className="absolute inset-0 z-0">
-          <Aurora colorStops={["#d8b4fe", "#B497CF", "#5227FF"]} blend={0.6} amplitude={1.5} speed={0.5} />
-        </div>
-        <div className="relative z-10">
-          <p className="text-xs uppercase tracking-[.3em] font-semibold">Divine Wheel of Fortune</p>
-          <h1 className="font-serif text-5xl md:text-7xl mt-4 drop-shadow-xl">About Nattasha Sharrma</h1>
-          <p className="text-white/80 mt-5 max-w-xl mx-auto text-lg drop-shadow">Healer, guide, and intuitive practitioner.</p>
-        </div>
-      </section>
+      <SectionHeader 
+        overline="Divine Wheel of Fortune"
+        title="About Nattasha Sharrma"
+        subtitle="Healer, guide, and intuitive practitioner."
+      />
 
       <section className="py-20 md:py-32 bg-[#f9f9f9]">
         <div className="container-full">

@@ -37,117 +37,32 @@ type Product = {
   images: string[];
   category?: Category;
 };
+import { SectionHeader } from "@/components/ui/SectionHeader";
+
 export default function Shop() {
-  const [params, setParams] = useSearchParams();
-  const queryString = params.toString();
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-  const [search, setSearch] = useState(params.get("q") || "");
-  const [authPrompt, setAuthPrompt] = useState(false);
-  const { toast } = useToast();
-  const category = params.get("category") || "";
-  const { addItem } = useCart();
-  const { likedProducts, toggleLike } = useLikes();
-  useEffect(() => {
-    api
-      .get("/categories")
-      .then(({ data }) => setCategories(data.data))
-      .catch(() => setCategories([]));
-  }, []);
-  useEffect(() => {
-    let live = true;
-    setLoading(true);
-    const current = new URLSearchParams(queryString);
-    api
-      .get("/products", {
-        params: {
-          category: category || undefined,
-          q: current.get("q") || undefined,
-          limit: 24,
-          page: page,
-        },
-      })
-      .then(({ data }) => {
-        if (live) {
-          const validProducts = data.data.filter((p: any) => p.availability !== false && p.isDeleted !== true);
-          if (page === 1) {
-            setProducts(validProducts);
-          } else {
-            setProducts((prev) => {
-              const newProducts = validProducts.filter((vp: any) => !prev.some((p: any) => p._id === vp._id));
-              return [...prev, ...newProducts];
-            });
-          }
-          setHasMore(data.pagination?.page < data.pagination?.totalPages);
-        }
-      })
-      .catch((error) =>
-        toast({
-          variant: "destructive",
-          title: "Could not load products",
-          description: getErrorMessage(error, "Please try again."),
-        }),
-      )
-      .finally(() => {
-        if (live) setLoading(false);
-      });
-    return () => {
-      live = false;
-    };
-  }, [category, queryString, toast, page]);
-  
-  const chooseCategory = (id = "") => {
-    const next = new URLSearchParams(params);
-    if (id) next.set("category", id);
-    else next.delete("category");
-    setPage(1);
-    setParams(next);
-  };
-  const submitSearch = (event: React.FormEvent) => {
-    event.preventDefault();
-    const next = new URLSearchParams(params);
-    if (search.trim()) next.set("q", search.trim());
-    else next.delete("q");
-    setPage(1);
-    setParams(next);
-  };
-
-  const addToCart = (product: Product) => {
-    const formattedProduct = { ...product, id: product._id };
-    addItem(formattedProduct as any, 1);
-    toast({ title: "Added to bag" });
-  };
-
-  const buyNow = (product: Product) => {
-    const formattedProduct = { ...product, id: product._id };
-    addItem(formattedProduct as any, 1);
-    window.location.href = "/checkout";
-  };
-
+// ...
   return (
     <Layout>
-      <section className="pt-28 pb-10 bg-[#181422] text-white">
-        <div className="container-full">
-          <p className="text-xs tracking-[.28em] uppercase text-primary">
-            Find what resonates
-          </p>
-          <h1 className="font-serif text-4xl md:text-6xl mt-3">
-            Shop the collection
-          </h1>
-          <form onSubmit={submitSearch} className="relative mt-8 max-w-xl">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/50" />
-            <Input
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search crystals, malas, rituals…"
-              className="pl-11 bg-white/10 border-white/20 text-white placeholder:text-white/45 rounded-full"
-            />
-          </form>
-        </div>
-      </section>
+      <SectionHeader 
+        className="pt-28 pb-10"
+        contentClassName="text-left container-full flex flex-col items-start"
+      >
+        <p className="text-xs tracking-[.28em] uppercase text-primary font-semibold drop-shadow-md">
+          Find what resonates
+        </p>
+        <h1 className="font-serif text-4xl md:text-6xl mt-3 text-white drop-shadow-xl">
+          Shop the collection
+        </h1>
+        <form onSubmit={submitSearch} className="relative mt-8 max-w-xl w-full z-20">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/50" />
+          <Input
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder="Search crystals, malas, rituals…"
+            className="pl-11 bg-white/10 border-white/20 text-white placeholder:text-white/45 rounded-full"
+          />
+        </form>
+      </SectionHeader>
       <section className="sticky top-16 z-30 bg-background/95 backdrop-blur border-b">
         <div className="container-full flex gap-2 overflow-x-auto py-4">
           <Button

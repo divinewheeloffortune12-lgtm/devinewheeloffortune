@@ -4,6 +4,7 @@ import { Layout } from "@/components/Layout";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useEffect } from "react";
+import { SectionHeader } from "@/components/ui/SectionHeader";
 
 export default function BlogPost() {
   const { slug } = useParams();
@@ -39,28 +40,29 @@ export default function BlogPost() {
   return (
     <Layout>
       <article className="pb-20">
-        <header className="pt-32 pb-16 bg-[#f6f0e6]">
-          <div className="container-narrow">
-            <Link to="/blog" className="inline-flex items-center gap-2 text-sm font-semibold text-primary mb-8 hover:opacity-80 transition-opacity">
-              <ArrowLeft className="w-4 h-4" /> Back to Journal
-            </Link>
-            
-            <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl leading-tight mb-8">
-              {post.title}
-            </h1>
-            
-            <div className="flex flex-wrap gap-6 text-sm text-muted-foreground uppercase tracking-widest font-semibold">
-              <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4" />
-                {new Date(post.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-              </div>
-              <div className="flex items-center gap-2">
-                <User className="w-4 h-4" />
-                {post.author}
-              </div>
+        <SectionHeader 
+          className="pt-24 pb-16"
+          contentClassName="container-narrow mx-auto text-left flex flex-col items-start"
+        >
+          <Link to="/blog" className="inline-flex items-center gap-2 text-sm font-semibold text-white/80 mb-8 hover:text-white transition-opacity">
+            <ArrowLeft className="w-4 h-4" /> Back to Journal
+          </Link>
+          
+          <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl leading-tight mb-8 drop-shadow-xl">
+            {post.title}
+          </h1>
+          
+          <div className="flex flex-wrap gap-6 text-sm text-white/70 uppercase tracking-widest font-semibold">
+            <div className="flex items-center gap-2">
+              <Calendar className="w-4 h-4" />
+              {new Date(post.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+            </div>
+            <div className="flex items-center gap-2">
+              <User className="w-4 h-4" />
+              {post.author}
             </div>
           </div>
-        </header>
+        </SectionHeader>
 
         <div className="container-narrow mt-16">
           {post.image && (

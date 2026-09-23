@@ -25,105 +25,35 @@ const sortOptions: { value: SortOption; label: string }[] = [
   { value: "name-asc", label: "Alphabetical A-Z" },
 ];
 
+import { SectionHeader } from "@/components/ui/SectionHeader";
+
 const Products = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const activeCollection = searchParams.get("collection") || "all";
-  const activeSort = (searchParams.get("sort") as SortOption) || "featured";
-
-  const filteredAndSortedProducts = useMemo(() => {
-    let result = [...products];
-
-    // Filter by collection
-    if (activeCollection !== "all") {
-      const collection = collections.find((c) => c.slug === activeCollection);
-      if (collection) {
-        result = result.filter((product) => product.collection === collection.id);
-      }
-    }
-
-    // Sort
-    switch (activeSort) {
-      case "newest":
-        result = result.filter((p) => p.new).concat(result.filter((p) => !p.new));
-        break;
-      case "price-asc":
-        result.sort((a, b) => a.price - b.price);
-        break;
-      case "price-desc":
-        result.sort((a, b) => b.price - a.price);
-        break;
-      case "name-asc":
-        result.sort((a, b) => a.name.localeCompare(b.name));
-        break;
-      case "featured":
-      default:
-        result = result.filter((p) => p.featured).concat(result.filter((p) => !p.featured));
-        break;
-    }
-
-    return result;
-  }, [activeCollection, activeSort]);
-
-  const currentCollection = activeCollection !== "all"
-    ? getCollectionBySlug(activeCollection)
-    : null;
-
-  const handleFilterChange = (slug: string) => {
-    const newParams = new URLSearchParams(searchParams);
-    if (slug === "all") {
-      newParams.delete("collection");
-    } else {
-      newParams.set("collection", slug);
-    }
-    setSearchParams(newParams);
-  };
-
-  const handleSortChange = (value: string) => {
-    const newParams = new URLSearchParams(searchParams);
-    if (value === "featured") {
-      newParams.delete("sort");
-    } else {
-      newParams.set("sort", value);
-    }
-    setSearchParams(newParams);
-  };
-
+// ...
   return (
     <Layout>
       {/* Hero Banner */}
-      <section className="relative h-[40vh] md:h-[55vh] overflow-hidden">
-        <div className="absolute inset-0">
-          <img
-            src={
-              currentCollection?.heroImage ||
-              "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1920&q=80"
-            }
-            alt={currentCollection?.name || "All Products"}
-            className="w-full h-full object-cover transition-opacity duration-700"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-charcoal/60 via-charcoal/20 to-charcoal/10" />
-        </div>
-
-        <div className="relative container-full h-full flex flex-col justify-end pb-12 md:pb-16">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] as const }}
-          >
-            <p className="text-[10px] font-semibold tracking-[0.3em] uppercase text-white/50 mb-3">
-              {currentCollection ? "Collection" : "Shop"}
+      <SectionHeader
+        className="h-[40vh] md:h-[55vh] flex flex-col justify-end pb-12 md:pb-16"
+        contentClassName="text-left flex flex-col items-start w-full container-full mx-auto"
+      >
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] as const }}
+        >
+          <p className="text-[10px] font-semibold tracking-[0.3em] uppercase text-white/70 mb-3 drop-shadow-md">
+            {currentCollection ? "Collection" : "Shop"}
+          </p>
+          <h1 className="font-serif text-4xl md:text-6xl lg:text-7xl text-white mb-3 leading-[0.95] drop-shadow-xl">
+            {currentCollection ? currentCollection.name : "All Pieces"}
+          </h1>
+          {currentCollection && (
+            <p className="text-base text-white/80 max-w-lg drop-shadow">
+              {currentCollection.description}
             </p>
-            <h1 className="font-serif text-4xl md:text-6xl lg:text-7xl text-white mb-3 leading-[0.95]">
-              {currentCollection ? currentCollection.name : "All Pieces"}
-            </h1>
-            {currentCollection && (
-              <p className="text-base text-white/70 max-w-lg">
-                {currentCollection.description}
-              </p>
-            )}
-          </motion.div>
-        </div>
-      </section>
+          )}
+        </motion.div>
+      </SectionHeader>
 
       {/* Filters & Sorting */}
       <section className="py-5 border-b border-border sticky top-16 md:top-20 bg-background/95 backdrop-blur-md z-40">

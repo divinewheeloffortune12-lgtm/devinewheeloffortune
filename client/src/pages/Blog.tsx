@@ -3,6 +3,7 @@ import { ArrowRight, Loader2 } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
+import { SectionHeader } from "@/components/ui/SectionHeader";
 
 export default function Blog() { 
   const { data: blogs = [], isLoading } = useQuery({
@@ -16,12 +17,10 @@ export default function Blog() {
 
   return (
     <Layout>
-      <section className="pt-32 pb-20 bg-[#f6f0e6]">
-        <div className="container-full">
-          <p className="text-xs uppercase tracking-[.3em] text-primary">The journal</p>
-          <h1 className="font-serif text-5xl md:text-7xl mt-4 max-w-3xl">Notes for an intentional life.</h1>
-        </div>
-      </section>
+      <SectionHeader 
+        overline="The journal"
+        title="Notes for an intentional life."
+      />
       
       <section className="container-full py-16 md:py-24">
         {isLoading ? (

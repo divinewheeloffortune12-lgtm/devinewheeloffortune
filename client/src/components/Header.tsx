@@ -137,6 +137,13 @@ export const Header = () => {
                         </Link>
                       ))
                     )}
+                    {categories.length > 0 && !isCategoriesLoading && (
+                      <Link to="/products" className="group/item flex flex-col items-center justify-center gap-2 bg-slate-50 hover:bg-primary/5 p-4 rounded-xl transition-colors border border-transparent hover:border-primary/20 shadow-sm hover:shadow-md h-full min-h-[80px]">
+                        <span className="font-medium text-sm text-primary flex items-center gap-2">
+                          View All Categories <ArrowRight className="w-4 h-4 transition-transform group-hover/item:translate-x-1" />
+                        </span>
+                      </Link>
+                    )}
                   </div>
                 </div>
               </div>

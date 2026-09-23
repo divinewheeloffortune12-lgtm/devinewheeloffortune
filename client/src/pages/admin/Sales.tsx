@@ -105,6 +105,137 @@ export const AdminSales = () => {
     );
   }
 
+  const printOrder = (order: any) => {
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+    
+    const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${order._id}`;
+    const dateStr = new Date(order.createdAt).toLocaleString();
+    
+    const productsHtml = order.products?.map((item: any) => `
+      <tr>
+        <td>${item.product?.name || 'Unknown Product'}</td>
+        <td style="text-align: center;">${item.quantity}</td>
+        <td style="text-align: right;">₹${item.price}</td>
+        <td style="text-align: right;">₹${item.price * item.quantity}</td>
+      </tr>
+    `).join('') || '';
+
+    const html = `
+      <html>
+        <head>
+          <title>Order Receipt #${order.orderNumber || order._id.slice(-6).toUpperCase()}</title>
+          <style>
+            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+            body { font-family: 'Inter', sans-serif; padding: 40px; color: #1e293b; line-height: 1.6; max-width: 800px; margin: 0 auto; background: #f8fafc; }
+            .receipt-card { background: #ffffff; padding: 40px; border-radius: 16px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); border: 1px solid #e2e8f0; }
+            .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px dashed #e2e8f0; padding-bottom: 30px; margin-bottom: 30px; }
+            .brand-name { color: #d4af37; font-size: 28px; font-weight: 700; margin: 0 0 5px 0; font-family: serif; }
+            .receipt-title { font-size: 14px; text-transform: uppercase; letter-spacing: 2px; color: #64748b; font-weight: 600; margin: 0; }
+            .qr-code { border: 1px solid #e2e8f0; border-radius: 8px; padding: 5px; background: #fff; width: 100px; height: 100px; }
+            
+            .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; }
+            .info-box { background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #f1f5f9; }
+            .info-box.full { grid-column: 1 / -1; }
+            .label { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #64748b; font-weight: 600; margin-bottom: 4px; display: block; }
+            .value { font-size: 15px; color: #0f172a; font-weight: 500; }
+            
+            .service-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+            .service-table th { text-align: left; padding: 12px; border-bottom: 2px solid #e2e8f0; color: #64748b; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
+            .service-table td { padding: 16px 12px; border-bottom: 1px solid #f1f5f9; color: #0f172a; font-weight: 500; }
+            
+            .totals { display: flex; justify-content: flex-end; margin-top: 20px; }
+            .totals-box { width: 300px; }
+            .total-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 15px; }
+            .total-row.final { border-top: 2px solid #e2e8f0; margin-top: 8px; padding-top: 16px; font-size: 20px; font-weight: 700; color: #0f172a; }
+            
+            .badges { display: flex; gap: 10px; margin-top: 10px; }
+            .badge { padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+            .badge.paid { background: #dcfce7; color: #166534; }
+            .badge.pending { background: #fef08a; color: #854d0e; }
+            .badge.status { background: #e0f2fe; color: #075985; }
+            
+            .footer { margin-top: 40px; text-align: center; font-size: 13px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 20px; }
+          </style>
+        </head>
+        <body>
+          <div class="receipt-card">
+            <div class="header">
+              <div>
+                <h1 class="brand-name">Divine Wheel of Fortune</h1>
+                <p class="receipt-title">Order Receipt</p>
+                <p style="margin: 10px 0 0 0; color: #64748b; font-size: 14px;">Order #: ${order.orderNumber || order._id.slice(-6).toUpperCase()}</p>
+                <p style="margin: 5px 0 0 0; color: #64748b; font-size: 14px;">Date: ${dateStr}</p>
+              </div>
+              <img src="${qrCodeUrl}" alt="QR Code" class="qr-code" />
+            </div>
+            
+            <div class="info-grid">
+              <div class="info-box">
+                <span class="label">Customer Details</span>
+                <div class="value">${order.user?.name || 'Unknown'}</div>
+                <div class="value" style="font-weight: 400; color: #475569;">${order.user?.email || ''}</div>
+                ${order.user?.mobile ? `<div class="value" style="font-weight: 400; color: #475569;">${order.user.mobile}</div>` : ''}
+              </div>
+              <div class="info-box">
+                <span class="label">Order Status</span>
+                <div class="badges">
+                  <span class="badge ${order.paymentStatus === 'PAID' ? 'paid' : 'pending'}">${order.paymentStatus}</span>
+                  <span class="badge status">${order.status}</span>
+                </div>
+              </div>
+              <div class="info-box full">
+                <span class="label">Shipping Address</span>
+                <div class="value">${order.shippingAddress || 'No address provided'}</div>
+              </div>
+            </div>
+
+            <table class="service-table">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th style="text-align: center;">Qty</th>
+                  <th style="text-align: right;">Price</th>
+                  <th style="text-align: right;">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${productsHtml}
+              </tbody>
+            </table>
+
+            <div class="totals">
+              <div class="totals-box">
+                <div class="total-row">
+                  <span>Subtotal</span>
+                  <span>₹${(order.totalAmount - (order.shippingCharge || 0)).toLocaleString("en-IN")}</span>
+                </div>
+                <div class="total-row">
+                  <span>Shipping</span>
+                  <span>${order.shippingCharge === 0 ? 'Free' : `₹${(order.shippingCharge || 0).toLocaleString("en-IN")}`}</span>
+                </div>
+                <div class="total-row final">
+                  <span>Total Amount</span>
+                  <span>₹${order.totalAmount?.toLocaleString("en-IN")}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="footer">
+              Thank you for choosing Divine Wheel of Fortune.<br/>
+              For any queries, please contact our support.
+            </div>
+          </div>
+          <script>
+            window.onload = function() { setTimeout(function() { window.print(); }, 500); }
+          </script>
+        </body>
+      </html>
+    `;
+    printWindow.document.write(html);
+    printWindow.document.close();
+  };
+
   return (
     <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500">
       <div className="flex justify-between items-center">

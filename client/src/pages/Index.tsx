@@ -376,7 +376,7 @@ const Index = () => {
           <p className="text-xs font-semibold uppercase tracking-editorial text-primary">Begin when you’re ready</p>
           <h2 className="mt-5 text-4xl md:text-6xl text-foreground drop-shadow-sm">Your next chapter can start with one conversation.</h2>
           <p className="mx-auto mt-6 max-w-xl leading-7 text-foreground/75 drop-shadow-sm">Share your preferred service and session length. Nattasha Sharrma will personally help you with the next step.</p>
-          <Button size="lg" className="mt-10 h-14 rounded-full bg-primary px-10 text-primary-foreground hover:bg-primary/90 shadow-xl text-base transition-transform hover:scale-105" onClick={() => window.location.href = "mailto:hello@divinewheeloffortune.com?subject=Session enquiry"}>Contact Nattasha Sharrma <ArrowRight className="ml-2 w-5 h-5" /></Button>
+          <Button size="lg" className="mt-10 h-14 rounded-full bg-primary px-10 text-primary-foreground hover:bg-primary/90 shadow-xl text-base transition-transform hover:scale-105" onClick={() => window.open("https://wa.me/919876978500", "_blank")}>Contact Nattasha Sharrma <ArrowRight className="ml-2 w-5 h-5" /></Button>
         </div>
       </section>
       

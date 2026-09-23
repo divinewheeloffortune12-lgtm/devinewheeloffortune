@@ -115,139 +115,141 @@ export const AdminSales = () => {
     
     const productsHtml = order.products?.map((item: any) => `
       <tr>
-        <td style="display: flex; align-items: center; gap: 12px; padding: 12px 0;">
-          ${item.product?.images?.[0] ? `<img src="${item.product.images[0]}" alt="${item.product?.name}" style="width: 48px; height: 48px; object-fit: cover; border-radius: 6px; border: 1px solid #e2e8f0;" />` : ''}
-          <div>
-            <div style="font-weight: 500; color: #1e293b;">${item.product?.name || 'Unknown Product'}</div>
-            <div style="font-size: 11px; color: #64748b; margin-top: 2px;">ID: ${item.product?._id || 'N/A'}</div>
-          </div>
-        </td>
-        <td style="text-align: center; color: #1e293b;">${item.quantity}</td>
-        <td style="text-align: right; color: #1e293b;">₹${item.price}</td>
-        <td style="text-align: right; font-weight: 500; color: #1e293b;">₹${item.price * item.quantity}</td>
+          <td style="display: flex; align-items: center; gap: 16px;">
+              ${item.product?.images?.[0] ? `<img src="${item.product.images[0]}" alt="${item.product?.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid #e2e8f0;" />` : `<div style="width: 50px; height: 50px; background: #e2e8f0; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px;">📦</div>`}
+              <div>
+                  <div style="font-weight: 600; color: #1e293b; font-size: 15px;">${item.product?.name || 'Unknown Product'}</div>
+                  <div style="font-size: 11px; color: #64748b; margin-top: 4px;">ID: ${item.product?._id || 'N/A'}</div>
+              </div>
+          </td>
+          <td style="text-align: center; color: #475569;">${item.quantity}</td>
+          <td style="text-align: right; color: #475569;">₹${item.price}</td>
+          <td style="text-align: right; font-weight: 600; color: #0f172a;">₹${item.price * item.quantity}</td>
       </tr>
     `).join('') || '';
 
     const html = `
-      <html>
-        <head>
-          <title>Purchase Receipt #${order.orderNumber || order._id.slice(-6).toUpperCase()}</title>
-          <style>
-            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-            body { font-family: 'Inter', sans-serif; padding: 40px; color: #334155; line-height: 1.5; max-width: 800px; margin: 0 auto; background: #ffffff; }
-            
-            .header-top { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 20px; position: relative; }
-            .brand-logo { font-size: 32px; color: #d4af37; margin-right: 8px; }
-            .brand-title { display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 700; color: #d4af37; margin: 0; font-family: serif; }
-            .receipt-subtitle { font-size: 14px; color: #64748b; margin-top: 8px; text-transform: capitalize; }
-            .qr-code { position: absolute; right: 0; top: 0; width: 80px; height: 80px; }
-            
-            hr.gold { border: none; border-top: 2px solid #d4af37; margin: 20px 0 30px 0; }
-            
-            .info-row { display: flex; justify-content: space-between; margin-bottom: 30px; }
-            .info-col { flex: 1; }
-            .info-col.right { text-align: right; }
-            .info-col.center { text-align: center; }
-            .label { font-size: 12px; color: #64748b; margin-bottom: 4px; display: block; }
-            .value { font-size: 15px; color: #0f172a; font-weight: 600; }
-            
-            .badge { display: inline-block; padding: 4px 12px; border-radius: 999px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
-            .badge.paid { background: #dcfce7; color: #166534; }
-            .badge.pending { background: #fef08a; color: #854d0e; }
-            
-            .customer-details { margin-bottom: 30px; }
-            .customer-details .label { margin-bottom: 6px; }
-            .customer-value { font-size: 15px; color: #1e293b; margin-bottom: 2px; }
-            .customer-name { font-weight: 600; color: #0f172a; margin-bottom: 4px; }
-            .payment-ref { font-size: 13px; color: #94a3b8; margin-top: 20px; margin-bottom: 30px; display: block; }
-            
-            .items-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
-            .items-table th { text-align: left; padding: 12px 0; border-bottom: 1px solid #e2e8f0; color: #64748b; font-size: 12px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
-            .items-table td { border-bottom: 1px solid #f1f5f9; padding: 12px 0; }
-            
-            .totals-container { display: flex; justify-content: flex-end; margin-top: 20px; }
-            .totals-box { width: 250px; }
-            .total-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 15px; color: #1e293b; }
-            .total-row.final { font-size: 18px; font-weight: 700; color: #0f172a; margin-top: 10px; }
-            hr.gold-bottom { border: none; border-top: 2px solid #d4af37; margin: 20px 0; }
-            
-          </style>
-        </head>
-        <body>
-          <div class="header-top">
-            <h1 class="brand-title"><span class="brand-logo">✨</span> Divine Wheel Of Fortune</h1>
-            <p class="receipt-subtitle">Purchase Receipt</p>
-            <img src="${qrCodeUrl}" alt="QR Code" class="qr-code" />
-          </div>
-          
-          <hr class="gold" />
-          
-          <div class="info-row">
-            <div class="info-col">
-              <span class="label">Order Number</span>
-              <div class="value">${order.orderNumber || order._id.slice(-6).toUpperCase()}</div>
-              <div style="font-size:11px; color:#64748b; margin-top:4px;">ID: ${order._id}</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receipt #${order.orderNumber || order._id.slice(-6).toUpperCase()}</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600&display=swap');
+        body { font-family: 'Inter', sans-serif; background: #f1f5f9; padding: 40px; color: #334155; line-height: 1.5; }
+        .receipt-container { max-width: 800px; margin: 0 auto; background: #ffffff; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border-radius: 12px; overflow: hidden; position: relative; }
+        .header { background: #1e1b26; color: #ffffff; padding: 40px; display: flex; justify-content: space-between; align-items: center; }
+        .brand { display: flex; align-items: center; gap: 16px; }
+        .logo { width: 60px; height: 60px; background: #ffffff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; }
+        .brand-text h1 { font-family: 'Cinzel', serif; font-size: 28px; margin: 0; color: #d4af37; letter-spacing: 1px; }
+        .brand-text p { margin: 4px 0 0 0; font-size: 14px; color: #a8a2b8; letter-spacing: 2px; text-transform: uppercase; }
+        .qr-box { background: white; padding: 8px; border-radius: 8px; }
+        .qr-code { width: 80px; height: 80px; display: block; }
+        .content { padding: 40px; }
+        .info-row { display: flex; justify-content: space-between; margin-bottom: 40px; padding-bottom: 30px; border-bottom: 1px solid #e2e8f0; }
+        .label { font-size: 12px; color: #64748b; margin-bottom: 8px; display: block; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+        .value { font-size: 16px; color: #0f172a; font-weight: 600; }
+        .badge { display: inline-block; padding: 6px 14px; border-radius: 999px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+        .badge.paid { background: #dcfce7; color: #166534; }
+        .badge.pending { background: #fef08a; color: #854d0e; }
+        .customer-section { margin-bottom: 40px; background: #f8fafc; padding: 24px; border-radius: 8px; }
+        .customer-name { font-size: 18px; font-weight: 600; color: #0f172a; margin-bottom: 8px; }
+        .customer-value { font-size: 14px; color: #475569; margin-bottom: 4px; display: flex; gap: 8px; }
+        .items-table { width: 100%; border-collapse: collapse; margin-bottom: 40px; }
+        .items-table th { text-align: left; padding: 16px 12px; border-bottom: 2px solid #e2e8f0; color: #64748b; font-size: 12px; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; }
+        .items-table td { border-bottom: 1px solid #f1f5f9; padding: 20px 12px; }
+        .totals-container { display: flex; justify-content: flex-end; background: #f8fafc; padding: 24px; border-radius: 8px; }
+        .totals-box { width: 300px; }
+        .total-row { display: flex; justify-content: space-between; padding: 10px 0; font-size: 15px; color: #475569; }
+        .total-row.final { font-size: 20px; font-weight: 700; color: #0f172a; margin-top: 16px; padding-top: 16px; border-top: 2px solid #e2e8f0; }
+        .footer { text-align: center; padding: 40px; color: #94a3b8; font-size: 14px; border-top: 1px dashed #cbd5e1; }
+        @media print { body { background: white; padding: 0; } .receipt-container { box-shadow: none; max-width: 100%; } }
+    </style>
+</head>
+<body>
+    <div class="receipt-container">
+        <div class="header">
+            <div class="brand">
+                <div class="logo">✨</div>
+                <div class="brand-text">
+                    <h1>Divine Wheel of Fortune</h1>
+                    <p>Official Receipt</p>
+                </div>
             </div>
-            <div class="info-col center">
-              <span class="label">Date</span>
-              <div class="value">${dateStr}</div>
-              <div style="font-size: 13px; color: #64748b; margin-top: 4px;">${timeStr}</div>
+            <div class="qr-box">
+                <img src="${qrCodeUrl}" alt="QR Code" class="qr-code" />
             </div>
-            <div class="info-col right">
-              <span class="label">Payment</span>
-              <div class="badge ${order.paymentStatus === 'PAID' ? 'paid' : 'pending'}">${order.paymentStatus}</div>
+        </div>
+        
+        <div class="content">
+            <div class="info-row">
+                <div>
+                    <span class="label">Order No.</span>
+                    <div class="value">#${order.orderNumber || order._id.slice(-6).toUpperCase()}</div>
+                    <div style="font-size:12px; color:#94a3b8; margin-top:6px;">ID: ${order._id}</div>
+                </div>
+                <div>
+                    <span class="label">Date & Time</span>
+                    <div class="value">${dateStr}</div>
+                    <div style="font-size: 13px; color: #64748b; margin-top: 6px;">${timeStr}</div>
+                </div>
+                <div style="text-align: right;">
+                    <span class="label">Status</span>
+                    <div class="badge ${order.paymentStatus === 'PAID' ? 'paid' : 'pending'}">${order.paymentStatus || 'PENDING'}</div>
+                </div>
             </div>
-          </div>
-          
-          <div class="customer-details">
-            <span class="label">Customer</span>
-            <div class="customer-name">${order.user?.name || 'Unknown User'}</div>
-            ${order.user?.email ? `<div class="customer-value">${order.user.email}</div>` : ''}
-            ${order.user?.mobile ? `<div class="customer-value">${order.user.mobile}</div>` : ''}
-            ${order.shippingAddress ? `<div class="customer-value" style="margin-top: 8px;"><strong>Address:</strong> ${order.shippingAddress}</div>` : ''}
-          </div>
-          
-          ${order.razorpayPaymentId ? `<span class="payment-ref">Payment Ref: ${order.razorpayPaymentId}</span>` : ''}
-          
-          <table class="items-table">
-            <thead>
-              <tr>
-                <th>ITEM</th>
-                <th style="text-align: center;">QTY</th>
-                <th style="text-align: right;">PRICE</th>
-                <th style="text-align: right;">TOTAL</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${productsHtml}
-            </tbody>
-          </table>
-          
-          <div class="totals-container">
-            <div class="totals-box">
-              <div class="total-row">
-                <span>Subtotal</span>
-                <span>₹${(order.totalAmount - (order.shippingCharge || 0)).toLocaleString("en-IN")}</span>
-              </div>
-              <div class="total-row">
-                <span>Shipping</span>
-                <span>${order.shippingCharge === 0 ? 'Free' : `₹${(order.shippingCharge || 0).toLocaleString("en-IN")}`}</span>
-              </div>
-              
-              <hr class="gold-bottom" />
-              
-              <div class="total-row final">
-                <span>Total Paid</span>
-                <span>₹${order.totalAmount?.toLocaleString("en-IN")}</span>
-              </div>
+            
+            <div class="customer-section">
+                <span class="label" style="margin-bottom: 12px;">Billed To</span>
+                <div class="customer-name">${order.user?.name || 'Unknown User'}</div>
+                ${order.user?.email ? `<div class="customer-value"><strong>Email:</strong> ${order.user.email}</div>` : ''}
+                ${order.user?.mobile ? `<div class="customer-value"><strong>Phone:</strong> ${order.user.mobile}</div>` : ''}
+                ${order.shippingAddress ? `<div class="customer-value" style="margin-top: 12px;"><strong>Address:</strong> ${order.shippingAddress}</div>` : ''}
             </div>
-          </div>
-          
-          <script>
-            window.onload = function() { setTimeout(function() { window.print(); }, 500); }
-          </script>
-        </body>
-      </html>
+            
+            <table class="items-table">
+                <thead>
+                    <tr>
+                        <th>Item Details</th>
+                        <th style="text-align: center;">Qty</th>
+                        <th style="text-align: right;">Price</th>
+                        <th style="text-align: right;">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${productsHtml}
+                </tbody>
+            </table>
+            
+            <div class="totals-container">
+                <div class="totals-box">
+                    <div class="total-row">
+                        <span>Subtotal</span>
+                        <span>₹${(order.totalAmount - (order.shippingCharge || 0)).toLocaleString("en-IN")}</span>
+                    </div>
+                    <div class="total-row">
+                        <span>Shipping</span>
+                        <span>${order.shippingCharge === 0 ? 'Free' : `₹${(order.shippingCharge || 0).toLocaleString("en-IN")}`}</span>
+                    </div>
+                    <div class="total-row final">
+                        <span>Total Paid</span>
+                        <span>₹${order.totalAmount?.toLocaleString("en-IN")}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            Thank you for choosing Divine Wheel of Fortune.<br>
+            May the universe bless your journey.
+        </div>
+    </div>
+    <script>
+      window.onload = function() { setTimeout(function() { window.print(); }, 500); }
+    </script>
+</body>
+</html>
     `;
     printWindow.document.write(html);
     printWindow.document.close();

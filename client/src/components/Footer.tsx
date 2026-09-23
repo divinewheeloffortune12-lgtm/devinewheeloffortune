@@ -42,8 +42,8 @@ export const Footer = () => {
             <h3 className="text-sm font-bold text-foreground mb-6">Contact Us</h3>
             <ul className="space-y-5 text-[13px] text-foreground/80 font-medium">
               <li>
-                <a href="mailto:hello@divinewheeloffortune.com" className="flex items-center gap-3 hover:text-primary transition-colors">
-                  <Mail className="h-4 w-4 text-primary opacity-70" /> hello@divinewheeloffortune.com
+                <a href="mailto:nattashasharrma23@gmail.com" className="flex items-center gap-3 hover:text-primary transition-colors">
+                  <Mail className="h-4 w-4 text-primary opacity-70" /> nattashasharrma23@gmail.com
                 </a>
               </li>
               <li>

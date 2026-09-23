@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receipt Demo</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600&display=swap');
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: #f1f5f9; 
+            padding: 40px; 
+            color: #334155; 
+            line-height: 1.5; 
+        }
+        
+        .receipt-container {
+            max-width: 800px; 
+            margin: 0 auto; 
+            background: #ffffff;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .header {
+            background: #1e1b26;
+            color: #ffffff;
+            padding: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+            background: #ffffff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+
+        .brand-text h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 28px;
+            margin: 0;
+            color: #d4af37;
+            letter-spacing: 1px;
+        }
+
+        .brand-text p {
+            margin: 4px 0 0 0;
+            font-size: 14px;
+            color: #a8a2b8;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .qr-box {
+            background: white;
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        .qr-code {
+            width: 80px; 
+            height: 80px;
+            display: block;
+        }
+
+        .content {
+            padding: 40px;
+        }
+        
+        .info-row { 
+            display: flex; 
+            justify-content: space-between; 
+            margin-bottom: 40px; 
+            padding-bottom: 30px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .label { 
+            font-size: 12px; 
+            color: #64748b; 
+            margin-bottom: 8px; 
+            display: block; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+        
+        .value { 
+            font-size: 16px; 
+            color: #0f172a; 
+            font-weight: 600; 
+        }
+        
+        .badge { 
+            display: inline-block; 
+            padding: 6px 14px; 
+            border-radius: 999px; 
+            font-size: 12px; 
+            font-weight: 600; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            background: #dcfce7; 
+            color: #166534; 
+        }
+        
+        .customer-section {
+            margin-bottom: 40px;
+            background: #f8fafc;
+            padding: 24px;
+            border-radius: 8px;
+        }
+
+        .customer-name { 
+            font-size: 18px; 
+            font-weight: 600; 
+            color: #0f172a; 
+            margin-bottom: 8px; 
+        }
+        
+        .customer-value { 
+            font-size: 14px; 
+            color: #475569; 
+            margin-bottom: 4px; 
+            display: flex;
+            gap: 8px;
+        }
+
+        .items-table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-bottom: 40px; 
+        }
+        
+        .items-table th { 
+            text-align: left; 
+            padding: 16px 12px; 
+            border-bottom: 2px solid #e2e8f0; 
+            color: #64748b; 
+            font-size: 12px; 
+            text-transform: uppercase; 
+            font-weight: 600; 
+            letter-spacing: 1px; 
+        }
+        
+        .items-table td { 
+            border-bottom: 1px solid #f1f5f9; 
+            padding: 20px 12px; 
+        }
+        
+        .totals-container { 
+            display: flex; 
+            justify-content: flex-end; 
+            background: #f8fafc;
+            padding: 24px;
+            border-radius: 8px;
+        }
+        
+        .totals-box { 
+            width: 300px; 
+        }
+        
+        .total-row { 
+            display: flex; 
+            justify-content: space-between; 
+            padding: 10px 0; 
+            font-size: 15px; 
+            color: #475569; 
+        }
+        
+        .total-row.final { 
+            font-size: 20px; 
+            font-weight: 700; 
+            color: #0f172a; 
+            margin-top: 16px; 
+            padding-top: 16px;
+            border-top: 2px solid #e2e8f0;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 40px;
+            color: #94a3b8;
+            font-size: 14px;
+            border-top: 1px dashed #cbd5e1;
+        }
+    </style>
+</head>
+<body>
+    <div class="receipt-container">
+        <div class="header">
+            <div class="brand">
+                <div class="logo">✨</div>
+                <div class="brand-text">
+                    <h1>Divine Wheel of Fortune</h1>
+                    <p>Official Receipt</p>
+                </div>
+            </div>
+            <div class="qr-box">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=DEMO-123456" alt="QR Code" class="qr-code" />
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="info-row">
+                <div>
+                    <span class="label">Order / Booking No.</span>
+                    <div class="value">#ORD-98234A</div>
+                    <div style="font-size:12px; color:#94a3b8; margin-top:6px;">ID: 64a8b9c0d1e2f3</div>
+                </div>
+                <div>
+                    <span class="label">Date & Time</span>
+                    <div class="value">23 September 2026</div>
+                    <div style="font-size: 13px; color: #64748b; margin-top: 6px;">01:45 PM</div>
+                </div>
+                <div style="text-align: right;">
+                    <span class="label">Status</span>
+                    <div class="badge">PAID</div>
+                </div>
+            </div>
+            
+            <div class="customer-section">
+                <span class="label" style="margin-bottom: 12px;">Billed To</span>
+                <div class="customer-name">Jane Doe</div>
+                <div class="customer-value"><strong>Email:</strong> jane.doe@example.com</div>
+                <div class="customer-value"><strong>Phone:</strong> +91 98765 43210</div>
+                <div class="customer-value" style="margin-top: 12px;"><strong>Address:</strong> 123 Spiritual Lane, Wellness City, 400001</div>
+            </div>
+            
+            <table class="items-table">
+                <thead>
+                    <tr>
+                        <th>Item Details</th>
+                        <th style="text-align: center;">Qty</th>
+                        <th style="text-align: right;">Price</th>
+                        <th style="text-align: right;">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="display: flex; align-items: center; gap: 16px;">
+                            <div style="width: 50px; height: 50px; background: #e2e8f0; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px;">🔮</div>
+                            <div>
+                                <div style="font-weight: 600; color: #1e293b; font-size: 15px;">Tarot Reading Session</div>
+                                <div style="font-size: 13px; color: #64748b; margin-top: 4px;">Duration: 60 mins</div>
+                            </div>
+                        </td>
+                        <td style="text-align: center; color: #475569;">1</td>
+                        <td style="text-align: right; color: #475569;">₹2,500</td>
+                        <td style="text-align: right; font-weight: 600; color: #0f172a;">₹2,500</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="totals-container">
+                <div class="totals-box">
+                    <div class="total-row">
+                        <span>Subtotal</span>
+                        <span>₹2,500</span>
+                    </div>
+                    <div class="total-row">
+                        <span>Tax / Fees</span>
+                        <span>₹0</span>
+                    </div>
+                    <div class="total-row final">
+                        <span>Total Paid</span>
+                        <span>₹2,500</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            Thank you for choosing Divine Wheel of Fortune.<br>
+            May the universe bless your journey.
+        </div>
+    </div>
+</body>
+</html>

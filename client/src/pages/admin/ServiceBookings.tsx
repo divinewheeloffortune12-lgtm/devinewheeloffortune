@@ -99,112 +99,134 @@ export const ServiceBookings = () => {
     if (!printWindow) return;
     
     const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${booking._id}`;
-    const dateStr = new Date(booking.createdAt).toLocaleString();
+    const dateStr = new Date(booking.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+    const timeStr = new Date(booking.createdAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
     
     const html = `
       <html>
         <head>
-          <title>Booking Receipt #${booking._id}</title>
+          <title>Service Receipt #${booking._id.slice(-6).toUpperCase()}</title>
           <style>
             @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-            body { font-family: 'Inter', sans-serif; padding: 40px; color: #1e293b; line-height: 1.6; max-width: 800px; margin: 0 auto; background: #f8fafc; }
-            .receipt-card { background: #ffffff; padding: 40px; border-radius: 16px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); border: 1px solid #e2e8f0; }
-            .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px dashed #e2e8f0; padding-bottom: 30px; margin-bottom: 30px; }
-            .brand-name { color: #d4af37; font-size: 28px; font-weight: 700; margin: 0 0 5px 0; font-family: serif; }
-            .receipt-title { font-size: 14px; text-transform: uppercase; letter-spacing: 2px; color: #64748b; font-weight: 600; margin: 0; }
-            .qr-code { border: 1px solid #e2e8f0; border-radius: 8px; padding: 5px; background: #fff; width: 100px; height: 100px; }
+            body { font-family: 'Inter', sans-serif; padding: 40px; color: #334155; line-height: 1.5; max-width: 800px; margin: 0 auto; background: #ffffff; }
             
-            .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; }
-            .info-box { background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #f1f5f9; }
-            .info-box.full { grid-column: 1 / -1; }
-            .label { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #64748b; font-weight: 600; margin-bottom: 4px; display: block; }
-            .value { font-size: 15px; color: #0f172a; font-weight: 500; }
+            .header-top { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 20px; position: relative; }
+            .brand-logo { font-size: 32px; color: #d4af37; margin-right: 8px; }
+            .brand-title { display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 700; color: #d4af37; margin: 0; font-family: serif; }
+            .receipt-subtitle { font-size: 14px; color: #64748b; margin-top: 8px; text-transform: capitalize; }
+            .qr-code { position: absolute; right: 0; top: 0; width: 80px; height: 80px; }
             
-            .service-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
-            .service-table th { text-align: left; padding: 12px; border-bottom: 2px solid #e2e8f0; color: #64748b; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
-            .service-table td { padding: 16px 12px; border-bottom: 1px solid #f1f5f9; color: #0f172a; font-weight: 500; }
+            hr.gold { border: none; border-top: 2px solid #d4af37; margin: 20px 0 30px 0; }
             
-            .totals { display: flex; justify-content: flex-end; margin-top: 20px; }
-            .totals-box { width: 300px; }
-            .total-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 15px; }
-            .total-row.final { border-top: 2px solid #e2e8f0; margin-top: 8px; padding-top: 16px; font-size: 20px; font-weight: 700; color: #0f172a; }
+            .info-row { display: flex; justify-content: space-between; margin-bottom: 30px; }
+            .info-col { flex: 1; }
+            .info-col.right { text-align: right; }
+            .info-col.center { text-align: center; }
+            .label { font-size: 12px; color: #64748b; margin-bottom: 4px; display: block; }
+            .value { font-size: 15px; color: #0f172a; font-weight: 600; }
             
-            .badges { display: flex; gap: 10px; margin-top: 10px; }
-            .badge { padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+            .badge { display: inline-block; padding: 4px 12px; border-radius: 999px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
             .badge.paid { background: #dcfce7; color: #166534; }
             .badge.pending { background: #fef08a; color: #854d0e; }
-            .badge.status { background: #e0f2fe; color: #075985; }
             
-            .footer { margin-top: 40px; text-align: center; font-size: 13px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 20px; }
+            .customer-details { margin-bottom: 30px; }
+            .customer-details .label { margin-bottom: 6px; }
+            .customer-value { font-size: 15px; color: #1e293b; margin-bottom: 2px; }
+            .customer-name { font-weight: 600; color: #0f172a; margin-bottom: 4px; }
+            .payment-ref { font-size: 13px; color: #94a3b8; margin-top: 20px; margin-bottom: 30px; display: block; }
+            
+            .items-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+            .items-table th { text-align: left; padding: 12px 0; border-bottom: 1px solid #e2e8f0; color: #64748b; font-size: 12px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
+            .items-table td { border-bottom: 1px solid #f1f5f9; padding: 12px 0; }
+            
+            .totals-container { display: flex; justify-content: flex-end; margin-top: 20px; }
+            .totals-box { width: 250px; }
+            .total-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 15px; color: #1e293b; }
+            .total-row.final { font-size: 18px; font-weight: 700; color: #0f172a; margin-top: 10px; }
+            hr.gold-bottom { border: none; border-top: 2px solid #d4af37; margin: 20px 0; }
+            
           </style>
         </head>
         <body>
-          <div class="receipt-card">
-            <div class="header">
-              <div>
-                <h1 class="brand-name">Divine Wheel of Fortune</h1>
-                <p class="receipt-title">Service Booking Receipt</p>
-                <p style="margin: 10px 0 0 0; color: #64748b; font-size: 14px;">Receipt #: ${booking._id}</p>
-                <p style="margin: 5px 0 0 0; color: #64748b; font-size: 14px;">Date: ${dateStr}</p>
-              </div>
-              <img src="${qrCodeUrl}" alt="QR Code" class="qr-code" />
+          <div class="header-top">
+            <h1 class="brand-title"><span class="brand-logo">✨</span> Divine Wheel Of Fortune</h1>
+            <p class="receipt-subtitle">Service Booking Receipt</p>
+            <img src="${qrCodeUrl}" alt="QR Code" class="qr-code" />
+          </div>
+          
+          <hr class="gold" />
+          
+          <div class="info-row">
+            <div class="info-col">
+              <span class="label">Booking Number</span>
+              <div class="value">${booking._id.slice(-8).toUpperCase()}</div>
+              <div style="font-size:11px; color:#64748b; margin-top:4px;">ID: ${booking._id}</div>
             </div>
-            
-            <div class="info-grid">
-              <div class="info-box">
-                <span class="label">Customer Details</span>
-                <div class="value">${booking.customerName}</div>
-                <div class="value" style="font-weight: 400; color: #475569;">${booking.email}</div>
-                <div class="value" style="font-weight: 400; color: #475569;">${booking.mobile}</div>
-              </div>
-              <div class="info-box">
-                <span class="label">Booking Status</span>
-                <div class="badges">
-                  <span class="badge ${booking.paymentStatus === 'PAID' ? 'paid' : 'pending'}">${booking.paymentStatus}</span>
-                  <span class="badge status">${booking.status}</span>
-                </div>
-              </div>
-              ${booking.address ? `
-              <div class="info-box full">
-                <span class="label">Address / Location</span>
-                <div class="value">${booking.address}</div>
-              </div>` : ''}
-              ${booking.notes ? `
-              <div class="info-box full">
-                <span class="label">Notes / Purpose</span>
-                <div class="value">${booking.notes}</div>
-              </div>` : ''}
+            <div class="info-col center">
+              <span class="label">Date</span>
+              <div class="value">${dateStr}</div>
+              <div style="font-size: 13px; color: #64748b; margin-top: 4px;">${timeStr}</div>
             </div>
-
-            <table class="service-table">
-              <thead>
-                <tr>
-                  <th>Service Booked</th>
-                  <th style="text-align: right;">Amount</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>${booking.service?.name || 'Unknown Service'}</td>
-                  <td style="text-align: right;">₹${booking.amount}</td>
-                </tr>
-              </tbody>
-            </table>
-
-            <div class="totals">
-              <div class="totals-box">
-                <div class="total-row final">
-                  <span>Total Amount</span>
-                  <span>₹${booking.amount}</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="footer">
-              Thank you for choosing Divine Wheel of Fortune.<br/>
-              For any queries, please contact our support.
+            <div class="info-col right">
+              <span class="label">Payment</span>
+              <div class="badge ${booking.paymentStatus === 'PAID' ? 'paid' : 'pending'}">${booking.paymentStatus}</div>
             </div>
           </div>
+          
+          <div class="customer-details">
+            <span class="label">Customer</span>
+            <div class="customer-name">${booking.customerName || 'Unknown User'}</div>
+            ${booking.email ? `<div class="customer-value">${booking.email}</div>` : ''}
+            ${booking.mobile ? `<div class="customer-value">${booking.mobile}</div>` : ''}
+            ${booking.address ? `<div class="customer-value" style="margin-top: 8px;"><strong>Address:</strong> ${booking.address}</div>` : ''}
+            ${booking.notes ? `<div class="customer-value" style="margin-top: 4px;"><strong>Notes:</strong> ${booking.notes}</div>` : ''}
+          </div>
+          
+          ${booking.razorpayPaymentId ? `<span class="payment-ref">Payment Ref: ${booking.razorpayPaymentId}</span>` : ''}
+          
+          <table class="items-table">
+            <thead>
+              <tr>
+                <th>SERVICE</th>
+                <th style="text-align: right;">PRICE</th>
+                <th style="text-align: right;">TOTAL</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="display: flex; align-items: center; gap: 12px; padding: 12px 0;">
+                  ${booking.service?.image ? `<img src="${booking.service.image}" alt="${booking.service?.name}" style="width: 48px; height: 48px; object-fit: cover; border-radius: 6px; border: 1px solid #e2e8f0;" />` : ''}
+                  <div>
+                    <div style="font-weight: 500; color: #1e293b;">${booking.service?.name || 'Unknown Service'}</div>
+                    <div style="font-size: 11px; color: #64748b; margin-top: 2px;">Duration: ${booking.service?.duration || 'N/A'} mins</div>
+                  </div>
+                </td>
+                <td style="text-align: right; color: #1e293b;">₹${booking.amount}</td>
+                <td style="text-align: right; font-weight: 500; color: #1e293b;">₹${booking.amount}</td>
+              </tr>
+            </tbody>
+          </table>
+          
+          <div class="totals-container">
+            <div class="totals-box">
+              <div class="total-row">
+                <span>Subtotal</span>
+                <span>₹${booking.amount?.toLocaleString("en-IN")}</span>
+              </div>
+              <div class="total-row">
+                <span>Platform Fee</span>
+                <span>Free</span>
+              </div>
+              
+              <hr class="gold-bottom" />
+              
+              <div class="total-row final">
+                <span>Total Paid</span>
+                <span>₹${booking.amount?.toLocaleString("en-IN")}</span>
+              </div>
+            </div>
+          </div>
+          
           <script>
             window.onload = function() { setTimeout(function() { window.print(); }, 500); }
           </script>

@@ -379,6 +379,20 @@ const Index = () => {
           <Button size="lg" className="mt-10 h-14 rounded-full bg-primary px-10 text-primary-foreground hover:bg-primary/90 shadow-xl text-base transition-transform hover:scale-105" onClick={() => window.open("https://wa.me/919876978500", "_blank")}>Contact Nattasha Sharrma <ArrowRight className="ml-2 w-5 h-5" /></Button>
         </div>
       </section>
+
+      <section className="py-16 md:py-24 bg-slate-50 border-t border-black/5">
+        <div className="container-full">
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="relative mx-auto w-full max-w-lg mb-8 rounded-3xl overflow-hidden border-4 border-white shadow-[0_0_40px_rgba(168,85,247,0.3)] bg-white transform transition-transform hover:scale-[1.02] duration-500">
+              <img src="/momdad.png" alt="Mom and Dad" className="w-full h-auto object-cover" />
+            </div>
+            <h3 className="text-2xl md:text-3xl font-serif text-slate-800 mb-4">A Foundation of Love and Support</h3>
+            <p className="text-slate-600 leading-relaxed max-w-2xl mx-auto text-lg">
+              Behind every step of this spiritual journey is the unconditional love, guidance, and blessings of my parents. Their unwavering belief has been the cornerstone of Divine Wheel of Fortune.
+            </p>
+          </div>
+        </div>
+      </section>
       
     </Layout>
   );

@@ -174,18 +174,14 @@ const Index = () => {
       {/* <MarqueeSection /> */}
 
       <section id="about" className="py-20 md:py-32">
-        <div className="container-full">
-          <div className="text-center mb-16 flex flex-col items-center">
-            <SectionHeading eyebrow="Her story" title="Meet yourself at the turning point." />
-          </div>
-          
-          <div className="grid md:grid-cols-2 gap-8 mb-16">
+        <div className="container-full grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
+          <div className="flex flex-col h-full justify-center">
             <motion.div 
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, ease: "easeOut" }}
-              className="relative w-full max-h-[80vh] flex justify-center items-center rounded-3xl shadow-xl shadow-black/5 border border-black/5 bg-black/5 overflow-hidden group"
+              className="relative w-full aspect-[4/5] sm:aspect-square md:aspect-[4/5] flex justify-center items-center rounded-[2rem] shadow-sm border border-purple-200/50 hover:shadow-md transition-shadow overflow-hidden bg-gradient-to-r from-purple-100/80 to-indigo-50/80 group"
             >
               <img 
                 src="/about-image.jpeg" 
@@ -193,43 +189,14 @@ const Index = () => {
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
               />
             </motion.div>
-            
-            <motion.div 
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
-              className="relative w-full max-h-[80vh] flex justify-center items-center rounded-3xl shadow-xl shadow-black/5 border border-black/5 bg-black/5 overflow-hidden group"
-            >
-              <video 
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
-                autoPlay muted loop playsInline preload="metadata"
-              >
-                <source src="/about-page-video.mp4" type="video/mp4" />
-              </video>
-            </motion.div>
           </div>
-
-          <motion.div 
-            initial={{ opacity: 0, y: 24 }} 
-            whileInView={{ opacity: 1, y: 0 }} 
-            viewport={{ once: true }}
-            className="max-w-4xl mx-auto space-y-6 text-base md:text-lg leading-relaxed text-slate-600"
-          >
-            <p>
-              <strong>Nattasha Sharrma</strong> is an internationally certified holistic healer, spiritual master, Reiki Grand Master, Tarot Visionary, intuitive psychic reader, astrologer, numerologist, spiritual teacher, trainer and occult practitioner. Her work brings together ancient wisdom, energy healing, intuitive guidance and spiritual practices to create a deeply personal and multidimensional approach to inner exploration and transformation.
-            </p>
-            <p>
-              With a diverse background spanning Reiki, Tarot, Akashic Records, Astrology, Numerology, Theta DNA Healing, Past Life Regression, Hypnotherapy, Crystal Healing, Sound Healing, Chakra Balancing, Pendulum Dowsing, Palm Reading, Manifestation, Shadow Work and Cord Cutting, Nattasha works with a wide range of spiritual and energetic modalities.
-            </p>
-            <p>
-              Her philosophy is simple: every individual has a unique journey, and no single spiritual system has to define that journey. Rather than limiting her work to one modality, Nattasha draws upon different systems according to the individual's needs, questions, experiences and spiritual path.
-            </p>
-            <div className="pt-8 text-center">
-              <Button asChild variant="link" className="h-auto p-0 text-primary text-lg">
-                <Link to="/about">Discover more about Nattasha Sharrma <ArrowRight className="ml-2 w-5 h-5" /></Link>
-              </Button>
+          <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+            <SectionHeading eyebrow="Her story" title="Meet yourself at the turning point." />
+            <div className="mt-8 grid gap-6 text-base leading-8 text-muted-foreground md:grid-cols-2">
+              <p>Nattasha Sharrma is the founder and guiding light behind Divine Wheel of Fortune, a trusted space for spiritual healing and intuitive guidance. With deep expertise across astrology, numerology, tarot and palm reading, and intuitive psychic work, she helps people find clarity in moments of confusion and direction in times of change.</p>
+              <p>Her practice goes beyond traditional readings, drawing on reiki healing, chakra balancing, past life regression, and ancestral healing to address the root of what truly holds people back, whether that's emotional blocks, money blocks, or unresolved patterns passed down through generations. Blending ancient wisdom with modern intuitive techniques, Natasha creates a safe, welcoming space where every seeker can heal, awaken, and reconnect with their higher self.</p>
             </div>
+            <Button asChild variant="link" className="mt-8 h-auto p-0 text-primary"><Link to="/about">Discover Nattasha Sharrma’s story <ArrowRight /></Link></Button>
           </motion.div>
         </div>
       </section>

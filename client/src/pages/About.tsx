@@ -14,11 +14,11 @@ export default function About() {
 
       <section className="py-20 md:py-32 bg-[#f9f9f9]">
         <div className="container-full">
-          <div className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
-            <div className="flex flex-col relative">
-              <div className="relative w-full max-h-[80vh] flex justify-center items-center rounded-3xl shadow-xl shadow-black/5 border border-black/5 bg-black/5 overflow-hidden">
-                <video className="max-w-full max-h-[80vh] w-auto h-auto rounded-3xl object-cover hover:scale-105 transition-transform duration-700" autoPlay muted loop playsInline preload="metadata">
-                  <source src="/about.mp4" type="video/mp4" />
+          <div className="flex flex-col gap-16 items-center">
+            <div className="flex flex-col relative w-full max-w-5xl">
+              <div className="relative w-full aspect-video flex justify-center items-center rounded-3xl shadow-xl shadow-black/5 border border-black/5 bg-black/5 overflow-hidden">
+                <video className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" autoPlay muted loop playsInline preload="metadata">
+                  <source src="/about-page-video.mp4" type="video/mp4" />
                 </video>
               </div>
               <div className="absolute -bottom-8 -right-4 sm:-right-8 px-8 py-6 text-center rounded-[2rem] bg-white/90 backdrop-blur-sm shadow-xl border border-purple-100 z-10 hidden sm:block">
@@ -28,16 +28,17 @@ export default function About() {
               </div>
             </div>
             
-            <div className="pl-0 lg:pl-8">
-              <p className="text-xs uppercase tracking-widest text-primary font-semibold mb-3 flex items-center gap-2">
+            <div className="max-w-4xl mx-auto w-full">
+              <p className="text-xs uppercase tracking-widest text-primary font-semibold mb-3 flex items-center gap-2 justify-center">
                 <span className="h-px w-8 bg-primary"></span>
                 Her Story
+                <span className="h-px w-8 bg-primary"></span>
               </p>
-              <h2 className="font-serif text-4xl md:text-5xl text-slate-900 leading-[1.1] mb-8">
+              <h2 className="font-serif text-4xl md:text-5xl text-slate-900 leading-[1.1] mb-8 text-center">
                 A space created for clarity, healing, and connection.
               </h2>
               
-              <div className="space-y-6 text-base md:text-lg leading-relaxed text-slate-600">
+              <div className="space-y-6 text-base md:text-lg leading-relaxed text-slate-600 text-center">
                 <p>
                   <strong>Nattasha Sharrma</strong> is an internationally certified holistic healer, spiritual master, Reiki Grand Master, Tarot Visionary, intuitive psychic reader, astrologer, numerologist, spiritual teacher, trainer and occult practitioner. Her work brings together ancient wisdom, energy healing, intuitive guidance and spiritual practices to create a deeply personal and multidimensional approach to inner exploration and transformation.
                 </p>

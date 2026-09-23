@@ -184,7 +184,7 @@ const Index = () => {
               className="relative w-full aspect-[4/5] sm:aspect-square md:aspect-[4/5] flex justify-center items-center rounded-[2rem] shadow-sm border border-purple-200/50 hover:shadow-md transition-shadow overflow-hidden bg-gradient-to-r from-purple-100/80 to-indigo-50/80 group"
             >
               <img 
-                src="/about-image.jpeg" 
+                src="/about-image.png" 
                 alt="Nattasha Sharrma" 
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
               />

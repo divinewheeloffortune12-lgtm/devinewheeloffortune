@@ -120,7 +120,7 @@ const PaymentSuccess = () => {
         </div>
         <div class="footer">
           <p>Thank you for shopping with ${data.businessName}!</p>
-          <p>For any queries, contact us at hello@divinewheeloffortune.com</p>
+          <p>For any queries, contact us at nattashasharrma1278@gmail.com</p>
         </div>
       </body>
       </html>
@@ -220,7 +220,7 @@ const PaymentSuccess = () => {
             transition={{ delay: 0.7, duration: 0.4 }}
             className="text-muted-foreground"
           >
-            Thank you for your purchase. Your order has been confirmed.
+            Thank you for your purchase. Your order has been confirmed. Our team will contact you shortly.
           </motion.p>
         </motion.div>
 

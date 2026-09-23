@@ -176,9 +176,9 @@ export const ServiceBookings = () => {
             
             <div class="customer-section">
                 <span class="label" style="margin-bottom: 12px;">Billed To</span>
-                <div class="customer-name">${booking.customerName || 'Unknown User'}</div>
-                ${booking.email ? `<div class="customer-value"><strong>Email:</strong> ${booking.email}</div>` : ''}
-                ${booking.mobile ? `<div class="customer-value"><strong>Phone:</strong> ${booking.mobile}</div>` : ''}
+                <div class="customer-name">${booking.customerName || booking.user?.name || 'Unknown User'}</div>
+                ${(booking.email || booking.user?.email) ? `<div class="customer-value"><strong>Email:</strong> ${booking.email || booking.user?.email}</div>` : ''}
+                ${(booking.mobile || booking.user?.mobile) ? `<div class="customer-value"><strong>Phone:</strong> ${booking.mobile || booking.user?.mobile}</div>` : ''}
                 ${booking.address ? `<div class="customer-value" style="margin-top: 12px;"><strong>Address:</strong> ${booking.address}</div>` : ''}
                 ${booking.notes ? `<div class="customer-value" style="margin-top: 12px;"><strong>Notes:</strong> ${booking.notes}</div>` : ''}
             </div>
@@ -397,8 +397,8 @@ export const ServiceBookings = () => {
                       <td className="px-6 py-4 text-slate-500">{new Date(booking.createdAt).toLocaleDateString()}</td>
                       <td className="px-6 py-4">
                         <div className="font-medium text-slate-900">{booking.customerName || booking.user?.name || "Unknown"}</div>
-                        <div className="text-xs text-slate-500">{booking.email}</div>
-                        <div className="text-xs text-slate-500">{booking.mobile}</div>
+                        <div className="text-xs text-slate-500">{booking.email || booking.user?.email}</div>
+                        <div className="text-xs text-slate-500">{booking.mobile || booking.user?.mobile}</div>
                       </td>
                       <td className="px-6 py-4 text-slate-600">{booking.service?.name || "Unknown Service"}</td>
                       <td className="px-6 py-4 font-medium">₹{booking.amount}</td>
@@ -458,9 +458,9 @@ export const ServiceBookings = () => {
                       <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1">Customer Details</p>
                       <p className="font-medium text-slate-800">{selectedBooking.customerName || "Unknown User"}</p>
                       <div className="mt-2 space-y-1">
-                        {selectedBooking.email && (
+                        {(selectedBooking.email || selectedBooking.user?.email) && (
                           <p className="text-sm text-slate-600 flex items-center gap-2">
-                            <span className="font-medium text-slate-500">Email:</span> {selectedBooking.email}
+                            <span className="font-medium text-slate-500">Email:</span> {selectedBooking.email || selectedBooking.user?.email}
                           </p>
                         )}
                         {selectedBooking.mobile && (

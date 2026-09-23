@@ -47,9 +47,9 @@ export default function Contact() {
             <p className="mt-2 text-slate-500 mb-6 leading-relaxed">For orders, products, and spiritual guidance, leave a thoughtful note or reach out directly.</p>
             
             <div className="space-y-4">
-              <a className="flex items-center gap-3 text-sm font-medium text-slate-700 hover:text-primary transition-colors" href="mailto:hello@divinewheel.example">
+              <a className="flex items-center gap-3 text-sm font-medium text-slate-700 hover:text-primary transition-colors" href="mailto:nattashasharrma1278@gmail.com">
                 <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center border border-slate-100 shadow-sm"><Mail className="w-4 h-4"/></div>
-                hello@divinewheel.example
+                nattashasharrma1278@gmail.com
               </a>
               <a className="flex items-center gap-3 text-sm font-medium text-slate-700 hover:text-primary transition-colors" href="https://wa.me/919876978500?text=Hello%20Divine%20Wheel" target="_blank" rel="noreferrer">
                 <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center border border-slate-100 shadow-sm"><MessageCircle className="w-4 h-4"/></div>

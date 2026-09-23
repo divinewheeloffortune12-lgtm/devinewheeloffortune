@@ -247,6 +247,11 @@ const Index = () => {
         ) : (
           <div className="container-full text-center text-muted-foreground">No categories available.</div>
         )}
+        <div className="mt-8 text-center flex justify-center w-full">
+          <Button asChild size="lg" className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg h-14 px-8 text-base transition-transform hover:scale-105">
+            <a href="#categories">See More Categories <ArrowRight className="ml-2 w-5 h-5" /></a>
+          </Button>
+        </div>
         <div className="container-full mt-14">
           <div className="flex items-center justify-center gap-3 border-t border-border pt-7 text-sm text-muted-foreground"><Globe2 className="h-5 w-5 text-primary" /> Shipping across India and to selected international destinations</div>
         </div>

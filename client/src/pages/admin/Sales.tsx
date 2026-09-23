@@ -205,6 +205,7 @@ export const AdminSales = () => {
                     <td className="p-4">
                       <div className="font-medium text-slate-800">{s.user?.name || "Unknown"}</div>
                       <div className="text-xs text-slate-500">{s.user?.email || ""}</div>
+                      {s.user?.mobile && <div className="text-xs text-slate-500">{s.user.mobile}</div>}
                     </td>
                     <td className="p-4 font-medium text-slate-800">₹{s.totalAmount?.toLocaleString("en-IN")}</td>
                     <td className="p-4">
@@ -284,6 +285,7 @@ export const AdminSales = () => {
                   <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1">Customer</p>
                   <p className="font-medium text-slate-800">{selectedOrder.user?.name || "Unknown"}</p>
                   <p className="text-sm text-slate-600">{selectedOrder.user?.email}</p>
+                  {selectedOrder.user?.mobile && <p className="text-sm text-slate-600">{selectedOrder.user.mobile}</p>}
                 </div>
                 <div>
                   <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1">Order Date</p>

@@ -33,13 +33,18 @@ const Login = () => {
       } catch (error: unknown) {
          const errorMsg = getErrorMessage(error, "An error occurred with Google login.");
          if (errorMsg.toLowerCase().includes("account not found") || errorMsg.toLowerCase().includes("sign up first")) {
-            toast({
+             toast({
               variant: "warning",
               title: "Account not found",
               description: (
-                <div className="flex flex-col gap-2 mt-1">
-                  <p>We couldn't find an account associated with this Google account.</p>
-                  <Link to="/signup" className="text-yellow-700 hover:text-yellow-900 underline font-semibold w-fit">
+                <div className="flex flex-col gap-3 mt-2">
+                  <p className="text-amber-800/90 leading-relaxed">
+                    We couldn't find an account associated with this Google account. You need to create one first.
+                  </p>
+                  <Link 
+                    to="/signup" 
+                    className="inline-flex items-center justify-center gap-2 bg-amber-100 hover:bg-amber-200 text-amber-900 px-4 py-2 rounded-lg font-medium transition-colors w-fit shadow-sm border border-amber-200/50"
+                  >
                     Continue to Sign up →
                   </Link>
                 </div>

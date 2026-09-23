@@ -177,8 +177,8 @@ export const ServiceBookings = () => {
             <div class="customer-section">
                 <span class="label" style="margin-bottom: 12px;">Billed To</span>
                 <div class="customer-name">${booking.customerName || booking.user?.name || 'Unknown User'}</div>
-                ${(booking.email || booking.user?.email) ? `<div class="customer-value"><strong>Email:</strong> ${booking.email || booking.user?.email}</div>` : ''}
-                ${(booking.mobile || booking.user?.mobile) ? `<div class="customer-value"><strong>Phone:</strong> ${booking.mobile || booking.user?.mobile}</div>` : ''}
+                <div class="customer-value"><strong>Email:</strong> ${booking.email || booking.user?.email || 'Not provided'}</div>
+                <div class="customer-value"><strong>Phone:</strong> ${booking.mobile || booking.user?.mobile || 'Not provided'}</div>
                 ${booking.address ? `<div class="customer-value" style="margin-top: 12px;"><strong>Address:</strong> ${booking.address}</div>` : ''}
                 ${booking.notes ? `<div class="customer-value" style="margin-top: 12px;"><strong>Notes:</strong> ${booking.notes}</div>` : ''}
             </div>

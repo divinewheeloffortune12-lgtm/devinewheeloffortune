@@ -36,11 +36,11 @@ export const QuantitySelector = ({
         size="icon"
         onClick={decrease}
         disabled={quantity <= min}
-        className="h-11 w-11 rounded-none hover:bg-accent disabled:opacity-30"
+        className="h-8 w-8 sm:h-11 sm:w-11 rounded-none hover:bg-accent disabled:opacity-30"
       >
-        <Minus className="w-4 h-4" />
+        <Minus className="w-3 h-3 sm:w-4 sm:h-4" />
       </Button>
-      <span className="w-12 text-center text-sm font-medium tabular-nums">
+      <span className="w-8 sm:w-12 text-center text-xs sm:text-sm font-medium tabular-nums">
         {quantity}
       </span>
       <Button
@@ -48,9 +48,9 @@ export const QuantitySelector = ({
         size="icon"
         onClick={increase}
         disabled={quantity >= max}
-        className="h-11 w-11 rounded-none hover:bg-accent disabled:opacity-30"
+        className="h-8 w-8 sm:h-11 sm:w-11 rounded-none hover:bg-accent disabled:opacity-30"
       >
-        <Plus className="w-4 h-4" />
+        <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
       </Button>
     </div>
   );

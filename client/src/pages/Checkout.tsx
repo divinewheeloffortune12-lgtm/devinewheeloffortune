@@ -242,12 +242,12 @@ const Checkout = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="font-serif text-4xl md:text-5xl mb-12"
+            className="font-serif text-3xl md:text-5xl mb-8 md:mb-12"
           >
             Checkout
           </motion.h1>
 
-          <div className="grid lg:grid-cols-12 gap-12 lg:gap-16">
+          <div className="grid lg:grid-cols-12 gap-8 lg:gap-16">
             {/* Form */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -255,17 +255,17 @@ const Checkout = () => {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="lg:col-span-7"
             >
-              <form onSubmit={handleSubmit} className="space-y-8">
+              <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
                 {/* Contact Information */}
                 <div>
-                  <h2 className="font-serif text-xl mb-6">
+                  <h2 className="font-serif text-xl mb-4 sm:mb-6">
                     Contact Information
                   </h2>
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div>
                       <label
                         htmlFor="firstName"
-                        className="block text-xs font-semibold tracking-[0.1em] uppercase text-muted-foreground mb-2"
+                        className="block text-[10px] sm:text-xs font-semibold tracking-[0.1em] uppercase text-muted-foreground mb-2"
                       >
                         First Name *
                       </label>
@@ -281,7 +281,7 @@ const Checkout = () => {
                     <div>
                       <label
                         htmlFor="lastName"
-                        className="block text-xs font-semibold tracking-[0.1em] uppercase text-muted-foreground mb-2"
+                        className="block text-[10px] sm:text-xs font-semibold tracking-[0.1em] uppercase text-muted-foreground mb-2"
                       >
                         Last Name
                       </label>
@@ -298,7 +298,7 @@ const Checkout = () => {
                     <div>
                       <label
                         htmlFor="email"
-                        className="block text-xs font-semibold tracking-[0.1em] uppercase text-muted-foreground mb-2"
+                        className="block text-[10px] sm:text-xs font-semibold tracking-[0.1em] uppercase text-muted-foreground mb-2"
                       >
                         Email *
                       </label>
@@ -315,7 +315,7 @@ const Checkout = () => {
                     <div>
                       <label
                         htmlFor="phone"
-                        className="block text-xs font-semibold tracking-[0.1em] uppercase text-muted-foreground mb-2"
+                        className="block text-[10px] sm:text-xs font-semibold tracking-[0.1em] uppercase text-muted-foreground mb-2"
                       >
                         Phone
                       </label>
@@ -333,12 +333,12 @@ const Checkout = () => {
 
                 {/* Shipping Address */}
                 <div>
-                  <h2 className="font-serif text-xl mb-6">Shipping Address</h2>
+                  <h2 className="font-serif text-xl mb-4 sm:mb-6">Shipping Address</h2>
                   <div className="space-y-4">
                     <div>
                       <label
                         htmlFor="address"
-                        className="block text-xs font-semibold tracking-[0.1em] uppercase text-muted-foreground mb-2"
+                        className="block text-[10px] sm:text-xs font-semibold tracking-[0.1em] uppercase text-muted-foreground mb-2"
                       >
                         Street Address *
                       </label>
@@ -355,7 +355,7 @@ const Checkout = () => {
                       <div>
                         <label
                           htmlFor="city"
-                          className="block text-xs font-semibold tracking-[0.1em] uppercase text-muted-foreground mb-2"
+                          className="block text-[10px] sm:text-xs font-semibold tracking-[0.1em] uppercase text-muted-foreground mb-2"
                         >
                           City *
                         </label>
@@ -371,7 +371,7 @@ const Checkout = () => {
                       <div>
                         <label
                           htmlFor="state"
-                          className="block text-xs font-semibold tracking-[0.1em] uppercase text-muted-foreground mb-2"
+                          className="block text-[10px] sm:text-xs font-semibold tracking-[0.1em] uppercase text-muted-foreground mb-2"
                         >
                           State *
                         </label>
@@ -401,7 +401,7 @@ const Checkout = () => {
                       <div>
                         <label
                           htmlFor="postalCode"
-                          className="block text-xs font-semibold tracking-[0.1em] uppercase text-muted-foreground mb-2"
+                          className="block text-[10px] sm:text-xs font-semibold tracking-[0.1em] uppercase text-muted-foreground mb-2"
                         >
                           Postal Code *
                         </label>
@@ -417,7 +417,7 @@ const Checkout = () => {
                       <div>
                         <label
                           htmlFor="country"
-                          className="block text-xs font-semibold tracking-[0.1em] uppercase text-muted-foreground mb-2"
+                          className="block text-[10px] sm:text-xs font-semibold tracking-[0.1em] uppercase text-muted-foreground mb-2"
                         >
                           Country *
                         </label>
@@ -436,7 +436,7 @@ const Checkout = () => {
 
                 {/* Order Notes */}
                 <div>
-                  <h2 className="font-serif text-xl mb-6">Order Notes</h2>
+                  <h2 className="font-serif text-xl mb-4 sm:mb-6">Order Notes</h2>
                   <Textarea
                     name="notes"
                     value={formData.notes}
@@ -471,21 +471,21 @@ const Checkout = () => {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="lg:col-span-5"
             >
-              <div className="bg-linen p-8 lg:sticky lg:top-28">
-                <h2 className="font-serif text-2xl mb-6">Order Summary</h2>
+              <div className="bg-linen p-6 sm:p-8 lg:sticky lg:top-28">
+                <h2 className="font-serif text-xl sm:text-2xl mb-4 sm:mb-6">Order Summary</h2>
 
                 {/* Items */}
                 <div className="space-y-4 mb-6">
                   {items.map((item) => (
                     <div key={item.product.id} className="flex gap-4">
-                      <div className="w-16 h-20 bg-muted/30 overflow-hidden">
+                      <div className="w-16 h-20 bg-muted/30 overflow-hidden flex-shrink-0">
                         <img
                           src={item.product.images[0]}
                           alt={item.product.name}
                           className="w-full h-full object-cover"
                         />
                       </div>
-                      <div className="flex-1">
+                      <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium line-clamp-1">
                           {item.product.name}
                         </p>

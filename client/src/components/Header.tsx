@@ -231,9 +231,9 @@ export const Header = () => {
             </div>
           </div>
 
-          <div className="flex justify-end items-center gap-3">
+          <div className="flex justify-end items-center gap-2 sm:gap-3">
             {/* Actions & Icons */}
-            <div className="flex items-center gap-1 sm:gap-2">
+            <div className="flex items-center gap-0.5 sm:gap-2">
               {isAuthLoading ? (
                 <div className="hidden lg:flex items-center gap-4 pr-3 border-r border-black/10 mr-1 animate-pulse">
                   <div className="h-4 w-10 bg-slate-200 rounded"></div>
@@ -245,32 +245,32 @@ export const Header = () => {
                   <Link to="/signup" className="text-xs font-semibold uppercase tracking-widest bg-foreground text-background hover:bg-primary px-5 py-2.5 rounded-full transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5 whitespace-nowrap">Sign Up</Link>
                 </div>
               ) : (
-                <Link to="/profile" aria-label="My profile" className="flex items-center justify-center h-10 w-10 rounded-full hover:bg-primary/10 text-foreground/80 hover:text-primary transition-colors overflow-hidden border border-black/10">
+                <Link to="/profile" aria-label="My profile" className="flex items-center justify-center h-8 w-8 sm:h-10 sm:w-10 rounded-full hover:bg-primary/10 text-foreground/80 hover:text-primary transition-colors overflow-hidden border border-black/10">
                   {user?.profileImage ? (
                     <img src={user.profileImage} alt="Profile" className="h-full w-full object-cover" />
                   ) : user?.name ? (
-                    <span className="font-bold text-sm uppercase">{user.name.charAt(0)}</span>
+                    <span className="font-bold text-xs sm:text-sm uppercase">{user.name.charAt(0)}</span>
                   ) : (
-                    <UserRound className="h-5 w-5" />
+                    <UserRound className="h-4 w-4 sm:h-5 sm:w-5" />
                   )}
                 </Link>
               )}
               
-              <Link to="/announcements" aria-label="Announcements" className="relative flex items-center justify-center h-10 w-10 rounded-full hover:bg-primary/10 text-foreground/80 hover:text-primary transition-colors">
-                <Bell className="h-5 w-5" />
-                {announcementCount > 0 && <span className="absolute top-1.5 right-1.5 flex items-center justify-center h-4 w-4 rounded-full bg-red-500 text-[9px] font-bold text-white ring-2 ring-white">{announcementCount}</span>}
+              <Link to="/announcements" aria-label="Announcements" className="relative flex items-center justify-center h-8 w-8 sm:h-10 sm:w-10 rounded-full hover:bg-primary/10 text-foreground/80 hover:text-primary transition-colors">
+                <Bell className="h-4 w-4 sm:h-5 sm:w-5" />
+                {announcementCount > 0 && <span className="absolute top-1 right-1 sm:top-1.5 sm:right-1.5 flex items-center justify-center h-3 w-3 sm:h-4 sm:w-4 rounded-full bg-red-500 text-[8px] sm:text-[9px] font-bold text-white ring-2 ring-white">{announcementCount}</span>}
               </Link>
               
-              <div className="flex items-center cursor-pointer">
+              <div className="flex items-center cursor-pointer scale-90 sm:scale-100 origin-right">
                 <CartIcon />
               </div>
 
-              <Link to="/services" aria-label="Book a Session" className="flex items-center justify-center h-10 w-10 rounded-full hover:bg-primary/10 text-foreground/80 hover:text-primary transition-colors">
-                <CalendarClock className="h-5 w-5" />
+              <Link to="/services" aria-label="Book a Session" className="flex items-center justify-center h-8 w-8 sm:h-10 sm:w-10 rounded-full hover:bg-primary/10 text-foreground/80 hover:text-primary transition-colors">
+                <CalendarClock className="h-4 w-4 sm:h-5 sm:w-5" />
               </Link>
 
-              <Button variant="ghost" size="icon" className="lg:hidden h-10 w-10 rounded-full text-foreground hover:text-primary hover:bg-primary/10 ml-1" onClick={() => setOpen(!open)} aria-label={open ? "Close menu" : "Open menu"}>
-                {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              <Button variant="ghost" size="icon" className="lg:hidden h-8 w-8 sm:h-10 sm:w-10 rounded-full text-foreground hover:text-primary hover:bg-primary/10 ml-0.5 sm:ml-1" onClick={() => setOpen(!open)} aria-label={open ? "Close menu" : "Open menu"}>
+                {open ? <X className="h-5 w-5 sm:h-6 sm:w-6" /> : <Menu className="h-5 w-5 sm:h-6 sm:w-6" />}
               </Button>
             </div>
           </div>

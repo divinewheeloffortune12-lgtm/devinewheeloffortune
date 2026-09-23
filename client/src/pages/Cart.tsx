@@ -99,39 +99,48 @@ const Cart = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: index * 0.1 }}
-                    className="flex gap-6 py-8 border-b border-border"
+                    className="flex gap-4 sm:gap-6 py-6 sm:py-8 border-b border-border relative"
                   >
                     {/* Product Image */}
                     <Link
                       to={`/product/${item.product.slug}`}
-                      className="w-28 h-32 md:w-36 md:h-44 flex-shrink-0 overflow-hidden bg-slate-50 border border-slate-100 rounded-xl group"
+                      className="w-24 h-32 md:w-36 md:h-44 flex-shrink-0 overflow-hidden bg-slate-50 border border-slate-100 rounded-xl group"
                     >
                       <img
                         src={item.product.images[0]}
                         alt={item.product.name}
-                        className="w-full h-full object-contain p-4 mix-blend-multiply transition-transform duration-500 group-hover:scale-110"
+                        className="w-full h-full object-contain p-2 sm:p-4 mix-blend-multiply transition-transform duration-500 group-hover:scale-110"
                       />
                     </Link>
 
                     {/* Product Details */}
-                    <div className="flex-1 flex flex-col">
-                      <div className="flex-1">
-                        <Link
-                          to={`/product/${item.product.slug}`}
-                          className="font-serif text-lg md:text-xl hover:text-primary transition-colors"
-                        >
-                          {item.product.name}
-                        </Link>
-                        <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                    <div className="flex-1 flex flex-col justify-between py-1">
+                      <div>
+                        <div className="flex justify-between items-start gap-2">
+                          <Link
+                            to={`/product/${item.product.slug}`}
+                            className="font-serif text-sm sm:text-lg md:text-xl hover:text-primary transition-colors line-clamp-2 pr-6"
+                          >
+                            {item.product.name}
+                          </Link>
+                          <button
+                            onClick={() => removeItem(item.product.id)}
+                            className="absolute top-6 sm:top-8 right-0 p-1.5 -mt-1 text-muted-foreground hover:text-destructive transition-colors bg-white/80 rounded-full"
+                          >
+                            <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
+                          </button>
+                        </div>
+                        <p className="text-xs sm:text-sm text-muted-foreground mt-1 line-clamp-1 sm:line-clamp-2 pr-6">
                           {item.product.description}
                         </p>
-                        <div className="font-medium text-foreground">
+                        
+                        <div className="font-medium text-foreground mt-1.5 sm:mt-2">
                           {(() => {
                             const discount = item.product.discount || 0;
                             const finalPrice = Math.round(item.product.price * (1 - discount / 100));
                             return (
-                              <div className="flex flex-col items-end">
-                                <span>₹{finalPrice.toLocaleString('en-IN')}</span>
+                              <div className="flex flex-wrap items-center gap-2">
+                                <span className="text-sm sm:text-base">₹{finalPrice.toLocaleString('en-IN')}</span>
                                 {discount > 0 && (
                                   <span className="text-xs line-through text-muted-foreground">
                                     ₹{item.product.price.toLocaleString('en-IN')}
@@ -142,7 +151,7 @@ const Cart = () => {
                           })()}
                         </div>
                         {((!item.product.availability) || (item.product.isDeleted) || item.product.stock < item.quantity) && (
-                          <div className="mt-2 text-xs font-medium text-destructive">
+                          <div className="mt-1.5 text-[10px] sm:text-xs font-medium text-destructive">
                             {(!item.product.availability || item.product.isDeleted) ? "Product Not Available" : 
                              item.product.stock === 0 ? "Out of Stock" : 
                              `Only ${item.product.stock} available`}
@@ -151,19 +160,13 @@ const Cart = () => {
                       </div>
 
                       {/* Actions */}
-                      <div className="flex items-center justify-between mt-4">
+                      <div className="mt-4 sm:mt-0">
                         <QuantitySelector
                           quantity={item.quantity}
                           onQuantityChange={(qty) =>
                             updateQuantity(item.product.id, qty)
                           }
                         />
-                        <button
-                          onClick={() => removeItem(item.product.id)}
-                          className="p-2 text-muted-foreground hover:text-destructive transition-colors"
-                        >
-                          <Trash2 className="w-5 h-5" />
-                        </button>
                       </div>
                     </div>
                   </motion.div>
@@ -202,32 +205,38 @@ const Cart = () => {
                   </div>
                 </div>
 
-                <div className="border-t border-border pt-4 mb-8">
+                <div className="border-t border-border pt-4 mb-8 hidden lg:block">
                   <div className="flex justify-between font-serif text-xl">
                     <span>Total</span>
                     <span>₹{total.toLocaleString('en-IN')}</span>
                   </div>
                 </div>
 
-                <Button
-                  asChild
-                  size="lg"
-                  disabled={hasUnavailableItems}
-                  className={`w-full rounded-none py-6 text-sm tracking-[0.15em] uppercase ${hasUnavailableItems ? 'bg-muted text-muted-foreground pointer-events-none' : 'btn-premium'}`}
-                >
-                  <Link to="/checkout">
-                    Proceed to Checkout
-                    <ArrowRight className="ml-3 w-4 h-4" />
-                  </Link>
-                </Button>
-                {hasUnavailableItems && (
-                  <p className="text-xs text-destructive text-center mt-3">
-                    Please remove or update unavailable items to proceed.
-                  </p>
-                )}
+                <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-black/10 z-50 lg:static lg:bg-transparent lg:border-0 lg:p-0 lg:z-auto shadow-[0_-4px_20px_rgba(0,0,0,0.05)] lg:shadow-none">
+                  <div className="flex items-center justify-between lg:hidden mb-3">
+                    <span className="font-serif text-lg">Total</span>
+                    <span className="font-serif text-lg font-medium">₹{total.toLocaleString('en-IN')}</span>
+                  </div>
+                  <Button
+                    asChild
+                    size="lg"
+                    disabled={hasUnavailableItems}
+                    className={`w-full rounded-none py-6 sm:py-7 text-xs sm:text-sm tracking-[0.15em] uppercase ${hasUnavailableItems ? 'bg-muted text-muted-foreground pointer-events-none' : 'btn-premium'}`}
+                  >
+                    <Link to="/checkout">
+                      Proceed to Checkout
+                      <ArrowRight className="ml-3 w-4 h-4" />
+                    </Link>
+                  </Button>
+                  {hasUnavailableItems && (
+                    <p className="text-[10px] sm:text-xs text-destructive text-center mt-2 lg:mt-3">
+                      Please remove or update unavailable items to proceed.
+                    </p>
+                  )}
+                </div>
 
                 {/* Trust signals */}
-                <div className="mt-8 pt-6 border-t border-border grid grid-cols-2 gap-4">
+                <div className="mt-8 pt-6 border-t border-border grid grid-cols-2 gap-4 pb-24 lg:pb-0">
                   <div>
                     <p className="text-[11px] font-semibold tracking-[0.15em] uppercase text-muted-foreground/60 mb-1">
                       Shipping

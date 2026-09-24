@@ -10,10 +10,10 @@ export const Footer = () => {
           <div className="lg:col-span-3 flex flex-col items-start">
             <Link to="/" className="flex items-center gap-2 mb-6 hover:opacity-80 transition-opacity">
               <Sparkles className="h-5 w-5 text-primary" />
-              <span className="font-serif text-2xl font-bold tracking-tight">Divine</span>
+              <span className="font-serif text-2xl font-bold tracking-tight">Divine Wheel of Fortune</span>
             </Link>
             <p className="max-w-[250px] text-sm leading-relaxed text-foreground/70">
-              Divine is a modern astrology and energy practitioner platform.
+              Divine Wheel of Fortune is a modern astrology and energy practitioner platform.
             </p>
           </div>
 

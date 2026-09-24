@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Sparkles, Loader2 } from "lucide-react";
+import { Sparkles, Loader2, Search } from "lucide-react";
 import { motion } from "framer-motion";
 import Aurora from "@/components/ui/Aurora";
 import { toast } from "sonner";
@@ -41,6 +41,7 @@ export const loadRazorpayScript = () => {
 
 const Services = () => {
   const [services, setServices] = useState<Service[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   
   const [selectedService, setSelectedService] = useState<Service | null>(null);
@@ -182,9 +183,18 @@ const Services = () => {
         </div>
         <div className="container-narrow relative z-10 text-center">
           <h1 className="text-4xl md:text-6xl font-serif tracking-tight drop-shadow-xl mb-6">Our Sacred Services</h1>
-          <p className="text-lg md:text-xl max-w-2xl mx-auto text-white/90 drop-shadow-md">
+          <p className="text-lg md:text-xl max-w-2xl mx-auto text-white/90 drop-shadow-md mb-8">
             Explore a comprehensive range of spiritual, intuitive, and energy-based healing modalities guided by Nattasha Sharrma.
           </p>
+          <div className="relative max-w-md mx-auto z-20">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/50" />
+            <Input
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search services..."
+              className="pl-11 bg-white/10 border-white/20 text-white placeholder:text-white/45 rounded-full"
+            />
+          </div>
         </div>
       </section>
 
@@ -198,7 +208,7 @@ const Services = () => {
             <div className="text-center text-muted-foreground">No services available at the moment.</div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-              {services.map((service, index) => (
+              {services.filter(service => service.name.toLowerCase().includes(searchQuery.toLowerCase())).map((service, index) => (
                 <motion.div
                   key={service._id}
                   initial={{ opacity: 0, y: 20 }}

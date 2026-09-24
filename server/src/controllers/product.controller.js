@@ -35,13 +35,15 @@ exports.listProducts = async (req, res, next) => {
 exports.getProductBySlug = async (req, res, next) => {
   try {
     const rawSlug = req.params.slug || '';
-    const decodedSlug = decodeURIComponent(rawSlug);
+    const decodedSlug = decodeURIComponent(rawSlug).trim();
+    const decodedSlugSpaces = decodeURIComponent(rawSlug.replace(/\+/g, ' ')).trim();
     const encodedSlug = encodeURIComponent(decodedSlug);
     
     const product = await Product.findOne({ 
       $or: [
-        { slug: { $regex: new RegExp(`^${escapeRegex(decodedSlug)}$`, 'i') } },
-        { slug: { $regex: new RegExp(`^${escapeRegex(encodedSlug)}$`, 'i') } },
+        { slug: { $regex: new RegExp(`^\\s*${escapeRegex(decodedSlug)}\\s*$`, 'i') } },
+        { slug: { $regex: new RegExp(`^\\s*${escapeRegex(decodedSlugSpaces)}\\s*$`, 'i') } },
+        { slug: { $regex: new RegExp(`^\\s*${escapeRegex(encodedSlug)}\\s*$`, 'i') } },
         { slug: rawSlug }
       ],
       isDeleted: { $ne: true }, 

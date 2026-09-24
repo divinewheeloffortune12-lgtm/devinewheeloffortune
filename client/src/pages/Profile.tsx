@@ -346,7 +346,9 @@ export const Profile = () => {
                     </div>
                     <div className="text-sm sm:text-right mt-2 sm:mt-0">
                       <p className="font-semibold text-lg text-slate-900">₹{order.totalAmount.toLocaleString("en-IN")}</p>
-                      <p className="text-slate-500 text-xs uppercase tracking-wider mt-1">{order.paymentStatus}</p>
+                      <p className="text-slate-500 text-xs uppercase tracking-wider mt-1">
+                        {order.paymentStatus === 'PAID' || order.paymentStatus === 'REFUNDED' ? order.paymentStatus : 'UNSUCCESSFUL'}
+                      </p>
                     </div>
                   </div>
                   
@@ -412,10 +414,10 @@ export const Profile = () => {
                     <div className="flex gap-2 mt-1">
                       <span className={`px-2 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider ${
                         booking.paymentStatus === 'PAID' ? 'bg-emerald-100 text-emerald-700' :
-                        booking.paymentStatus === 'PENDING' ? 'bg-amber-100 text-amber-700' :
+                        booking.paymentStatus === 'REFUNDED' ? 'bg-amber-100 text-amber-700' :
                         'bg-red-100 text-red-700'
                       }`}>
-                        {booking.paymentStatus}
+                        {booking.paymentStatus === 'PAID' || booking.paymentStatus === 'REFUNDED' ? booking.paymentStatus : 'UNSUCCESSFUL'}
                       </span>
                       <span className={`px-2 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider ${
                         ['CONFIRMED', 'COMPLETED'].includes(booking.status) ? 'bg-blue-100 text-blue-700' :

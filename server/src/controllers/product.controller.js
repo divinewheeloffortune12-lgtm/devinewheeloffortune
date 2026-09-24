@@ -25,7 +25,7 @@ exports.listProducts = async (req, res, next) => {
       query.name = { $regex: escapeRegex(term), $options: 'i' };
     }
     const [products, total] = await Promise.all([
-      Product.find(query).select('name slug category price discount tags isFeatured stock description images availability createdAt').populate('category', 'name').sort(sortFields[req.query.sort] || sortFields.newest).skip((page - 1) * limit).limit(limit).lean(),
+      Product.find(query).select('name slug category price discount tags isFeatured stock description images availability createdAt').populate('category', 'name').sort(sortFields[req.query.sort] || sortFields['price-desc']).skip((page - 1) * limit).limit(limit).lean(),
       Product.countDocuments(query),
     ]);
     res.json({ success: true, data: products, pagination: { page, limit, total, totalPages: Math.ceil(total / limit) } });

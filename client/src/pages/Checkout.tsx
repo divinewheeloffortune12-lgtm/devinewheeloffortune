@@ -80,7 +80,7 @@ const Checkout = () => {
 
   const total = Math.max(0, subtotal + shipping);
 
-  const hasUnavailableItems = items.some(item => !item.product.availability || item.product.isDeleted || item.product.stock < item.quantity);
+  const hasUnavailableItems = items.some(item => item.product.availability === false || item.product.isDeleted || item.product.stock < item.quantity);
 
   if (items.length === 0) {
     return (
@@ -489,9 +489,9 @@ const Checkout = () => {
                         <p className="text-sm font-medium line-clamp-1">
                           {item.product.name}
                         </p>
-                        {(!item.product.availability || item.product.isDeleted || item.product.stock < item.quantity) ? (
+                        {(item.product.availability === false || item.product.isDeleted || item.product.stock < item.quantity) ? (
                           <p className="text-xs text-destructive mt-0.5">
-                            {(!item.product.availability || item.product.isDeleted) ? "Product Not Available" : "Out of Stock"}
+                            {(item.product.availability === false || item.product.isDeleted) ? "Product Not Available" : "Out of Stock"}
                           </p>
                         ) : (
                           <div className="flex items-center gap-2 mt-1">

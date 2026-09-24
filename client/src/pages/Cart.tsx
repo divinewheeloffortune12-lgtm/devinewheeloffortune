@@ -32,7 +32,7 @@ const Cart = () => {
 
   const total = Math.max(0, subtotal + shipping);
 
-  const hasUnavailableItems = items.some(item => !item.product.availability || item.product.isDeleted || item.product.stock < item.quantity);
+  const hasUnavailableItems = items.some(item => item.product.availability === false || item.product.isDeleted || item.product.stock < item.quantity);
 
   if (items.length === 0) {
     return (
@@ -150,9 +150,9 @@ const Cart = () => {
                             );
                           })()}
                         </div>
-                        {((!item.product.availability) || (item.product.isDeleted) || item.product.stock < item.quantity) && (
+                        {((item.product.availability === false) || (item.product.isDeleted) || item.product.stock < item.quantity) && (
                           <div className="mt-1.5 text-[10px] sm:text-xs font-medium text-destructive">
-                            {(!item.product.availability || item.product.isDeleted) ? "Product Not Available" : 
+                            {(item.product.availability === false || item.product.isDeleted) ? "Product Not Available" : 
                              item.product.stock === 0 ? "Out of Stock" : 
                              `Only ${item.product.stock} available`}
                           </div>

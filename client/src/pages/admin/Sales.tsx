@@ -75,10 +75,7 @@ export const AdminSales = () => {
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'PENDING_PAYMENT': return <Package className="w-4 h-4 text-slate-500" />;
-      case 'CONFIRMED': 
-      case 'PROCESSING': return <Package className="w-4 h-4 text-amber-500" />;
-      case 'SHIPPED': return <Truck className="w-4 h-4 text-blue-500" />;
+      case 'PENDING': return <Package className="w-4 h-4 text-amber-500" />;
       case 'DELIVERED': return <CheckCircle2 className="w-4 h-4 text-emerald-500" />;
       case 'CANCELLED': 
       case 'REFUNDED': return <XCircle className="w-4 h-4 text-red-500" />;
@@ -367,24 +364,19 @@ export const AdminSales = () => {
                     </td>
                     <td className="p-4">
                       <div className="flex items-center gap-2">
-                        {getStatusIcon(s.status)}
-                        <span className="text-xs font-semibold uppercase tracking-wider">{s.status || 'PENDING_PAYMENT'}</span>
+                        {getStatusIcon(s.status || 'PENDING')}
+                        <span className="text-xs font-semibold uppercase tracking-wider">{s.status || 'PENDING'}</span>
                       </div>
                     </td>
                     <td className="p-4 text-slate-500">{new Date(s.createdAt).toLocaleDateString()}</td>
                     <td className="p-4 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        {s.status === 'CONFIRMED' && (
-                          <Button variant="outline" size="sm" onClick={() => handleStatusUpdate(s._id, 'PROCESSING')} className="h-8 text-amber-600 border-amber-200 hover:bg-amber-50" disabled={isUpdating}>
-                            Process
+                        {s.status === 'PENDING' && (
+                          <Button variant="outline" size="sm" onClick={() => handleStatusUpdate(s._id, 'DELIVERED')} className="h-8 text-emerald-600 border-emerald-200 hover:bg-emerald-50" disabled={isUpdating}>
+                            Deliver
                           </Button>
                         )}
-                        {s.status === 'PROCESSING' && (
-                          <Button variant="outline" size="sm" onClick={() => handleStatusUpdate(s._id, 'SHIPPED')} className="h-8 text-blue-600 border-blue-200 hover:bg-blue-50" disabled={isUpdating}>
-                            Ship
-                          </Button>
-                        )}
-                        {['PENDING_PAYMENT', 'CONFIRMED', 'PROCESSING', 'SHIPPED'].includes(s.status) && (
+                        {s.status === 'PENDING' && (
                           <Button variant="outline" size="sm" onClick={() => handleStatusUpdate(s._id, 'CANCELLED')} className="h-8 text-red-600 border-red-200 hover:bg-red-50" disabled={isUpdating}>
                             Cancel
                           </Button>
@@ -519,39 +511,14 @@ export const AdminSales = () => {
                       <SelectValue placeholder="Select status" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value={selectedOrder.status || 'PENDING_PAYMENT'}>
-                        Current: {selectedOrder.status?.replace('_', ' ') || 'Pending Payment'}
+                      <SelectItem value={selectedOrder.status || 'PENDING'}>
+                        Current: {selectedOrder.status || 'PENDING'}
                       </SelectItem>
-                      {(() => {
-                        const VALID_TRANSITIONS: Record<string, string[]> = {
-                          PENDING_PAYMENT: ['CONFIRMED', 'CANCELLED'],
-                          CONFIRMED: ['PROCESSING', 'CANCELLED'],
-                          PROCESSING: ['SHIPPED', 'CANCELLED'],
-                          SHIPPED: ['DELIVERED'],
-                          DELIVERED: ['REFUNDED'],
-                          CANCELLED: [],
-                          REFUNDED: [],
-                        };
-                        const getStatusLabel = (status: string) => {
-                          switch (status) {
-                            case 'PENDING_PAYMENT': return 'Pending Payment';
-                            case 'CONFIRMED': return 'Confirmed';
-                            case 'PROCESSING': return 'Processing';
-                            case 'SHIPPED': return 'Shipped / Dispatched';
-                            case 'DELIVERED': return 'Successfully Delivered';
-                            case 'CANCELLED': return 'Cancelled';
-                            case 'REFUNDED': return 'Refunded';
-                            default: return status;
-                          }
-                        };
-                        
-                        const allowed = VALID_TRANSITIONS[selectedOrder.status] || [];
-                        return allowed.map(status => (
-                          <SelectItem key={status} value={status}>
-                            {getStatusLabel(status)}
-                          </SelectItem>
-                        ));
-                      })()}
+                      {['PENDING', 'CANCELLED', 'REFUNDED', 'DELIVERED'].filter(s => s !== (selectedOrder.status || 'PENDING')).map(status => (
+                        <SelectItem key={status} value={status}>
+                          {status}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>

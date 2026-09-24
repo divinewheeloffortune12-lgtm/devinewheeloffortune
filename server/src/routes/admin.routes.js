@@ -95,8 +95,6 @@ router.get('/sales', async (req, res, next) => {
     const filter = {};
     if (req.query.status && req.query.status !== 'all') {
       filter.status = req.query.status;
-    } else {
-      filter.status = { $ne: 'PENDING_PAYMENT' };
     }
     if (req.query.paymentStatus && req.query.paymentStatus !== 'all') filter.paymentStatus = req.query.paymentStatus;
     if (req.query.user) filter.user = req.query.user;
@@ -128,7 +126,7 @@ router.put('/sales/:id/status', async (req, res, next) => {
     const { status } = req.body;
 
     // Validate the target status is a valid enum value
-    const validStatuses = ['PENDING_PAYMENT', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED', 'REFUNDED'];
+    const validStatuses = ['PENDING', 'CANCELLED', 'REFUNDED', 'DELIVERED'];
     if (!status || !validStatuses.includes(status)) {
       return res.status(400).json({ success: false, message: `Invalid status. Must be one of: ${validStatuses.join(', ')}` });
     }
@@ -142,20 +140,13 @@ router.put('/sales/:id/status', async (req, res, next) => {
       return res.status(404).json({ success: false, message: 'Order not found' });
     }
 
-    // State machine: validate the transition is allowed
-    const allowedNextStatuses = VALID_TRANSITIONS[order.status] || [];
-    if (!allowedNextStatuses.includes(status)) {
-      return res.status(400).json({
-        success: false,
-        message: `Cannot transition from ${order.status} to ${status}. Allowed transitions: ${allowedNextStatuses.join(', ') || 'none'}`
-      });
-    }
+    // Removed state machine, admin can set any status at any time
 
-    // Prevent marking unpaid orders as shipped/delivered
-    if (['SHIPPED', 'DELIVERED'].includes(status) && order.paymentStatus !== 'PAID') {
+    // Prevent marking unpaid orders as delivered
+    if (['DELIVERED'].includes(status) && order.paymentStatus !== 'PAID') {
       return res.status(400).json({
         success: false,
-        message: 'Cannot ship/deliver an order that has not been paid'
+        message: 'Cannot deliver an order that has not been paid'
       });
     }
 
@@ -173,10 +164,10 @@ router.put('/sales/:id/status', async (req, res, next) => {
     let message = '';
     if (status === 'CANCELLED') {
       message = `Your order #${order.orderNumber} has been cancelled. Our team will contact you shortly.`;
-    } else if (status === 'CONFIRMED') {
-      message = `Great news! Your order #${order.orderNumber} has been confirmed.`;
-    } else if (status === 'SHIPPED') {
-      message = `Your order #${order.orderNumber} has been shipped!`;
+    } else if (status === 'DELIVERED') {
+      message = `Great news! Your order #${order.orderNumber} has been delivered.`;
+    } else if (status === 'REFUNDED') {
+      message = `Your order #${order.orderNumber} has been refunded.`;
     }
 
     if (message && order.user) {

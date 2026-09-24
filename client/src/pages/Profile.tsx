@@ -17,7 +17,7 @@ import {
 import { Layout } from "@/components/Layout";
 import { api, getErrorMessage } from "@/lib/api";
 
-type Order = { _id: string; orderNumber: string; totalAmount: number; status: string; paymentStatus: string; createdAt: string; products: { quantity: number; product: { name: string } | null }[] };
+type Order = { _id: string; orderNumber: string; totalAmount: number; status: string; paymentStatus: string; createdAt: string; statusHistory?: { status: string; changedAt: string }[]; products: { quantity: number; product: { name: string } | null }[] };
 
 const profileSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -362,16 +362,18 @@ export const Profile = () => {
                     
                     <div className="bg-slate-50 px-4 py-3 rounded-lg border border-slate-100 min-w-[200px]">
                       <p className="text-xs uppercase tracking-widest text-slate-500 mb-1">Tracking Status</p>
-                      <p className={`font-semibold mb-3 ${
+                      <p className={`font-semibold mb-1 ${
                         ['CANCELLED', 'REFUNDED'].includes(order.status) ? 'text-red-600' : 
                         order.status === 'DELIVERED' ? 'text-emerald-600' : 
-                        order.status === 'SHIPPED' ? 'text-blue-600' :
                         'text-amber-600'
                       }`}>
                         {order.status.replace('_', ' ')}
                       </p>
+                      {order.statusHistory && order.statusHistory.length > 0 && (
+                        <p className="text-[10px] text-slate-400 mb-3">Updated: {new Date(order.statusHistory[order.statusHistory.length - 1].changedAt).toLocaleDateString()}</p>
+                      )}
                       <Button variant="outline" size="sm" onClick={() => printInvoice(order)} className="w-full text-xs h-8"><Download className="w-3 h-3 mr-2" /> Download Bill</Button>
-                      {!['SHIPPED', 'DELIVERED', 'CANCELLED', 'REFUNDED'].includes(order.status) && (
+                      {!['DELIVERED', 'CANCELLED', 'REFUNDED'].includes(order.status) && (
                         <div className="mt-3 pt-3 border-t border-slate-200">
                           <Button 
                             variant="destructive" 

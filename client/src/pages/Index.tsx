@@ -387,9 +387,20 @@ const Index = () => {
               <img src="/momdad.png" alt="Mom and Dad" className="w-full h-auto object-cover" />
             </div>
             <h3 className="text-2xl md:text-3xl font-serif text-slate-800 mb-4">A Foundation of Love and Support</h3>
-            <p className="text-slate-600 leading-relaxed max-w-2xl mx-auto text-lg">
+            <p className="text-slate-600 leading-relaxed max-w-2xl mx-auto text-lg mb-12">
               Behind every step of this spiritual journey is the unconditional love, guidance, and blessings of my parents. Their unwavering belief has been the cornerstone of Divine Wheel of Fortune.
             </p>
+            
+            <div className="rounded-3xl overflow-hidden shadow-[0_0_30px_rgba(168,85,247,0.3)] relative border-4 border-white bg-slate-900 group aspect-[4/5] sm:aspect-video max-w-lg mx-auto">
+              <video 
+                src="/contactvideo.mp4" 
+                autoPlay 
+                muted 
+                loop 
+                playsInline 
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            </div>
           </div>
         </div>
       </section>

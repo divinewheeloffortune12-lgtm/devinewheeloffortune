@@ -71,17 +71,6 @@ export default function Contact() {
               </div>
             </div>
           </aside>
-          
-          <div className="rounded-3xl overflow-hidden shadow-[0_0_30px_rgba(168,85,247,0.3)] relative border-4 border-white bg-slate-900 group aspect-[4/5] sm:aspect-video lg:aspect-[4/5]">
-            <video 
-              src="/contactvideo.mp4" 
-              autoPlay 
-              muted 
-              loop 
-              playsInline 
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-          </div>
         </div>
         <form onSubmit={submit} className="rounded-3xl border bg-card p-6 md:p-10 shadow-[0_0_30px_rgba(0,0,0,0.05)] space-y-5 h-fit">
           <div className="grid sm:grid-cols-2 gap-5">

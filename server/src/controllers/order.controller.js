@@ -201,14 +201,14 @@ exports.verifyPayment = async (req, res, next) => {
       { 
         $set: { 
           paymentStatus: 'PAID', 
-          status: 'CONFIRMED',
+          status: 'PENDING',
           razorpayPaymentId: razorpay_payment_id,
           paidAt: new Date()
         },
         $unset: { expiresAt: 1 },
         $push: {
           statusHistory: {
-            status: 'CONFIRMED',
+            status: 'PENDING',
             reason: 'Payment successful'
           }
         }

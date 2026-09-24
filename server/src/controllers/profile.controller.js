@@ -18,7 +18,7 @@ exports.getMyOrders = async (req, res, next) => {
   try {
     // Only show successfully paid orders in purchase history
     const orders = await Order.find({ user: req.user._id, paymentStatus: 'PAID' })
-      .select('orderNumber products totalAmount shippingCharge status paymentStatus createdAt')
+      .select('orderNumber products totalAmount shippingCharge status paymentStatus createdAt statusHistory')
       .populate('products.product', 'name slug images')
       .sort({ createdAt: -1 })
       .limit(50)

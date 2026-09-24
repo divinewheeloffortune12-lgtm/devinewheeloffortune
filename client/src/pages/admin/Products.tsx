@@ -56,11 +56,19 @@ export const AdminProducts = () => {
   const [categories, setCategories] = useState([]);
   
   // Pagination & Filtering state
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(() => Number(sessionStorage.getItem("adminProductsPage")) || 1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalProducts, setTotalProducts] = useState(0);
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [selectedCategory, setSelectedCategory] = useState<string>(() => sessionStorage.getItem("adminProductsCategory") || "all");
+  const [searchQuery, setSearchQuery] = useState(() => sessionStorage.getItem("adminProductsSearch") || "");
+  const [searchInput, setSearchInput] = useState(searchQuery);
   const limit = 10;
+  
+  useEffect(() => {
+    sessionStorage.setItem("adminProductsPage", page.toString());
+    sessionStorage.setItem("adminProductsCategory", selectedCategory);
+    sessionStorage.setItem("adminProductsSearch", searchQuery);
+  }, [page, selectedCategory, searchQuery]);
   
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -93,7 +101,7 @@ export const AdminProducts = () => {
 
   useEffect(() => {
     fetchProducts();
-  }, [page, selectedCategory]);
+  }, [page, selectedCategory, searchQuery]);
 
   useEffect(() => {
     fetchCategories();
@@ -102,7 +110,7 @@ export const AdminProducts = () => {
   const fetchProducts = async () => {
     try {
       setIsLoading(true);
-      const url = `/admin/products?page=${page}&limit=${limit}${selectedCategory !== 'all' ? `&category=${selectedCategory}` : ''}`;
+      const url = `/admin/products?page=${page}&limit=${limit}${selectedCategory !== 'all' ? `&category=${selectedCategory}` : ''}${searchQuery ? `&search=${searchQuery}` : ''}`;
       const { data } = await api.get(url);
       setProducts(data.data);
       setTotalPages(data.totalPages || 1);
@@ -510,6 +518,29 @@ export const AdminProducts = () => {
             {c.name}
           </Button>
         ))}
+      </div>
+
+      <div className="flex gap-2 items-center pb-4">
+        <Input 
+          placeholder="Search products by name..." 
+          value={searchInput} 
+          onChange={(e) => setSearchInput(e.target.value)} 
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              setSearchQuery(searchInput);
+              setPage(1);
+            }
+          }}
+          className="max-w-md bg-white"
+        />
+        <Button onClick={() => { setSearchQuery(searchInput); setPage(1); }}>
+          Search
+        </Button>
+        {searchQuery && (
+          <Button variant="ghost" onClick={() => { setSearchInput(""); setSearchQuery(""); setPage(1); }}>
+            Clear
+          </Button>
+        )}
       </div>
 
       {products.length === 0 && !isLoading ? (

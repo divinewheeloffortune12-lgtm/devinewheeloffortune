@@ -117,6 +117,9 @@ exports.getProducts = async (req, res) => {
     if (req.query.category) {
       query.category = req.query.category;
     }
+    if (req.query.search) {
+      query.name = { $regex: req.query.search, $options: 'i' };
+    }
 
     const products = await Product.find(query)
       .populate('category', 'name')

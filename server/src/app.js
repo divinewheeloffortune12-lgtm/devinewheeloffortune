@@ -76,6 +76,7 @@ app.use(cors({
     return callback(null, true);
   },
   credentials: true,
+  exposedHeaders: ['x-rtb-fingerprint-id', 'request-id'],
 }));
 
 // Webhook route needs raw body for HMAC signature verification.

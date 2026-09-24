@@ -14,6 +14,7 @@ export const AdminSales = () => {
   const [totalOrders, setTotalOrders] = useState(0);
   const [totalRevenue, setTotalRevenue] = useState(0);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
+  const [selectedUser, setSelectedUser] = useState<any>(null);
   const [isUpdating, setIsUpdating] = useState(false);
   const { toast } = useToast();
 
@@ -338,6 +339,7 @@ export const AdminSales = () => {
                 <tr>
                   <th className="p-4 font-semibold whitespace-nowrap">Order ID</th>
                   <th className="p-4 font-semibold whitespace-nowrap">Customer</th>
+                  <th className="p-4 font-semibold whitespace-nowrap">Products</th>
                   <th className="p-4 font-semibold whitespace-nowrap">Amount</th>
                   <th className="p-4 font-semibold whitespace-nowrap">Payment</th>
                   <th className="p-4 font-semibold whitespace-nowrap">Status</th>
@@ -353,6 +355,18 @@ export const AdminSales = () => {
                       <div className="font-medium text-slate-800">{s.user?.name || "Unknown"}</div>
                       <div className="text-xs text-slate-500">{s.user?.email || ""}</div>
                       {s.user?.mobile && <div className="text-xs text-slate-500">{s.user.mobile}</div>}
+                    </td>
+                    <td className="p-4">
+                      {s.products && s.products.map((p: any, idx: number) => (
+                        <div key={idx} className="flex items-center gap-2 mb-2 last:mb-0">
+                          {p.product?.images?.[0] ? (
+                            <img src={p.product.images[0]} alt={p.product.name} className="w-8 h-8 rounded object-cover" />
+                          ) : (
+                            <div className="w-8 h-8 rounded bg-slate-100 flex items-center justify-center text-[10px] text-slate-400">No Img</div>
+                          )}
+                          <span className="text-xs font-medium text-slate-700 truncate max-w-[120px]" title={p.product?.name}>{p.product?.name || "Unknown"} x {p.quantity}</span>
+                        </div>
+                      ))}
                     </td>
                     <td className="p-4 font-medium text-slate-800">₹{s.totalAmount?.toLocaleString("en-IN")}</td>
                     <td className="p-4">
@@ -371,16 +385,9 @@ export const AdminSales = () => {
                     <td className="p-4 text-slate-500">{new Date(s.createdAt).toLocaleDateString()}</td>
                     <td className="p-4 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        {s.status === 'PENDING' && (
-                          <Button variant="outline" size="sm" onClick={() => handleStatusUpdate(s._id, 'DELIVERED')} className="h-8 text-emerald-600 border-emerald-200 hover:bg-emerald-50" disabled={isUpdating}>
-                            Deliver
-                          </Button>
-                        )}
-                        {s.status === 'PENDING' && (
-                          <Button variant="outline" size="sm" onClick={() => handleStatusUpdate(s._id, 'CANCELLED')} className="h-8 text-red-600 border-red-200 hover:bg-red-50" disabled={isUpdating}>
-                            Cancel
-                          </Button>
-                        )}
+                        <Button variant="outline" size="sm" onClick={() => setSelectedUser(s.user)} className="h-8 text-blue-600 border-blue-200 hover:bg-blue-50">
+                          View User
+                        </Button>
                         <Button variant="ghost" size="sm" onClick={() => setSelectedOrder(s)} className="h-8 text-primary hover:text-primary hover:bg-primary/10">
                           Details
                         </Button>
@@ -526,12 +533,55 @@ export const AdminSales = () => {
               </div>
 
               <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
+                {selectedOrder.status === 'PENDING' && (
+                  <Button variant="outline" onClick={() => handleStatusUpdate(selectedOrder._id, 'DELIVERED')} className="text-emerald-600 border-emerald-200 hover:bg-emerald-50" disabled={isUpdating}>
+                    Deliver
+                  </Button>
+                )}
+                {selectedOrder.status === 'PENDING' && (
+                  <Button variant="outline" onClick={() => handleStatusUpdate(selectedOrder._id, 'CANCELLED')} className="text-red-600 border-red-200 hover:bg-red-50" disabled={isUpdating}>
+                    Cancel
+                  </Button>
+                )}
                 <Button variant="outline" onClick={() => setSelectedOrder(null)}>
                   Close
                 </Button>
                 <Button onClick={() => printOrder(selectedOrder)} className="flex items-center gap-2">
                   <Printer className="w-4 h-4" /> Print Details
                 </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+      <Dialog open={!!selectedUser} onOpenChange={(open) => !open && setSelectedUser(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="font-serif text-xl">User Details</DialogTitle>
+            <DialogDescription className="hidden">User Details</DialogDescription>
+          </DialogHeader>
+          {selectedUser && (
+            <div className="space-y-4 pt-4">
+              <div>
+                <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1">Name</p>
+                <p className="font-medium text-slate-800">{selectedUser.name || "Unknown"}</p>
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1">Email</p>
+                <p className="text-slate-800">{selectedUser.email || "N/A"}</p>
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1">Mobile</p>
+                <p className="text-slate-800">{selectedUser.mobile || "N/A"}</p>
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1">Registered Since</p>
+                <p className="text-slate-800">
+                  {selectedUser.createdAt ? new Date(selectedUser.createdAt).toLocaleDateString() : "N/A"}
+                </p>
+              </div>
+              <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
+                <Button variant="outline" onClick={() => setSelectedUser(null)}>Close</Button>
               </div>
             </div>
           )}

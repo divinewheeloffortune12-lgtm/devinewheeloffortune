@@ -19,8 +19,8 @@ const razorpay = new Razorpay({
 
 // Valid order status transitions (state machine)
 const VALID_TRANSITIONS = {
-  PENDING_PAYMENT: ['CONFIRMED', 'CANCELLED'],
-  CONFIRMED: ['PROCESSING', 'CANCELLED'],
+  PENDING: ['CONFIRMED', 'CANCELLED'],
+  CONFIRMED: ['PROCESSING', 'SHIPPED', 'CANCELLED'],
   PROCESSING: ['SHIPPED', 'CANCELLED'],
   SHIPPED: ['DELIVERED'],
   DELIVERED: ['REFUNDED'],
@@ -112,7 +112,7 @@ exports.createOrder = async (req, res, next) => {
       shippingCharge,
       shippingAddress: shippingAddress.trim(),
       razorpayOrderId: rzpOrder.id,
-      status: 'PENDING_PAYMENT',
+      status: 'PENDING',
       paymentStatus: 'PENDING'
     });
 

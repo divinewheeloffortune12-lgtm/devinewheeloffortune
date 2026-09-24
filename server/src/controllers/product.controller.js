@@ -9,7 +9,7 @@ exports.listProducts = async (req, res, next) => {
   try {
     const page = Math.max(1, Number.parseInt(req.query.page, 10) || 1);
     const limit = Math.min(48, Math.max(1, Number.parseInt(req.query.limit, 10) || 12));
-    const query = { isDeleted: false, availability: { $ne: false } };
+    const query = { isDeleted: { $ne: true }, availability: { $ne: false } };
     if (req.query.category) {
       if (!mongoose.isValidObjectId(req.query.category)) {
         const cat = await Category.findOne({ slug: req.query.category });
@@ -34,7 +34,19 @@ exports.listProducts = async (req, res, next) => {
 
 exports.getProductBySlug = async (req, res, next) => {
   try {
-    const product = await Product.findOne({ slug: req.params.slug, isDeleted: false, availability: { $ne: false } }).populate('category', 'name').lean();
+    const rawSlug = req.params.slug || '';
+    const decodedSlug = decodeURIComponent(rawSlug);
+    const encodedSlug = encodeURIComponent(decodedSlug);
+    
+    const product = await Product.findOne({ 
+      $or: [
+        { slug: { $regex: new RegExp(`^${escapeRegex(decodedSlug)}$`, 'i') } },
+        { slug: { $regex: new RegExp(`^${escapeRegex(encodedSlug)}$`, 'i') } },
+        { slug: rawSlug }
+      ],
+      isDeleted: { $ne: true }, 
+      availability: { $ne: false } 
+    }).populate('category', 'name').lean();
     if (!product) return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Product not found' } });
     return res.json({ success: true, data: product });
   } catch (error) { return next(error); }

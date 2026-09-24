@@ -16,8 +16,9 @@ export default function About() {
         <div className="container-full">
           <div className="flex flex-col gap-16 items-center">
             <div className="flex flex-col relative w-full max-w-5xl">
-              <div className="relative w-full aspect-video flex justify-center items-center rounded-3xl shadow-xl shadow-black/5 border border-black/5 bg-black/5 overflow-hidden">
-                <video className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" autoPlay muted loop playsInline preload="metadata">
+              <div className="relative w-full aspect-video flex justify-center items-center rounded-[2rem] shadow-2xl shadow-primary/10 border border-white/20 bg-slate-900/5 overflow-hidden group">
+                <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 z-10 pointer-events-none"></div>
+                <video className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 ease-out" autoPlay muted loop playsInline preload="auto">
                   <source src="/about-page-video.mp4" type="video/mp4" />
                 </video>
               </div>
@@ -71,7 +72,8 @@ export default function About() {
               </p>
             </div>
           </div>
-          <div className="bg-slate-50 p-10 rounded-3xl border border-slate-100 flex flex-col justify-center">
+          <div className="bg-gradient-to-br from-slate-50 to-white p-10 rounded-[2.5rem] border border-slate-100/50 shadow-xl shadow-slate-200/20 flex flex-col justify-center relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-primary/10 transition-colors duration-700"></div>
             <h3 className="text-3xl font-serif text-slate-900 mb-6">Beyond Healing — A Teacher and Guide</h3>
             <div className="space-y-6 text-lg text-slate-600">
               <p>
@@ -94,26 +96,27 @@ export default function About() {
       </section>
 
       {/* Her Approach & Philosophy */}
-      <section className="py-20 md:py-32 bg-[#181422] text-white">
-        <div className="container-full text-center max-w-4xl mx-auto">
+      <section className="py-20 md:py-32 bg-slate-950 text-white relative overflow-hidden">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-[500px] bg-primary/20 blur-[120px] rounded-full pointer-events-none opacity-50"></div>
+        <div className="container-full text-center max-w-4xl mx-auto relative z-10">
           <h3 className="text-3xl md:text-5xl font-serif mb-10">Her Approach</h3>
           <p className="text-lg md:text-xl text-white/80 mb-10">
             At the heart of Nattasha's work is the belief that spirituality is not something that needs to fit into a single box.
           </p>
           <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 text-left mb-16">
-            <div className="bg-white/5 p-6 rounded-2xl border border-white/10">
+            <div className="bg-white/[0.03] backdrop-blur-md p-6 rounded-3xl border border-white/10 hover:bg-white/[0.06] transition-colors duration-500">
               <p className="italic text-white/90">Some journeys begin with a question.</p>
             </div>
-            <div className="bg-white/5 p-6 rounded-2xl border border-white/10">
+            <div className="bg-white/[0.03] backdrop-blur-md p-6 rounded-3xl border border-white/10 hover:bg-white/[0.06] transition-colors duration-500">
               <p className="italic text-white/90">Some begin with a search for clarity.</p>
             </div>
-            <div className="bg-white/5 p-6 rounded-2xl border border-white/10">
+            <div className="bg-white/[0.03] backdrop-blur-md p-6 rounded-3xl border border-white/10 hover:bg-white/[0.06] transition-colors duration-500">
               <p className="italic text-white/90">Some begin with healing.</p>
             </div>
-            <div className="bg-white/5 p-6 rounded-2xl border border-white/10">
+            <div className="bg-white/[0.03] backdrop-blur-md p-6 rounded-3xl border border-white/10 hover:bg-white/[0.06] transition-colors duration-500">
               <p className="italic text-white/90">Some begin with curiosity.</p>
             </div>
-            <div className="bg-white/5 p-6 rounded-2xl border border-white/10 sm:col-span-2 md:col-span-2">
+            <div className="bg-white/[0.03] backdrop-blur-md p-6 rounded-3xl border border-white/10 sm:col-span-2 md:col-span-2 hover:bg-white/[0.06] transition-colors duration-500">
               <p className="italic text-white/90">And some begin with the desire to understand oneself at a deeper level.</p>
             </div>
           </div>
@@ -125,8 +128,9 @@ export default function About() {
       </section>
 
       {/* Final Call to Action */}
-      <section className="py-20 md:py-32 bg-[#f9f9f9]">
-        <div className="container-full text-center max-w-3xl mx-auto">
+      <section className="py-20 md:py-32 bg-gradient-to-b from-white to-slate-50 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.015] pointer-events-none mix-blend-overlay"></div>
+        <div className="container-full text-center max-w-3xl mx-auto relative z-10">
           <h3 className="text-4xl font-serif text-slate-900 mb-8">A Journey of Awareness</h3>
           <p className="text-xl text-slate-600 mb-6">
             Nattasha Sharrma's work ultimately centres around one fundamental idea: 
@@ -149,11 +153,11 @@ export default function About() {
             <span className="px-4 py-2 bg-primary text-white rounded-full shadow-sm">Transformation</span>
           </div>
 
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Link to="/services" className="inline-flex items-center justify-center gap-2 bg-primary text-white font-semibold px-8 py-4 rounded-full hover:bg-primary/90 transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5">
-              Explore Services <ArrowRight className="w-4 h-4" />
+          <div className="flex flex-col sm:flex-row justify-center gap-4 mt-8">
+            <Link to="/services" className="group inline-flex items-center justify-center gap-2 bg-slate-900 text-white font-medium px-8 py-4 rounded-full hover:bg-slate-800 transition-all duration-300 shadow-xl shadow-slate-900/10 hover:shadow-slate-900/20 hover:-translate-y-1">
+              Explore Services <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
-            <a href="/products" className="inline-flex items-center justify-center gap-2 bg-white text-slate-800 border border-slate-200 font-semibold px-8 py-4 rounded-full hover:bg-slate-50 transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5">
+            <a href="/products" className="inline-flex items-center justify-center gap-2 bg-white text-slate-800 border border-slate-200 font-medium px-8 py-4 rounded-full hover:bg-slate-50 transition-all duration-300 shadow-sm hover:shadow-lg hover:-translate-y-1">
               Visit the Sacred Shop
             </a>
           </div>

@@ -334,7 +334,14 @@ exports.getUserOrders = async (req, res, next) => {
     const page = Math.max(1, Number(req.query.page) || 1);
     const limit = Math.min(50, Math.max(1, Number(req.query.limit) || 20));
 
-    const filter = { user: req.user._id, paymentStatus: 'PAID' };
+    const twelveHoursAgo = new Date(Date.now() - 12 * 60 * 60 * 1000);
+    const filter = { 
+      user: req.user._id, 
+      $or: [
+        { paymentStatus: 'PAID' },
+        { paymentStatus: { $ne: 'PAID' }, createdAt: { $gte: twelveHoursAgo } }
+      ]
+    };
 
     const [orders, total] = await Promise.all([
       Order.find(filter)

@@ -178,9 +178,8 @@ exports.getUserBookings = async (req, res, next) => {
     const bookings = await ServiceBooking.find({
       user: req.user._id,
       $or: [
-        { paymentStatus: { $in: ['PAID', 'CONFIRMED', 'COMPLETED'] } },
-        { paymentStatus: 'PENDING' },
-        { paymentStatus: 'FAILED', createdAt: { $gt: twelveHoursAgo } }
+        { paymentStatus: { $in: ['PAID', 'CONFIRMED', 'COMPLETED', 'REFUNDED'] } },
+        { paymentStatus: { $ne: 'PAID' }, createdAt: { $gte: twelveHoursAgo } }
       ]
     })
     .populate('service', 'name price image duration')

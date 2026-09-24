@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { api } from "@/lib/api";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
-import { Loader2, UserX, Clock, Eye, Download, MoreVertical, Trash2, ShieldBan, ShieldAlert, CheckCircle, Receipt } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Loader2, UserX, Clock, Eye, Download, MoreVertical, Trash2, ShieldBan, ShieldAlert, CheckCircle, Receipt, Search } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -27,10 +28,20 @@ export const AdminUsers = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(searchTerm);
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [searchTerm]);
+
   const { data: usersData, isLoading } = useQuery({
-    queryKey: ['admin-users'],
+    queryKey: ['admin-users', debouncedSearch],
     queryFn: async () => {
-      const { data } = await api.get("/admin/users");
+      const { data } = await api.get(`/admin/users${debouncedSearch ? `?search=${encodeURIComponent(debouncedSearch)}` : ''}`);
       return data.data;
     },
     staleTime: 5 * 60 * 1000,
@@ -139,27 +150,38 @@ export const AdminUsers = () => {
         </Button>
       </div>
 
-      <div className="flex gap-4 border-b border-slate-200">
-        <button
-          onClick={() => setActiveTab("active")}
-          className={`pb-3 text-sm font-medium transition-colors ${
-            activeTab === "active"
-              ? "border-b-2 border-primary text-primary"
-              : "text-slate-500 hover:text-slate-700"
-          }`}
-        >
-          Active / Blocked
-        </button>
-        <button
-          onClick={() => setActiveTab("deleted")}
-          className={`pb-3 text-sm font-medium transition-colors ${
-            activeTab === "deleted"
-              ? "border-b-2 border-primary text-primary"
-              : "text-slate-500 hover:text-slate-700"
-          }`}
-        >
-          Deleted Users
-        </button>
+      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between border-b border-slate-200 pb-4">
+        <div className="flex gap-4">
+          <button
+            onClick={() => setActiveTab("active")}
+            className={`pb-3 text-sm font-medium transition-colors border-b-2 -mb-[18px] ${
+              activeTab === "active"
+                ? "border-primary text-primary"
+                : "border-transparent text-slate-500 hover:text-slate-700"
+            }`}
+          >
+            Active / Blocked
+          </button>
+          <button
+            onClick={() => setActiveTab("deleted")}
+            className={`pb-3 text-sm font-medium transition-colors border-b-2 -mb-[18px] ${
+              activeTab === "deleted"
+                ? "border-primary text-primary"
+                : "border-transparent text-slate-500 hover:text-slate-700"
+            }`}
+          >
+            Deleted Users
+          </button>
+        </div>
+        <div className="relative w-full sm:w-72 mt-2 sm:mt-0">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <Input 
+            placeholder="Search name, email, or number..." 
+            className="pl-9 bg-white border-slate-200 focus-visible:ring-primary/20"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
       </div>
 
       {users.filter(u => activeTab === "active" ? u.status !== 'deleted' : u.status === 'deleted').length === 0 ? (

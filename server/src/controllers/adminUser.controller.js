@@ -11,7 +11,8 @@ exports.getUsers = async (req, res) => {
     if (req.query.search) {
       query.$or = [
         { name: { $regex: req.query.search, $options: 'i' } },
-        { email: { $regex: req.query.search, $options: 'i' } }
+        { email: { $regex: req.query.search, $options: 'i' } },
+        { mobile: { $regex: req.query.search, $options: 'i' } }
       ];
     }
 

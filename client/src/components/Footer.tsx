@@ -76,7 +76,10 @@ export const Footer = () => {
               <Link2 className="h-5 w-5 opacity-70" />
             </a>
           </div>
-          <p>© {new Date().getFullYear()} Divine Wheel Of Fortune. All rights reserved.</p>
+          <div className="flex flex-col md:flex-row items-center gap-2 md:gap-6 text-center md:text-left">
+            <p>© {new Date().getFullYear()} Divine Wheel Of Fortune. All rights reserved.</p>
+            <p>Powered by <a href="https://garrydigital360.in" target="_blank" rel="noreferrer" className="hover:text-primary transition-colors underline hover:no-underline">Garry Digital 360</a></p>
+          </div>
         </div>
       </div>
     </footer>

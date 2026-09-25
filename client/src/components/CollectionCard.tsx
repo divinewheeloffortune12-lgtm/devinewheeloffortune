@@ -35,7 +35,7 @@ export const CollectionCard = ({ collection, index = 0, variant = "default" }: C
           <img
             src={collection.image}
             alt={collection.name}
-            className="w-full h-full object-cover transition-transform duration-[1.2s] ease-out group-hover:scale-110"
+            className="w-full h-full object-contain transition-transform duration-[1.2s] ease-out group-hover:scale-110"
           />
 
           {/* Multi-layer gradient overlay */}

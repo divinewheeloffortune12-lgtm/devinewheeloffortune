@@ -114,7 +114,7 @@ const Carousel_003 = ({
             <SwiperSlide key={index} className="group overflow-hidden rounded-2xl bg-black/40 backdrop-blur-md border border-white/10 shadow-2xl transition-all hover:border-primary/50">
               <a href={image.link || "/products"} className="block h-[300px] w-full overflow-hidden relative cursor-pointer">
                 <img
-                  className="h-full w-full object-cover contrast-[1.15] saturate-110 brightness-[1.05] transition-transform duration-700 group-hover:scale-110"
+                  className="h-full w-full object-contain contrast-[1.15] saturate-110 brightness-[1.05] transition-transform duration-700 group-hover:scale-110"
                   src={image.src}
                   alt={image.alt}
                 />

@@ -101,8 +101,8 @@ const Index = () => {
           <source src="/herovideo.mp4" type="video/mp4" />
         </video>
         <div className="absolute inset-0 bg-slate-900/10 z-20 pointer-events-none" />
-        <div className="absolute inset-x-0 bottom-[-2px] h-32 bg-gradient-to-t from-white via-white/80 to-transparent z-20 pointer-events-none" />
-        <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-background to-transparent z-20 pointer-events-none" />
+        <div className="absolute inset-x-0 bottom-[-2px] h-20 bg-gradient-to-t from-white/70 via-white/30 to-transparent z-20 pointer-events-none" />
+        <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-background/90 to-transparent z-20 pointer-events-none" />
         
         <div className="container-full relative flex min-h-[88svh] items-end justify-start pb-8 pt-32 md:pb-12 z-30">
           <motion.div 

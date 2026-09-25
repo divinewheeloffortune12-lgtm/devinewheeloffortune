@@ -9,7 +9,6 @@ import { Pagination, EffectFade } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/effect-fade";
-import Tilt from "react-parallax-tilt";
 
 interface ProductCardProps {
   product: Product;
@@ -43,15 +42,14 @@ export const ProductCard = ({ product, index = 0, variant = "default" }: Product
       transition={{ duration: 0.7, delay: index * 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
       className="group"
     >
-      <Link to={`/product/${product.slug}`} className="block">
+      <Link to={`/product/${product.slug}`} className="block h-full bg-white rounded-[2rem] p-3 transition-all duration-500 hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-slate-100/50">
         {/* Image Container */}
-        <Tilt tiltMaxAngleX={5} tiltMaxAngleY={5} transitionSpeed={2500} scale={1.02} className="relative mb-5" glareEnable={true} glareMaxOpacity={0.1} glarePosition="all" glareBorderRadius="0">
-          <div
-            className={cn(
-              "relative overflow-hidden bg-slate-50 border border-slate-100 rounded-t-2xl",
-              variant === "large" ? "aspect-[3/4]" : "aspect-[4/5]"
-            )}
-          >
+        <div
+          className={cn(
+            "relative overflow-hidden bg-[#F5F5F7] rounded-3xl mb-5",
+            variant === "large" ? "aspect-[3/4]" : "aspect-[4/5]"
+          )}
+        >
           {hasSecondImage ? (
             <Swiper
               modules={[Pagination, EffectFade]}
@@ -64,7 +62,7 @@ export const ProductCard = ({ product, index = 0, variant = "default" }: Product
                   <img
                     src={img}
                     alt={`${product.name} - view ${i + 1}`}
-                    className="w-full h-full object-contain p-4 mix-blend-multiply contrast-[1.15] saturate-110 drop-shadow-sm brightness-[1.05] transition-all duration-[1s] ease-out group-hover:scale-105"
+                    className="w-full h-full object-contain p-8 mix-blend-multiply drop-shadow-sm transition-transform duration-700 ease-out group-hover:scale-105"
                   />
                 </SwiperSlide>
               ))}
@@ -73,7 +71,7 @@ export const ProductCard = ({ product, index = 0, variant = "default" }: Product
             <img
               src={(product.images || [])[0]}
               alt={product.name}
-              className="w-full h-full object-contain p-4 mix-blend-multiply contrast-[1.15] saturate-110 drop-shadow-sm brightness-[1.05] transition-all duration-[1s] ease-out group-hover:scale-105"
+              className="w-full h-full object-contain p-8 mix-blend-multiply drop-shadow-sm transition-transform duration-700 ease-out group-hover:scale-105"
             />
           )}
 
@@ -129,10 +127,9 @@ export const ProductCard = ({ product, index = 0, variant = "default" }: Product
             </span>
           </div>
         </div>
-        </Tilt>
 
         {/* Product Info */}
-        <div className="space-y-2">
+        <div className="space-y-2 px-3 pb-2">
           {/* Collection label */}
           {collection && (
             <p className="text-[11px] font-medium tracking-[0.2em] uppercase text-muted-foreground/70 transition-colors duration-300 group-hover:text-primary">

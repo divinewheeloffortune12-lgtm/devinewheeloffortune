@@ -74,14 +74,14 @@ export const FeaturedProducts = () => {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.5, delay: index * 0.1 }}
-                    className="group relative cursor-pointer"
+                    className="group relative cursor-pointer block h-full bg-white rounded-[2rem] p-3 transition-all duration-500 hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-slate-100/50"
                   >
-                    <div className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-muted mb-5">
-                      <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-500 z-10" />
+                    <div className="relative aspect-[3/4] overflow-hidden rounded-3xl bg-[#F5F5F7] mb-4">
+                      <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors duration-500 z-10" />
                       <img 
                         src={product.image} 
                         alt={product.name} 
-                        className="w-full h-full object-contain mix-blend-multiply contrast-[1.15] saturate-110 brightness-[1.05] transition-transform duration-700 group-hover:scale-110"
+                        className="w-full h-full object-contain p-8 mix-blend-multiply drop-shadow-sm transition-transform duration-700 group-hover:scale-105"
                       />
                       
                       {/* Buy Button Overlay */}
@@ -92,10 +92,10 @@ export const FeaturedProducts = () => {
                       </div>
                     </div>
                     
-                    <div className="space-y-1">
-                      <p className="text-xs uppercase tracking-widest text-muted-foreground">{product.category}</p>
-                      <h3 className="font-serif text-xl line-clamp-1 group-hover:text-primary transition-colors">{product.name}</h3>
-                      <p className="text-sm font-medium">{product.price}</p>
+                    <div className="space-y-1 px-3 pb-2">
+                      <p className="text-[11px] font-medium tracking-[0.2em] uppercase text-muted-foreground/70 transition-colors duration-300 group-hover:text-primary">{product.category}</p>
+                      <h3 className="font-serif text-xl text-foreground transition-colors duration-300 group-hover:text-primary leading-snug line-clamp-1">{product.name}</h3>
+                      <p className="text-sm font-medium pt-1">{product.price}</p>
                     </div>
                   </motion.div>
                 ))}

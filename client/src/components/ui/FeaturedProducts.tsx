@@ -81,7 +81,7 @@ export const FeaturedProducts = () => {
                       <img 
                         src={product.image} 
                         alt={product.name} 
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                        className="w-full h-full object-cover contrast-[1.15] saturate-110 brightness-[1.05] transition-transform duration-700 group-hover:scale-110"
                       />
                       
                       {/* Buy Button Overlay */}

@@ -277,7 +277,7 @@ const Index = () => {
                     src={optimizeImage(item.image || '', { width: 600 })} 
                     alt={item.name}
                     loading="lazy"
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    className="absolute inset-0 w-full h-full object-cover contrast-[1.15] saturate-110 brightness-[1.05] transition-transform duration-700 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 p-8 z-20 flex flex-col justify-end">
                     <p className="text-sm uppercase tracking-widest text-primary mb-2 font-medium transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">

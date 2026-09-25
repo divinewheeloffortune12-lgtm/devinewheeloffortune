@@ -133,7 +133,7 @@ const ProductDetail = () => {
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.98 }}
                     transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] as const }}
-                    className="w-full h-full object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-105"
+                    className="w-full h-full object-cover contrast-[1.15] saturate-110 brightness-[1.05] transition-transform duration-[1.5s] ease-out group-hover:scale-105"
                   />
                 </AnimatePresence>
 
@@ -197,7 +197,7 @@ const ProductDetail = () => {
                       <img
                         src={image}
                         alt={`${product.name} view ${index + 1}`}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover contrast-[1.15] saturate-110 brightness-[1.05]"
                       />
                     </button>
                   ))}

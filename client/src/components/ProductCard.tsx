@@ -64,7 +64,7 @@ export const ProductCard = ({ product, index = 0, variant = "default" }: Product
                   <img
                     src={img}
                     alt={`${product.name} - view ${i + 1}`}
-                    className="w-full h-full object-contain p-4 mix-blend-multiply transition-all duration-[1s] ease-out group-hover:scale-105"
+                    className="w-full h-full object-contain p-4 mix-blend-multiply contrast-[1.15] saturate-110 drop-shadow-sm brightness-[1.05] transition-all duration-[1s] ease-out group-hover:scale-105"
                   />
                 </SwiperSlide>
               ))}
@@ -73,7 +73,7 @@ export const ProductCard = ({ product, index = 0, variant = "default" }: Product
             <img
               src={(product.images || [])[0]}
               alt={product.name}
-              className="w-full h-full object-contain p-4 mix-blend-multiply transition-all duration-[1s] ease-out group-hover:scale-105"
+              className="w-full h-full object-contain p-4 mix-blend-multiply contrast-[1.15] saturate-110 drop-shadow-sm brightness-[1.05] transition-all duration-[1s] ease-out group-hover:scale-105"
             />
           )}
 

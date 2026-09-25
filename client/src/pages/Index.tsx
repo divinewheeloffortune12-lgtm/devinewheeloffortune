@@ -104,7 +104,7 @@ const Index = () => {
         <div className="absolute inset-x-0 bottom-[-2px] h-32 bg-gradient-to-t from-white via-white/80 to-transparent z-20 pointer-events-none" />
         <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-background to-transparent z-20 pointer-events-none" />
         
-        <div className="container-full relative flex min-h-[88svh] items-end justify-start pb-8 pt-32 md:pb-12 z-10">
+        <div className="container-full relative flex min-h-[88svh] items-end justify-start pb-8 pt-32 md:pb-12 z-30">
           <motion.div 
             initial="hidden"
             animate="visible"

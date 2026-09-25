@@ -23,7 +23,7 @@ import "swiper/css/pagination";
 import "swiper/css/effect-fade";
 import { optimizeImage } from "@/lib/utils";
 
-type Category = { _id: string; name: string; image?: string; note?: string };
+type Category = { _id: string; name: string; slug?: string; image?: string; note?: string };
 type Product = {
   _id: string;
   id?: string;
@@ -163,8 +163,8 @@ export default function Shop() {
           {categories.map((item) => (
             <Button
               key={item._id}
-              onClick={() => chooseCategory(item._id)}
-              variant={category === item._id ? "default" : "outline"}
+              onClick={() => chooseCategory(item.slug || item._id)}
+              variant={category === item._id || category === item.slug ? "default" : "outline"}
               className="rounded-full whitespace-nowrap"
             >
               {item.name}

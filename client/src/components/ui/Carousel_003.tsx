@@ -71,10 +71,11 @@ const Carousel_003 = ({
       >
         <Swiper
           spaceBetween={spaceBetween}
+          speed={1200}
           autoplay={
             autoplay
               ? {
-                  delay: 2500,
+                  delay: 3000,
                   disableOnInteraction: false,
                 }
               : false
@@ -85,11 +86,11 @@ const Carousel_003 = ({
           centeredSlides={true}
           loop={loop}
           coverflowEffect={{
-            rotate: 40,
+            rotate: 15,
             stretch: 0,
-            depth: 100,
+            depth: 150,
             modifier: 1,
-            slideShadows: true,
+            slideShadows: false,
           }}
           pagination={
             showPagination

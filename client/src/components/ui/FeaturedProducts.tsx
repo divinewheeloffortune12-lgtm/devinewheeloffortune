@@ -76,12 +76,12 @@ export const FeaturedProducts = () => {
                     transition={{ duration: 0.5, delay: index * 0.1 }}
                     className="group relative cursor-pointer block h-full bg-white rounded-[2rem] p-3 transition-all duration-500 hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-slate-100/50"
                   >
-                    <div className="relative aspect-[3/4] overflow-hidden rounded-3xl bg-[#F5F5F7] mb-4">
+                    <div className="relative aspect-[4/3] overflow-hidden rounded-3xl bg-[#F5F5F7] mb-4">
                       <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors duration-500 z-10" />
                       <img 
                         src={product.image} 
                         alt={product.name} 
-                        className="w-full h-full object-contain p-8 mix-blend-multiply drop-shadow-sm transition-transform duration-700 group-hover:scale-105"
+                        className="w-full h-full object-contain p-6 mix-blend-multiply drop-shadow-sm transition-transform duration-700 group-hover:scale-105"
                       />
                       
                       {/* Buy Button Overlay */}

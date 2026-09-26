@@ -25,10 +25,10 @@ export const CollectionCard = ({ collection, index = 0, variant = "default" }: C
       >
         <Tilt tiltMaxAngleX={4} tiltMaxAngleY={4} transitionSpeed={3000} scale={1.01} glareEnable={true} glareMaxOpacity={0.15} glarePosition="all" className="relative h-full">
         <div
-          className={`relative overflow-hidden bg-muted/50 ${
+          className={`relative overflow-hidden bg-muted/50 rounded-2xl ${
             variant === "wide" ? "aspect-[16/9]" :
-            variant === "tall" ? "aspect-[2/3]" :
-            "aspect-[3/4]"
+            variant === "tall" ? "aspect-[3/4]" :
+            "aspect-[4/3]"
           }`}
         >
           {/* Image with zoom on hover */}

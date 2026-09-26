@@ -18,14 +18,14 @@ export default function About() {
             <div className="flex flex-col relative w-full max-w-5xl">
               <div className="relative w-full aspect-video flex justify-center items-center rounded-[2rem] shadow-2xl shadow-primary/10 border border-white/20 bg-slate-900/5 overflow-hidden group">
                 <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 z-10 pointer-events-none"></div>
-                <video className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 ease-out" autoPlay muted loop playsInline preload="auto">
+                <video className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 ease-out" autoPlay muted loop playsInline preload="auto" onEnded={(e) => { e.currentTarget.play().catch(()=>{}); }} onPause={(e) => { e.currentTarget.play().catch(()=>{}); }}>
                   <source src="/about-page-video.mp4" type="video/mp4" />
                 </video>
               </div>
-              <div className="absolute -bottom-8 -right-4 sm:-right-8 px-8 py-6 text-center rounded-[2rem] bg-white/90 backdrop-blur-sm shadow-xl border border-purple-100 z-10 hidden sm:block">
-                <Sparkles className="w-8 h-8 text-primary mx-auto mb-2 opacity-50" />
-                <p className="font-serif text-3xl text-slate-800">Nattasha Sharrma</p>
-                <p className="mt-2 text-[10px] uppercase tracking-[0.2em] text-primary font-bold">Intuitive Guide</p>
+              <div className="absolute bottom-2 right-2 sm:-bottom-8 sm:-right-8 px-4 py-3 sm:px-8 sm:py-6 text-center rounded-3xl sm:rounded-[2rem] bg-white/95 backdrop-blur-md shadow-xl border border-purple-100 z-10">
+                <Sparkles className="w-5 h-5 sm:w-8 sm:h-8 text-primary mx-auto mb-1 sm:mb-2 opacity-50" />
+                <p className="font-serif text-lg sm:text-3xl text-slate-800 leading-tight">Nattasha Sharrma</p>
+                <p className="mt-1 sm:mt-2 text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-primary font-bold">Intuitive Guide</p>
               </div>
             </div>
             

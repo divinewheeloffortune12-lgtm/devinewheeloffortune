@@ -29,7 +29,7 @@ export const FeaturedProducts = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         {[1,2,3,4].map(i => (
           <div key={i} className="flex flex-col rounded-[2rem] border border-border/60 bg-white shadow-sm overflow-hidden animate-pulse">
-            <div className="aspect-[4/3] bg-slate-100"></div>
+            <div className="aspect-[4/5] bg-slate-100"></div>
             <div className="p-5 sm:p-6 flex flex-col flex-1 mt-2">
               <div className="h-3 w-1/3 bg-slate-100 rounded mb-4"></div>
               <div className="h-6 w-3/4 bg-slate-100 rounded mb-3"></div>
@@ -50,10 +50,10 @@ export const FeaturedProducts = () => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
       {products.map((product: Product) => (
-        <Link key={product._id} to={`/product/${product.slug}`} className="group relative block h-full bg-white rounded-[2rem] p-3 transition-all duration-500 hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-slate-100/50">
-          <div className="aspect-[4/3] bg-[#F5F5F7] rounded-3xl relative overflow-hidden mb-4">
+        <Link key={product._id} to={`/product/${product.slug}`} className="group relative block overflow-hidden rounded-3xl bg-white shadow-sm hover:shadow-xl transition-all duration-300">
+          <div className="aspect-[4/5] bg-slate-50 border-b border-slate-100 relative overflow-hidden">
             {product.images && product.images[0] ? (
-              <img src={optimizeImage(product.images[0], { width: 400 })} alt={product.name} loading="lazy" className="w-full h-full object-contain p-6 mix-blend-multiply drop-shadow-sm transition-transform duration-700 group-hover:scale-105" />
+              <img src={optimizeImage(product.images[0], { width: 400 })} alt={product.name} loading="lazy" className="w-full h-full object-contain p-4 mix-blend-multiply transition-transform duration-700 group-hover:scale-105" />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-slate-400">No image</div>
             )}
@@ -73,10 +73,10 @@ export const FeaturedProducts = () => {
             </div>
           </div>
           
-          <div className="space-y-1 px-3 pb-2">
-            <p className="text-[11px] font-medium tracking-[0.2em] uppercase text-muted-foreground/70 transition-colors duration-300 group-hover:text-primary">{product.category?.name || "Shop"}</p>
-            <h3 className="font-serif text-xl text-foreground transition-colors duration-300 group-hover:text-primary leading-snug">{product.name}</h3>
-            <div className="flex items-center gap-2 pt-1">
+          <div className="p-6">
+            <p className="text-xs uppercase tracking-widest text-primary mb-2 font-medium">{product.category?.name || "Shop"}</p>
+            <h3 className="font-serif text-xl text-slate-900 group-hover:text-primary transition-colors">{product.name}</h3>
+            <div className="flex items-center gap-2 mt-2">
               {(() => {
                 const discount = product.discount || 0;
                 const finalPrice = Math.round(product.price * (1 - discount / 100));

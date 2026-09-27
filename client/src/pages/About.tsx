@@ -22,7 +22,7 @@ export default function About() {
                   <source src="/about-page-video.mp4" type="video/mp4" />
                 </video>
               </div>
-              <div className="absolute bottom-4 right-4 w-12 sm:w-16 h-12 sm:h-16 rounded-full overflow-hidden border-2 border-white/50 shadow-lg z-10 bg-white">
+              <div className="absolute bottom-4 right-4 w-12 sm:w-16 md:w-20 lg:w-24 h-12 sm:h-16 md:h-20 lg:h-24 rounded-full overflow-hidden border-2 border-white/50 shadow-lg z-10 bg-white">
                 <img src="/logo.png" alt="Logo" className="w-full h-full object-cover" />
               </div>
             </div>

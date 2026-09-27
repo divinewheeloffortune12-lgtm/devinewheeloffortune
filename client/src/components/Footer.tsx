@@ -48,8 +48,15 @@ export const Footer = () => {
               </li>
               <li>
                 <div className="flex flex-col gap-1">
-                  <a href="https://wa.me/919876978500" target="_blank" rel="noreferrer" className="flex items-center gap-3 hover:text-primary transition-colors">
-                    <Phone className="h-4 w-4 text-primary opacity-70" /> +91 98769 78500
+                  <a href="https://wa.me/919319121777" target="_blank" rel="noreferrer" className="flex items-center gap-3 hover:text-primary transition-colors">
+                    <Phone className="h-4 w-4 text-primary opacity-70" /> +91 93191 21777 (WhatsApp)
+                  </a>
+                </div>
+              </li>
+              <li>
+                <div className="flex flex-col gap-1">
+                  <a href="tel:+919876978500" className="flex items-center gap-3 hover:text-primary transition-colors">
+                    <Phone className="h-4 w-4 text-primary opacity-70" /> +91 98769 78500 (Mobile)
                   </a>
                   <span className="text-[10px] ml-7 text-muted-foreground">(Serious Inquiries Only)</span>
                 </div>

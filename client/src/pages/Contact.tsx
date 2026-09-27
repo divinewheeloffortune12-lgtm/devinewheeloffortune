@@ -52,9 +52,9 @@ export default function Contact() {
                   <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center border border-slate-100 shadow-sm"><Mail className="w-4 h-4"/></div>
                   nattashasharrma1278@gmail.com
                 </a>
-                <a className="flex items-center gap-3 text-sm font-medium text-slate-700 hover:text-primary transition-colors" href="https://wa.me/919876978500?text=Hello%20Divine%20Wheel" target="_blank" rel="noreferrer">
+                <a className="flex items-center gap-3 text-sm font-medium text-slate-700 hover:text-primary transition-colors" href="https://wa.me/919319121777?text=Hello%20Divine%20Wheel" target="_blank" rel="noreferrer">
                   <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center border border-slate-100 shadow-sm"><MessageCircle className="w-4 h-4"/></div>
-                  +91 98769 78500 (Serious Inquiries Only)
+                  +91 93191 21777 (WhatsApp)
                 </a>
                 <a className="flex items-center gap-3 text-sm font-medium text-slate-700 hover:text-primary transition-colors" href="https://www.youtube.com/@Natasshasharrma_says" target="_blank" rel="noreferrer">
                   <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center border border-slate-100 shadow-sm">

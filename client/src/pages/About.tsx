@@ -22,10 +22,8 @@ export default function About() {
                   <source src="/about-page-video.mp4" type="video/mp4" />
                 </video>
               </div>
-              <div className="absolute bottom-2 right-2 sm:-bottom-8 sm:-right-8 px-4 py-3 sm:px-8 sm:py-6 text-center rounded-3xl sm:rounded-[2rem] bg-white/95 backdrop-blur-md shadow-xl border border-purple-100 z-10">
-                <Sparkles className="w-5 h-5 sm:w-8 sm:h-8 text-primary mx-auto mb-1 sm:mb-2 opacity-50" />
-                <p className="font-serif text-lg sm:text-3xl text-slate-800 leading-tight">Nattasha Sharrma</p>
-                <p className="mt-1 sm:mt-2 text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-primary font-bold">Intuitive Guide</p>
+              <div className="absolute bottom-4 right-4 w-12 sm:w-16 h-12 sm:h-16 rounded-full overflow-hidden border-2 border-white/50 shadow-lg z-10 bg-white">
+                <img src="/logo.png" alt="Logo" className="w-full h-full object-cover" />
               </div>
             </div>
             

@@ -141,7 +141,11 @@ export default function Aurora(props) {
       console.warn('Aurora: WebGL context failed to initialize', error);
       return;
     }
-    const gl = renderer.gl;
+    const gl = renderer?.gl;
+    if (!gl) {
+      console.warn('Aurora: WebGL context is not available');
+      return;
+    }
     gl.clearColor(0, 0, 0, 0);
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);

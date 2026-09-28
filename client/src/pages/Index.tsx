@@ -66,7 +66,16 @@ const Index = () => {
     queryFn: async () => {
       try {
         const { data } = await api.get('/blogs');
-        return data.length > 0 ? data : localBlogs;
+        const blogsToUse = data.length > 0 ? data : localBlogs;
+        return blogsToUse.map(b => {
+          if (b.slug === 'dragon-reiki-healing-awaken-ancient-power') {
+            return { ...b, image: "https://images.unsplash.com/photo-1515589654160-7080e77d7045?auto=format&fit=crop&w=1200&q=80" };
+          }
+          if (b.slug === 'what-is-dragon-reiki') {
+            return { ...b, image: "https://images.unsplash.com/photo-1507676184212-d0c30a512d7c?auto=format&fit=crop&w=1200&q=80" };
+          }
+          return b;
+        });
       } catch (error) {
         return localBlogs;
       }

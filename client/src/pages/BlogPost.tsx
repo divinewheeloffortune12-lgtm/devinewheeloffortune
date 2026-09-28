@@ -14,8 +14,20 @@ export default function BlogPost() {
   const { data: post, isLoading, isError } = useQuery({
     queryKey: ['blog', slug],
     queryFn: async () => {
-      const foundPost = localBlogs.find(b => b.slug === slug);
+      let foundPost;
+      try {
+        const { data } = await api.get(`/blogs/${slug}`);
+        foundPost = data;
+      } catch (error) {
+        foundPost = localBlogs.find(b => b.slug === slug);
+      }
       if (!foundPost) throw new Error("Not found");
+      
+      if (foundPost.slug === 'dragon-reiki-healing-awaken-ancient-power') {
+        foundPost.image = "https://images.unsplash.com/photo-1515589654160-7080e77d7045?auto=format&fit=crop&w=1200&q=80";
+      } else if (foundPost.slug === 'what-is-dragon-reiki') {
+        foundPost.image = "https://images.unsplash.com/photo-1507676184212-d0c30a512d7c?auto=format&fit=crop&w=1200&q=80";
+      }
       return foundPost;
     },
     staleTime: 5 * 60 * 1000,

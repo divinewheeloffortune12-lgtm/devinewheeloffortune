@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { blogs as localBlogs } from "@/data/blogs";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { useQuery } from "@tanstack/react-query";
@@ -6,11 +7,10 @@ import { api } from "@/lib/api";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 
 export default function Blog() { 
-  const { data: blogs = [], isLoading } = useQuery({
+  const { data: blogs = localBlogs, isLoading } = useQuery({
     queryKey: ['blogs'],
     queryFn: async () => {
-      const res = await api.get('/blogs');
-      return res.data?.data || [];
+      return localBlogs;
     },
     staleTime: 5 * 60 * 1000,
   });

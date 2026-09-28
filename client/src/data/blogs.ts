@@ -1,18 +1,103 @@
-﻿export interface Blog {
-  id: string;
-  slug: string;
-  title: string;
-  excerpt: string;
-  content: string;
-  date: string;
-  author: string;
-  image: string;
-  keywords: string[];
-}
-
-export const blogs: Blog[] = [
+export const blogs = [
   {
-    id: "1",
+    _id: "blog_1",
+    slug: "janam-patri-understanding-your-life-path",
+    title: "Janam Patri: Why Your Birth Chart Is the Key to Understanding Your Life's Path",
+    excerpt: "Discover what a Janam Patri is, why the planets at your exact time of birth shape your personality and destiny, and why everyone should have their birth chart made.",
+    content: `Have you ever wondered why some people seem to move through life with a certain rhythm, career opportunities finding them at the right time, relationships clicking into place, while others feel like they're constantly pushing against something invisible? According to Vedic astrology, the answer is often written in the sky, at the exact moment you took your first breath.
+
+That map is your Janam Patri.
+
+**What Is a Janam Patri?**
+A Janam Patri, also known as a birth chart or Kundli, is a detailed astrological record of exactly where every planet, the Sun, Moon, Mars, Mercury, Jupiter, Venus, Saturn, Rahu, and Ketu, was positioned in the sky at the precise date, time, and place of your birth. Think of it as a cosmic snapshot, frozen forever, that captures the unique energetic blueprint you were born into.
+
+No two Janam Patris are exactly alike, even twins born minutes apart can carry meaningfully different charts. That's because your birth chart isn't generic, it's yours, calculated specifically from your own birth details.
+
+**Why Are the Planets So Important?**
+In Vedic astrology, each planet governs a different part of your life. The Sun shapes your identity, confidence, and sense of purpose. The Moon governs your emotions, mind, and inner world. Mars influences your drive, courage, and how you handle conflict. Mercury rules communication, intellect, and decision-making. Jupiter brings wisdom, growth, luck, and abundance. Venus shapes love, relationships, beauty, and harmony. Saturn teaches discipline, patience, and life's biggest lessons. Rahu and Ketu, the lunar nodes, reveal karmic patterns, past-life influences, and the deeper lessons your soul is here to learn.
+
+These planets don't work alone. Their positions, the houses they fall into, and the way they interact with each other create a complex, deeply personal picture of who you are and what your life is likely to unfold like. When a planet is strong and well-placed, it tends to bring ease in that area of life. When it's weak, afflicted, or poorly placed, it can show up as recurring struggles, delays, or blocks, often in ways that feel strangely repetitive until you understand the root cause.
+
+**Why Everyone Should Have Their Janam Patri Made**
+A Janam Patri isn't just a novelty or a once-in-a-lifetime keepsake, it's a practical tool for understanding yourself and navigating life with more clarity. People turn to their birth chart to understand their core personality, strengths, and natural talents, get clarity on the right timing for major decisions like marriage, career moves, or investments, identify planetary doshas or afflictions that may be causing recurring struggles, understand compatibility before marriage through Kundli matching, recognize karmic patterns and past-life influences shaping present circumstances, and find the right remedies, gemstones, rituals, or spiritual practices to ease difficult planetary periods.
+
+Without your Janam Patri, you're essentially navigating life without a map, reacting to challenges as they come instead of understanding why they keep showing up. With it, patterns that once felt confusing or frustrating often start to make sense.
+
+**Get Your Janam Patri Made Today**
+Your birth chart holds insight that no generic horoscope ever could, insight that's personal, precise, and entirely your own. Whether you're seeking clarity on your career, relationships, health, or life's bigger questions, your Janam Patri is where those answers begin.
+
+Book your Janam Patri reading with Divine Wheel of Fortune today and discover what the stars have been trying to tell you all along.`,
+    author: "Nattasha Sharrma",
+    image: "https://images.unsplash.com/photo-1532968961962-8a0cb3a2d4f5?auto=format&fit=crop&q=80&w=1200",
+    keywords: ["Janam Patri", "Birth Chart", "Kundli", "Vedic Astrology", "Planets", "Astrology Reading"],
+    status: "published",
+    showOnHomepage: true,
+    createdAt: new Date().toISOString()
+  },
+  {
+    _id: "blog_2",
+    slug: "reiki-healing-gentle-energy-practice",
+    title: "Reiki Healing: The Gentle Energy Practice That Helps You Feel Like Yourself Again",
+    excerpt: "Discover Reiki Healing and Psychic Reiki Healing, two powerful energy practices that ease stress, clear emotional blocks, and restore balance.",
+    content: `There's a particular kind of tired that sleep doesn't fix. You've had eight hours, maybe more, and you still wake up feeling like you're carrying something heavy. Nothing's technically wrong, yet everything feels a little harder than it should. If that sounds familiar, you're not imagining it, and you're definitely not alone. More often than not, what you're feeling isn't just physical. It's energetic. And that's exactly what Reiki was designed to address.
+
+**So, What Actually Is Reiki?**
+Reiki is a Japanese healing practice built on a beautifully simple idea, there's a life force energy flowing through every one of us, and when that energy gets blocked, tangled, or drained, we feel it. As stress. As exhaustion. As that nagging sense that something's just off, even when you can't put your finger on why.
+
+A Reiki practitioner doesn't diagnose or fix you like a mechanic would a car. Instead, they act as a calm, steady channel, gently guiding that universal energy back into flow through soft hands-on or hands-near-body touch. Most people say it feels like warmth spreading through the body, or like they finally exhaled a breath they'd been holding for weeks. Nothing is forced. Reiki simply clears the way so your body can do what it already knows how to do, heal itself.
+
+**Why People Keep Coming Back to Reiki**
+Here's the thing, you don't need to be falling apart to benefit from Reiki. Most people who try it aren't in crisis, they're just tired of feeling stuck. Maybe stress has been sitting in your shoulders for months. Maybe you're carrying grief you haven't fully processed, or you just can't shake the restlessness at 2am. Maybe you feel blocked, in your career, your relationships, or just in yourself, and you can't explain why.
+
+That's where Reiki meets people. Gently, without judgment, without needing you to have it all figured out first.
+
+**Psychic Reiki Healing: When Energy Work Meets Intuition**
+Psychic Reiki takes traditional Reiki a step further. Alongside channeling healing energy, the practitioner also taps into their intuitive and psychic abilities, picking up on subtle messages, blocked emotions, or patterns you may not even be consciously aware of yet.
+
+Think of it this way: regular Reiki clears and balances your energy. Psychic Reiki does that too, but it also listens. It can surface insight about what's really been weighing on you, where a block originated, or what your intuition has been quietly trying to tell you. For people who feel like something deeper is going on beneath the surface, not just stress, but a pattern, a repeated block, an unresolved thread, Psychic Reiki often brings the clarity that regular energy work alone can't reach.
+
+**Feel the Shift for Yourself**
+Whether it's the steady calm of traditional Reiki or the deeper insight of Psychic Reiki, both offer something modern life rarely gives us, permission to slow down and actually heal. You don't have to keep pushing through feeling drained, blocked, or disconnected.
+
+Book your Reiki healing session with Divine Wheel of Fortune and start clearing the path back to yourself.`,
+    author: "Nattasha Sharrma",
+    image: "https://images.unsplash.com/photo-1519834785169-98be25ec3f84?auto=format&fit=crop&q=80&w=1200",
+    keywords: ["Reiki Healing", "Psychic Reiki Healing", "Energy Healing", "Emotional Blocks", "Stress Relief"],
+    status: "published",
+    showOnHomepage: true,
+    createdAt: new Date(Date.now() - 100000).toISOString()
+  },
+  {
+    _id: "blog_3",
+    slug: "dragon-reiki-healing-awaken-ancient-power",
+    title: "Dragon Reiki Healing: Awaken Ancient Elemental Power for Deep Transformation",
+    excerpt: "Discover Dragon Reiki, a rare and powerful healing energy that clears blockages, restores balance, and awakens inner strength.",
+    content: `**What Is Dragon Reiki?**
+Dragon Reiki is a rare and profoundly powerful branch of energy healing that goes beyond traditional Reiki by channeling the ancient, primal energy of dragons. Across cultures, dragons have long been revered as guardians of wisdom, strength, and transformation. In Dragon Reiki, practitioners connect with these elemental dragon energies, often associated with Earth, Fire, Water, Air, and Spirit, to deliver deep healing on physical, emotional, and spiritual levels.
+
+Unlike gentler forms of energy work, Dragon Reiki is known for its intensity. It does not simply soothe, it actively burns through stagnant energy, emotional blockages, and old patterns that keep a person stuck. This makes it especially powerful for those who feel they have tried other healing modalities without lasting results.
+
+**Why Do People Need Dragon Reiki?**
+Modern life leaves many of us carrying invisible weight: stress, anxiety, emotional trauma, low confidence, and a disconnection from our own intuition. Dragon Reiki addresses these root-level blockages rather than just their symptoms. People seek out Dragon Reiki for reasons like releasing deep-seated emotional trauma and restoring inner balance, breaking through fear, self-doubt, and blocks holding back personal or financial growth, reconnecting with their intuition and spiritual purpose, clearing negative or stagnant energy from their body, mind, and surroundings, and building confidence, courage, and inner strength during major life transitions.
+
+Because dragon energy is considered so potent, even a single session can create noticeable shifts, many clients describe feeling lighter, clearer, and more empowered almost immediately afterward.
+
+**What Happens in a Dragon Reiki Session?**
+During a Dragon Reiki healing session, a trained practitioner channels elemental dragon energy through hands-on healing, guided visualization, and focused breathwork. Each element brings its own gift, grounding and stability from Earth, passion and transformation from Fire, emotional release from Water, clarity and mental freedom from Air, and deep spiritual connection from Spirit. The session is tailored to what the individual needs most at that moment, making it a deeply personal and often emotional experience.
+
+**Experience the Power of Dragon Reiki with Divine Wheel of Fortune**
+At Divine Wheel of Fortune, our Dragon Reiki healing sessions are guided with care, precision, and years of spiritual practice, helping you release what no longer serves you and step into your full power. Whether you are seeking emotional healing, renewed confidence, or a stronger spiritual connection, Dragon Reiki offers a uniquely powerful path forward.
+
+Ready to feel the shift for yourself? Book your Dragon Reiki session with Divine Wheel of Fortune today and awaken the ancient energy waiting within you.`,
+    author: "Nattasha Sharrma",
+    image: "https://images.unsplash.com/photo-1601662528567-526cd06f363c?q=80&w=1200&auto=format&fit=crop",
+    keywords: ["Dragon Reiki", "Dragon Energy", "Elemental Power", "Energy Clearing", "Deep Healing"],
+    status: "published",
+    showOnHomepage: true,
+    createdAt: new Date(Date.now() - 200000).toISOString()
+  },
+  {
+    _id: "blog_4",
     slug: "mediumship-sacred-conversation",
     title: "Mediumship: A Sacred Conversation With Your Ancestors and Loved Ones",
     excerpt: "Mediumship is the bridge between this world and that one, a sacred conversation that allows healing words to finally be spoken...",
@@ -27,13 +112,15 @@ Many people come to me carrying unfinished business, words they wish they had sa
 If you have ever wished for just one more conversation with someone you lost, or felt your ancestors quietly guiding you from behind the scenes, this is your invitation to listen more closely.
 
 **Open the door to a conversation your heart has been waiting for.**`,
-    date: "Sep 17, 2026",
-    author: "Nattasha Sharma",
+    author: "Nattasha Sharrma",
     image: "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
-    keywords: ["mediumship reading", "talk to ancestors", "connect with loved ones who passed", "medium session", "Natasha Sharma"]
+    keywords: ["mediumship reading", "talk to ancestors", "connect with loved ones who passed", "medium session"],
+    status: "published",
+    showOnHomepage: true,
+    createdAt: new Date(Date.now() - 300000).toISOString()
   },
   {
-    id: "2",
+    _id: "blog_5",
     slug: "lama-fera-healing",
     title: "Lama Fera Healing: Ancient Himalayan Wisdom for Modern Healing",
     excerpt: "Lama Fera is an ancient Himalayan healing technique, practiced by Buddhist monks for centuries, that uses sacred symbols...",
@@ -50,13 +137,15 @@ What makes Lama Fera so powerful is its ability to work on multiple levels at on
 If you have been carrying a weight you can't quite explain, or feel like something in your energy has been stuck for far too long, Lama Fera may be exactly the ancient wisdom you need.
 
 **Experience centuries of Himalayan healing wisdom for yourself.**`,
-    date: "Sep 16, 2026",
-    author: "Nattasha Sharma",
+    author: "Nattasha Sharrma",
     image: "https://images.unsplash.com/photo-1544928147-79a2dbc1f389?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
-    keywords: ["Lama Fera healing", "Himalayan healing technique", "chakra balancing", "energy healing", "Natasha Sharma"]
+    keywords: ["Lama Fera healing", "Himalayan healing technique", "chakra balancing", "energy healing"],
+    status: "published",
+    showOnHomepage: true,
+    createdAt: new Date(Date.now() - 400000).toISOString()
   },
   {
-    id: "3",
+    _id: "blog_6",
     slug: "akashic-records-reading",
     title: "Akashic Records Reading and Healing: The Soul's Library Holds Every Answer You Seek",
     excerpt: "There is a place beyond time, beyond memory, where every choice you've ever made, every lifetime you've ever lived is recorded...",
@@ -71,61 +160,11 @@ And healing happens right there, in that same sacred space. Once a pattern is se
 If you have ever felt like there is a bigger story behind your struggles, if you sense there is more to understand about who you are and why you are here, your Akashic Records are waiting to be read. This is not about predicting your future. It is about finally understanding your past, so you can walk forward lighter, clearer, and truly free.
 
 **Discover the truth your soul has been waiting for you to remember.**`,
-    date: "Sep 15, 2026",
-    author: "Nattasha Sharma",
+    author: "Nattasha Sharrma",
     image: "https://images.unsplash.com/photo-1532012197267-da84d127e765?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
-    keywords: ["Akashic records reading", "Akashic healing", "soul records reading", "past life patterns", "Natasha Sharma"]
-  }
-
-,
-  {
-    id: "4",
-    slug: "what-is-dragon-reiki",
-    title: "What Is Dragon Reiki? A Gentle Guide to Attunement and Symbols",
-    excerpt: "If you've spent any time exploring energy healing, you've probably come across Reiki. But lately, a deeper, more ancient-feeling branch has been quietly gaining a devoted following — Dragon Reiki...",
-    content: `If you've spent any time exploring energy healing, you've probably come across Reiki. But lately, a deeper, more ancient-feeling branch has been quietly gaining a devoted following — Dragon Reiki. It sounds mythical, and in a way, it is. But it's also a real, practiced healing modality that thousands of people are turning to for something traditional Reiki alone doesn't always reach.
-
-So what exactly is it, and why are dragons involved?
-
-**Where Traditional Reiki Ends, Dragon Reiki Begins**
-Classic Reiki works with universal life force energy — that gentle, steady current practitioners channel through their hands. Dragon Reiki takes that same foundation and adds something older and, many practitioners say, more potent: the energy of dragons.
-
-In spiritual traditions across cultures — from Chinese and Japanese mythology to Celtic lore — dragons aren't seen as fearsome creatures to slay. They're guardians. Keepers of elemental wisdom, fierce protectors, and some of the oldest energetic beings believed to exist. Dragon Reiki practitioners work with these dragon guides to bring extra strength, protection, and depth into a healing session.
-
-Where regular Reiki might smooth out everyday stress or tension, Dragon Reiki tends to be sought out for heavier lifting — old emotional wounds, karmic patterns that keep repeating, energetic boundaries that feel too thin, or a general sense of needing spiritual protection in your life.
-
-**How Does Someone Actually Become a Dragon Reiki Practitioner?**
-This is where attunement comes in, and it's really the heart of the whole practice. Attunement is a sacred, one-on-one initiation. A Reiki Master essentially opens up your energy channels so that dragon healing energy can flow through you safely and clearly. You can't pick this up from a YouTube video or a book — it has to be personally transmitted, almost like passing a torch.
-
-Most Dragon Reiki training unfolds across three stages:
-The **first level** is really about you. It opens your connection to dragon energy so you can begin healing yourself and offer simple hands-on sessions to others.
-
-The **second level** is where things deepen. You learn distance healing — sending dragon energy to someone who isn't physically in the room — along with your first real symbol work.
-
-The **third level**, the master level, is where a practitioner becomes fully equipped to hold space for complex healing work, and eventually to attune others themselves, continuing the lineage forward.
-
-With each level, practitioners often describe feeling a noticeable shift — a raised sense of awareness, sharper intuition, and an easier, more natural flow when channeling energy.
-
-**The Symbols That Bring Dragon Reiki to Life**
-Every energy healing tradition has its symbols, and in Dragon Reiki, they're treated almost like keys — each one unlocking a slightly different kind of healing.
-
-There's the **Dragon Fire symbol**, used when something needs to be burned away — old emotional baggage, stuck patterns, energy that's simply overstayed its welcome. Then there's the **Dragon Earth symbol**, which does the opposite job: grounding you, steadying the body, calming an aura that feels scattered or ungrounded.
-
-When someone needs a shield rather than release, practitioners turn to the **Dragon Protection symbol** — often used for people who feel drained by others' energy or exposed to negativity. The **Dragon Wisdom symbol** is called on for clarity, for opening intuition when someone feels stuck or unsure. And the **Dragon Healing symbol** itself is the broad, all-purpose one — supporting physical recovery and emotional repair side by side.
-
-These symbols are usually introduced during the second and third attunement levels, and practitioners use them through visualization, drawing them in the air, or simply holding the intention behind them during a session.
-
-**Why People Are Drawn to It**
-The people who find their way to Dragon Reiki often describe the same feeling — that traditional healing modalities helped, but something still felt unresolved underneath. Dragon Reiki tends to reach that layer. It's common to hear practitioners talk about clients releasing emotional patterns they'd carried for years, feeling their boundaries strengthen, or simply feeling more protected moving through daily life.
-
-It also tends to resonate with people who are naturally energy-sensitive — the ones who absorb other people's moods easily, or who've always felt a pull toward something a little more ancient and mystical than mainstream wellness offers.
-
-**Is Dragon Reiki Right for You?**
-If you're someone who's tried energy work before and felt like you only scratched the surface, or if you're simply drawn to the symbolism of dragons as protectors and guides, Dragon Reiki might be worth exploring. It's not about intensity for its own sake — it's about depth, protection, and reconnecting with a form of healing energy that feels, to many practitioners, like it's been waiting to be rediscovered.`,
-    date: "Sep 23, 2026",
-    author: "Nattasha Sharma",
-    image: "https://images.unsplash.com/photo-1601662528567-526cd06f363c?q=80&w=1200&auto=format&fit=crop",
-    keywords: ["Dragon Reiki", "Dragon Reiki attunement", "Dragon Reiki symbols", "energy healing", "spiritual healing", "Reiki levels", "dragon energy healing"]
+    keywords: ["Akashic records reading", "Akashic healing", "soul records reading", "past life patterns"],
+    status: "published",
+    showOnHomepage: true,
+    createdAt: new Date(Date.now() - 500000).toISOString()
   }
 ];
-

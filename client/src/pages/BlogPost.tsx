@@ -1,4 +1,5 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
+import { blogs as localBlogs } from "@/data/blogs";
 import { ArrowLeft, Calendar, User, Loader2 } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { useQuery } from "@tanstack/react-query";
@@ -13,8 +14,9 @@ export default function BlogPost() {
   const { data: post, isLoading, isError } = useQuery({
     queryKey: ['blog', slug],
     queryFn: async () => {
-      const res = await api.get(`/blogs/${slug}`);
-      return res.data?.data;
+      const foundPost = localBlogs.find(b => b.slug === slug);
+      if (!foundPost) throw new Error("Not found");
+      return foundPost;
     },
     staleTime: 5 * 60 * 1000,
   });

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { blogs as localBlogs } from "@/data/blogs";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, ChevronDown, Clock3, Globe2, HeartHandshake, ShieldCheck, Sparkles, Star, Loader2 } from "lucide-react";
@@ -60,11 +61,11 @@ const Index = () => {
     staleTime: 60 * 1000
   });
 
-  const { data: latestBlogs = [], isLoading: blogsLoading } = useQuery({
+  const { data: latestBlogs = localBlogs.slice(0, 3), isLoading: blogsLoading } = useQuery({
     queryKey: ['latest-blogs'],
     queryFn: async () => {
-      const res = await api.get('/blogs?limit=3&showOnHomepage=true');
-      return res.data?.data || [];
+      // Fallback to local data immediately to ensure they are visible
+      return localBlogs.slice(0, 3);
     },
     staleTime: 5 * 60 * 1000,
   });

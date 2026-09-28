@@ -182,12 +182,12 @@ mongoose.connect(uri)
         Object.assign(existing, blogData);
         existing.createdAt = createdAt;
         await existing.save();
-        console.log(\`Updated: \${blogData.title}\`);
+        console.log(`Updated: ${blogData.title}`);
       } else {
         const blog = new Blog(blogData);
         blog.createdAt = createdAt;
         await blog.save();
-        console.log(\`Created: \${blogData.title}\`);
+        console.log(`Created: ${blogData.title}`);
       }
     }
     

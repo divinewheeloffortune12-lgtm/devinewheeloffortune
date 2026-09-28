@@ -61,11 +61,11 @@ const Index = () => {
     staleTime: 60 * 1000
   });
 
-  const { data: latestBlogs = localBlogs.slice(0, 3), isLoading: blogsLoading } = useQuery({
+  const { data: latestBlogs = localBlogs, isLoading: blogsLoading } = useQuery({
     queryKey: ['latest-blogs'],
     queryFn: async () => {
       // Fallback to local data immediately to ensure they are visible
-      return localBlogs.slice(0, 3);
+      return localBlogs;
     },
     staleTime: 5 * 60 * 1000,
   });

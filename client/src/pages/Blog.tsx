@@ -5,12 +5,18 @@ import { Layout } from "@/components/Layout";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { SectionHeader } from "@/components/ui/SectionHeader";
+import { optimizeImage } from "@/lib/utils";
 
 export default function Blog() { 
   const { data: blogs = localBlogs, isLoading } = useQuery({
     queryKey: ['blogs'],
     queryFn: async () => {
-      return localBlogs;
+      try {
+        const { data } = await api.get('/blogs');
+        return data.length > 0 ? data : localBlogs;
+      } catch (error) {
+        return localBlogs;
+      }
     },
     staleTime: 5 * 60 * 1000,
   });
@@ -44,11 +50,14 @@ export default function Blog() {
           <div className="grid md:grid-cols-3 gap-6">
             {blogs.map((article: any) => (
               <article key={article._id} className="group rounded-3xl border bg-card p-7 md:p-9 min-h-72 flex flex-col">
-                {article.image && (
-                  <div className="aspect-[4/3] rounded-2xl overflow-hidden mb-6 relative bg-slate-50">
-                    <img src={article.image} alt={article.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                  </div>
-                )}
+                <div className="aspect-[4/3] rounded-2xl overflow-hidden mb-6 relative bg-slate-50">
+                  <img 
+                    src={optimizeImage(article.image || "https://images.unsplash.com/photo-1532968961962-8a0cb3a2d4f5?auto=format&fit=crop&q=80&w=800", { width: 800 })} 
+                    alt={article.title} 
+                    loading="lazy"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+                  />
+                </div>
                 <p className="text-xs uppercase tracking-[.2em] text-primary">
                   {new Date(article.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} · {article.author}
                 </p>

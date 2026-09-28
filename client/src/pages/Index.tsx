@@ -64,8 +64,12 @@ const Index = () => {
   const { data: latestBlogs = localBlogs, isLoading: blogsLoading } = useQuery({
     queryKey: ['latest-blogs'],
     queryFn: async () => {
-      // Fallback to local data immediately to ensure they are visible
-      return localBlogs;
+      try {
+        const { data } = await api.get('/blogs');
+        return data.length > 0 ? data : localBlogs;
+      } catch (error) {
+        return localBlogs;
+      }
     },
     staleTime: 5 * 60 * 1000,
   });
@@ -332,9 +336,7 @@ const Index = () => {
             ) : (
               latestBlogs.map((blog: any, index: number) => (
                 <article key={blog._id} className="bg-white/80 backdrop-blur-md p-10 hover:bg-white transition-colors relative group overflow-hidden flex flex-col justify-between">
-                  {blog.image && (
-                    <div className="absolute inset-0 z-0 opacity-[0.05] group-hover:scale-105 transition-transform duration-700" style={{ backgroundImage: `url('${optimizeImage(blog.image, { width: 800 })}')`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat" }} />
-                  )}
+                  <div className="absolute inset-0 z-0 opacity-[0.05] group-hover:scale-105 transition-transform duration-700" style={{ backgroundImage: `url('${optimizeImage(blog.image || "https://images.unsplash.com/photo-1532968961962-8a0cb3a2d4f5?auto=format&fit=crop&q=80&w=800", { width: 800 })}')`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat" }} />
                   <div className="relative z-10">
                     <span className="text-7xl font-serif text-primary/10 absolute top-0 right-0 group-hover:scale-110 group-hover:text-primary/20 transition-all duration-500">0{index + 1}</span>
                     <p className="mt-8 text-xs uppercase tracking-editorial text-primary font-semibold">{blog.keywords?.[0] || 'Article'}</p>

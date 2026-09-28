@@ -86,7 +86,7 @@ export default function BlogPost() {
           )}
 
           <div className="prose prose-lg prose-slate max-w-none prose-headings:font-serif prose-headings:font-normal prose-a:text-primary hover:prose-a:text-primary/80 prose-img:rounded-3xl mx-auto space-y-6">
-             {post.content.split('\n\n').map((paragraph: string, index: number) => {
+             {(post.content || '').split('\n\n').map((paragraph: string, index: number) => {
                 if (paragraph.startsWith('### ')) {
                   return <h3 key={index} className="text-3xl font-serif mt-12 mb-6 text-foreground">{paragraph.replace('### ', '')}</h3>
                 } else if (paragraph.startsWith('**') && paragraph.endsWith('**') && !paragraph.includes('\n')) {

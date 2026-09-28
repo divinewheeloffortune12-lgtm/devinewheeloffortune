@@ -90,7 +90,7 @@ At Divine Wheel of Fortune, our Dragon Reiki healing sessions are guided with ca
 
 Ready to feel the shift for yourself? Book your Dragon Reiki session with Divine Wheel of Fortune today and awaken the ancient energy waiting within you.`,
     author: "Nattasha Sharrma",
-    image: "https://images.unsplash.com/photo-1601662528567-526cd06f363c?q=80&w=1200&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1515589654160-7080e77d7045?auto=format&fit=crop&w=1200&q=80",
     keywords: ["Dragon Reiki", "Dragon Energy", "Elemental Power", "Energy Clearing", "Deep Healing"],
     status: "published",
     showOnHomepage: true,
@@ -141,7 +141,7 @@ It also tends to resonate with people who are naturally energy-sensitive - the o
 **Is Dragon Reiki Right for You?**
 If you're someone who's tried energy work before and felt like you only scratched the surface, or if you're simply drawn to the symbolism of dragons as protectors and guides, Dragon Reiki might be worth exploring. It's not about intensity for its own sake - it's about depth, protection, and reconnecting with a form of healing energy that feels, to many practitioners, like it's been waiting to be rediscovered.`,
     author: "Nattasha Sharrma",
-    image: "https://images.unsplash.com/photo-1601662528567-526cd06f363c?q=80&w=1200&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1507676184212-d0c30a512d7c?auto=format&fit=crop&w=1200&q=80",
     keywords: ["Dragon Reiki", "Dragon Reiki attunement", "Dragon Reiki symbols", "energy healing", "spiritual healing", "Reiki levels", "dragon energy healing"],
     status: "published",
     showOnHomepage: true,

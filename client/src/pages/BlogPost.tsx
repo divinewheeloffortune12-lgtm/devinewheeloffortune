@@ -16,7 +16,7 @@ export default function BlogPost() {
     queryFn: async () => {
       let foundPost;
       try {
-        const { data } = await api.get(`/blogs/${slug}`);
+        const { data } = await api.get(`/blogs/${slug}`, { timeout: 3000 });
         foundPost = data;
       } catch (error) {
         foundPost = localBlogs.find(b => b.slug === slug);
@@ -86,9 +86,14 @@ export default function BlogPost() {
           )}
 
           <div className="prose prose-lg prose-slate max-w-none prose-headings:font-serif prose-headings:font-normal prose-a:text-primary hover:prose-a:text-primary/80 prose-img:rounded-3xl mx-auto space-y-6">
-             {post.content.split('\n\n').map((paragraph: string, index: number) => (
-                <p key={index} className="text-muted-foreground leading-8" dangerouslySetInnerHTML={{ __html: paragraph.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }} />
-             ))}
+             {post.content.split('\n\n').map((paragraph: string, index: number) => {
+                if (paragraph.startsWith('### ')) {
+                  return <h3 key={index} className="text-3xl font-serif mt-12 mb-6 text-foreground">{paragraph.replace('### ', '')}</h3>
+                } else if (paragraph.startsWith('**') && paragraph.endsWith('**') && !paragraph.includes('\n')) {
+                  return <h4 key={index} className="text-2xl font-serif mt-10 mb-4 text-foreground">{paragraph.replace(/\*\*/g, '')}</h4>
+                }
+                return <p key={index} className="text-muted-foreground leading-8" dangerouslySetInnerHTML={{ __html: paragraph.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }} />
+             })}
           </div>
 
           {post.keywords && post.keywords.length > 0 && (

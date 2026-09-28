@@ -65,7 +65,7 @@ const Index = () => {
     queryKey: ['latest-blogs'],
     queryFn: async () => {
       try {
-        const { data } = await api.get('/blogs');
+        const { data } = await api.get('/blogs', { timeout: 3000 });
         const blogsToUse = data.length > 0 ? data : localBlogs;
         return blogsToUse.map(b => {
           if (b.slug === 'dragon-reiki-healing-awaken-ancient-power') {

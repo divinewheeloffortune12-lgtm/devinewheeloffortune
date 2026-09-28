@@ -332,7 +332,7 @@ const Index = () => {
             ) : (
               latestBlogs.map((blog: any, index: number) => (
                 <article key={blog._id} className="bg-white/80 backdrop-blur-md p-10 hover:bg-white transition-colors relative group overflow-hidden flex flex-col justify-between">
-                  {index === 0 && blog.image && (
+                  {blog.image && (
                     <div className="absolute inset-0 z-0 opacity-[0.05] group-hover:scale-105 transition-transform duration-700" style={{ backgroundImage: `url('${optimizeImage(blog.image, { width: 800 })}')`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat" }} />
                   )}
                   <div className="relative z-10">

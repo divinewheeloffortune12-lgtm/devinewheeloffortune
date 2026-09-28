@@ -72,7 +72,7 @@ If you're someone who's tried energy work before and felt like you only scratche
         status: "published",
         showOnHomepage: true,
         author: "Nattasha Sharma",
-        image: "https://images.unsplash.com/photo-1507676184212-d0c30a512d7c?auto=format&fit=crop&w=1200&q=80"
+        image: "/images/dragon_reiki_guide.png"
     });
     
     await blog.save();

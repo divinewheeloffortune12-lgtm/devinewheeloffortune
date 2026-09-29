@@ -39,7 +39,7 @@ export default function Blog() {
       
       <section className="container-full py-16 md:py-24">
         {isLoading ? (
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 px-4 md:px-0">
             {Array.from({ length: 3 }).map((_, index) => (
               <div key={index} className="rounded-3xl border bg-card p-7 md:p-9 min-h-72 flex flex-col animate-pulse">
                 <div className="aspect-[4/3] rounded-2xl bg-slate-200 mb-6"></div>
@@ -56,7 +56,7 @@ export default function Blog() {
             <p>No articles published yet. Check back soon.</p>
           </div>
         ) : (
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 px-4 md:px-0">
             {blogs.map((article: any) => (
               <article key={article._id} className="group rounded-3xl border bg-card p-7 md:p-9 min-h-72 flex flex-col">
                 <div className="aspect-[4/3] rounded-2xl overflow-hidden mb-6 relative bg-slate-50">

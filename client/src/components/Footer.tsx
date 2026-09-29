@@ -76,7 +76,7 @@ export const Footer = () => {
             <a href="https://instagram.com/divine_wheel_of_fortune" target="_blank" rel="noreferrer" className="hover:text-primary transition-colors" aria-label="Instagram">
               <Instagram className="h-5 w-5 opacity-70" />
             </a>
-            <a href="https://www.youtube.com/@Natasshasharrma_says" target="_blank" rel="noreferrer" className="hover:text-primary transition-colors" aria-label="Youtube">
+            <a href="https://www.youtube.com/@Nattashasharrma_says" target="_blank" rel="noreferrer" className="hover:text-primary transition-colors" aria-label="Youtube">
               <Youtube className="h-5 w-5 opacity-70" />
             </a>
             <a href="https://superprofile.bio/divinewheeloffortune" target="_blank" rel="noreferrer" className="hover:text-primary transition-colors" aria-label="Superprofile">

@@ -71,7 +71,7 @@ If you're someone who's tried energy work before and felt like you only scratche
         keywords: ["Dragon Reiki", "Dragon Reiki attunement", "Dragon Reiki symbols", "energy healing", "spiritual healing", "Reiki levels", "dragon energy healing"],
         status: "published",
         showOnHomepage: true,
-        author: "Nattasha Sharma",
+        author: "Nattasha Sharrma",
         image: "/images/dragon_reiki_guide.png"
     });
     

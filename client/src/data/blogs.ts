@@ -28,7 +28,7 @@ Your birth chart holds insight that no generic horoscope ever could, insight tha
 
 Book your Janam Patri reading with Divine Wheel of Fortune today and discover what the stars have been trying to tell you all along.`,
     author: "Nattasha Sharrma",
-    image: "https://images.unsplash.com/photo-1532968961962-8a0cb3a2d4f5?auto=format&fit=crop&q=80&w=1200",
+    image: "/images/janam_patri.png",
     keywords: ["Janam Patri", "Birth Chart", "Kundli", "Vedic Astrology", "Planets", "Astrology Reading"],
     status: "published",
     showOnHomepage: true,
@@ -61,7 +61,7 @@ Whether it's the steady calm of traditional Reiki or the deeper insight of Psych
 
 Book your Reiki healing session with Divine Wheel of Fortune and start clearing the path back to yourself.`,
     author: "Nattasha Sharrma",
-    image: "https://images.unsplash.com/photo-1519834785169-98be25ec3f84?auto=format&fit=crop&q=80&w=1200",
+    image: "/images/reiki_healing.png",
     keywords: ["Reiki Healing", "Psychic Reiki Healing", "Energy Healing", "Emotional Blocks", "Stress Relief"],
     status: "published",
     showOnHomepage: true,
@@ -164,7 +164,7 @@ If you have ever wished for just one more conversation with someone you lost, or
 
 **Open the door to a conversation your heart has been waiting for.**`,
     author: "Nattasha Sharrma",
-    image: "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+    image: "/images/mediumship.png",
     keywords: ["mediumship reading", "talk to ancestors", "connect with loved ones who passed", "medium session"],
     status: "published",
     showOnHomepage: true,
@@ -189,7 +189,7 @@ If you have been carrying a weight you can't quite explain, or feel like somethi
 
 **Experience centuries of Himalayan healing wisdom for yourself.**`,
     author: "Nattasha Sharrma",
-    image: "https://images.unsplash.com/photo-1544928147-79a2dbc1f389?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+    image: "/images/lama_fera.png",
     keywords: ["Lama Fera healing", "Himalayan healing technique", "chakra balancing", "energy healing"],
     status: "published",
     showOnHomepage: true,
@@ -212,7 +212,7 @@ If you have ever felt like there is a bigger story behind your struggles, if you
 
 **Discover the truth your soul has been waiting for you to remember.**`,
     author: "Nattasha Sharrma",
-    image: "https://images.unsplash.com/photo-1532012197267-da84d127e765?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+    image: "/images/akashic_records.png",
     keywords: ["Akashic records reading", "Akashic healing", "soul records reading", "past life patterns"],
     status: "published",
     showOnHomepage: true,

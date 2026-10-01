@@ -73,13 +73,20 @@ const Services = () => {
       const query = location.state.preselectService.toLowerCase();
       const matched = services.find(s => s.name.toLowerCase().includes(query) || query.includes(s.name.toLowerCase()));
       if (matched) {
+        // Clear state so it doesn't loop
+        window.history.replaceState({}, document.title);
+        
+        if (!isLoggedIn) {
+          toast.error("Please login or signup to book a service");
+          navigate('/login', { state: { from: '/services', preselectService: matched.name } });
+          return;
+        }
+        
         setSelectedService(matched);
         setIsModalOpen(true);
-        // Clear state so it doesn't reopen on refresh
-        window.history.replaceState({}, document.title);
       }
     }
-  }, [services, location.state]);
+  }, [services, location.state, isLoggedIn, navigate]);
 
   const handleBookClick = (service: Service) => {
     if (!isLoggedIn) {

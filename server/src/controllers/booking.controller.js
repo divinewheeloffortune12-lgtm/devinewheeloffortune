@@ -135,7 +135,7 @@ exports.verifyBookingPayment = async (req, res, next) => {
           status: 'CONFIRMED',
           razorpayPaymentId: razorpay_payment_id,
         },
-        $unset: { expiresAt: 1 }
+
       },
       { new: true }
     );

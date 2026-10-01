@@ -6,8 +6,10 @@ exports.exportSales = async (req, res) => {
     if (req.query.status && req.query.status !== 'all') {
       filter.status = req.query.status;
     }
-    if (req.query.paymentStatus && req.query.paymentStatus !== 'all') {
-      filter.paymentStatus = req.query.paymentStatus;
+    if (req.query.paymentStatus) {
+      if (req.query.paymentStatus !== 'all') {
+        filter.paymentStatus = req.query.paymentStatus;
+      }
     } else {
       filter.paymentStatus = { $in: ['PAID', 'REFUNDED'] };
     }

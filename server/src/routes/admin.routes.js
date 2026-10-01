@@ -97,8 +97,10 @@ router.get('/sales', async (req, res, next) => {
       filter.status = req.query.status;
     }
     
-    if (req.query.paymentStatus && req.query.paymentStatus !== 'all') {
-      filter.paymentStatus = req.query.paymentStatus;
+    if (req.query.paymentStatus) {
+      if (req.query.paymentStatus !== 'all') {
+        filter.paymentStatus = req.query.paymentStatus;
+      }
     } else {
       // Don't show unsuccessful/pending payments in admin by default
       filter.paymentStatus = { $in: ['PAID', 'REFUNDED'] }; 

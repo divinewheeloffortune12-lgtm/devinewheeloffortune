@@ -169,6 +169,9 @@ process.on('uncaughtException', (error) => {
 });
 
 if (require.main === module) {
+  const RetentionPolicy = require('./services/retention.service');
+  RetentionPolicy.startSchedule();
+
   app.listen(PORT, () => {
   });
 }

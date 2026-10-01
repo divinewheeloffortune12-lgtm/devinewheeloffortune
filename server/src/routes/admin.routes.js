@@ -189,7 +189,8 @@ router.get('/sales', async (req, res, next) => {
     let totalRevenue = 0;
     combined.forEach(item => {
       const amt = Number(item.totalAmount || item.amount || 0);
-      if (!isNaN(amt)) {
+      // Only count revenue for PAID orders that are NOT cancelled or refunded
+      if (!isNaN(amt) && item.paymentStatus === 'PAID' && item.status !== 'CANCELLED' && item.status !== 'REFUNDED') {
         totalRevenue += amt;
       }
     });

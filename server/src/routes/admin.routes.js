@@ -105,20 +105,35 @@ router.get('/sales', async (req, res, next) => {
     
     if (req.query.user) filter.user = req.query.user;
 
-    const [orders, total] = await Promise.all([
+    const ServiceBooking = require('../models/ServiceBooking');
+
+    // Fetch both collections
+    const [orders, bookings] = await Promise.all([
       Order.find(filter)
         .populate('user', 'name email mobile')
         .populate('products.product', 'name price images')
-        .sort({ createdAt: -1 })
-        .skip((page - 1) * limit)
-        .limit(limit)
         .lean(),
-      Order.countDocuments(filter)
+      ServiceBooking.find(filter)
+        .populate('user', 'name email mobile')
+        .populate('service', 'name price image')
+        .lean()
     ]);
+
+    // Add type identifiers
+    orders.forEach(o => { o.type = 'Order'; });
+    bookings.forEach(b => { 
+      b.type = 'Booking'; 
+      b.orderNumber = b._id.toString(); 
+    });
+
+    const combined = [...orders, ...bookings].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    
+    const total = combined.length;
+    const paginatedData = combined.slice((page - 1) * limit, page * limit);
 
     res.json({
       success: true,
-      data: orders,
+      data: paginatedData,
       pagination: { page, limit, total, totalPages: Math.ceil(total / limit) }
     });
   } catch (error) {

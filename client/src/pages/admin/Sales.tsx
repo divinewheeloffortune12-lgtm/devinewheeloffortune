@@ -50,7 +50,7 @@ export const AdminSales = () => {
     // Fetch total revenue separately for the dashboard card
     api.get("/admin/stats").then(({ data }) => {
       setTotalRevenue(data.data.totals?.revenue || 0);
-      setTotalOrders(data.data.totals?.sales || 0);
+      setTotalOrders((data.data.totals?.sales || 0) + (data.data.totals?.bookings || 0));
     }).catch(() => undefined);
   }, []);
 
@@ -352,9 +352,9 @@ export const AdminSales = () => {
                   <tr key={s._id} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50 transition-colors">
                     <td className="p-4 font-medium text-slate-800">#{s.orderNumber || s._id.slice(-6).toUpperCase()}</td>
                     <td className="p-4">
-                      <div className="font-medium text-slate-800">{s.user?.name || "Unknown"}</div>
-                      <div className="text-xs text-slate-500">{s.user?.email || ""}</div>
-                      {s.user?.mobile && <div className="text-xs text-slate-500">{s.user.mobile}</div>}
+                      <div className="font-medium text-slate-800">{s.user?.name || s.customerName || "Unknown"}</div>
+                      <div className="text-xs text-slate-500">{s.user?.email || s.email || ""}</div>
+                      {(s.user?.mobile || s.mobile) && <div className="text-xs text-slate-500">{s.user?.mobile || s.mobile}</div>}
                     </td>
                     <td className="p-4">
                       {s.products && s.products.map((p: any, idx: number) => (
@@ -367,8 +367,18 @@ export const AdminSales = () => {
                           <span className="text-xs font-medium text-slate-700 truncate max-w-[120px]" title={p.product?.name}>{p.product?.name || "Unknown"} x {p.quantity}</span>
                         </div>
                       ))}
+                      {s.type === 'Booking' && s.service && (
+                        <div className="flex items-center gap-2 mb-2 last:mb-0">
+                          {s.service.image ? (
+                            <img src={s.service.image} alt={s.service.name} className="w-8 h-8 rounded object-cover" />
+                          ) : (
+                            <div className="w-8 h-8 rounded bg-slate-100 flex items-center justify-center text-[10px] text-slate-400">Svc</div>
+                          )}
+                          <span className="text-xs font-medium text-slate-700 truncate max-w-[120px]" title={s.service.name}>{s.service.name} (Booking)</span>
+                        </div>
+                      )}
                     </td>
-                    <td className="p-4 font-medium text-slate-800">₹{s.totalAmount?.toLocaleString("en-IN")}</td>
+                    <td className="p-4 font-medium text-slate-800">₹{(s.totalAmount || s.amount)?.toLocaleString("en-IN")}</td>
                     <td className="p-4">
                       <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
                         s.paymentStatus === 'PAID' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
@@ -385,7 +395,7 @@ export const AdminSales = () => {
                     <td className="p-4 text-slate-500">{new Date(s.createdAt).toLocaleDateString()}</td>
                     <td className="p-4 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <Button variant="outline" size="sm" onClick={() => setSelectedUser(s.user)} className="h-8 text-blue-600 border-blue-200 hover:bg-blue-50">
+                        <Button variant="outline" size="sm" onClick={() => setSelectedUser(s.user)} disabled={!s.user} className="h-8 text-blue-600 border-blue-200 hover:bg-blue-50">
                           View User
                         </Button>
                         <Button variant="ghost" size="sm" onClick={() => setSelectedOrder(s)} className="h-8 text-primary hover:text-primary hover:bg-primary/10">

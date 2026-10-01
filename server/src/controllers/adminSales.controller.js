@@ -10,8 +10,6 @@ exports.exportSales = async (req, res) => {
       if (req.query.paymentStatus !== 'all') {
         filter.paymentStatus = req.query.paymentStatus;
       }
-    } else {
-      filter.paymentStatus = { $in: ['PAID', 'REFUNDED'] };
     }
     
     // Handle date filtering

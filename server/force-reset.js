@@ -6,8 +6,13 @@ const AdminUser = require('./src/models/Admin');
 
 const run = async () => {
   try {
-    const email = process.argv[2] || process.env.ADMIN_EMAIL || 'divinewheeloffortune@gmail.com';
-    const password = process.argv[3] || process.env.ADMIN_PASSWORD || 'nattasha@2026v1';
+    const email = process.argv[2] || process.env.ADMIN_EMAIL;
+    const password = process.argv[3] || process.env.ADMIN_PASSWORD;
+
+    if (!email || !password) {
+      console.error('ERROR: ADMIN_EMAIL and ADMIN_PASSWORD must be provided via arguments or .env');
+      process.exit(1);
+    }
 
     console.log(`Connecting to MongoDB...`);
     await mongoose.connect(process.env.MONGODB_URI);

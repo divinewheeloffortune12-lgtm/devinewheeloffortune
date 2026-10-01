@@ -4,7 +4,10 @@ const Blog = require('./src/models/Blog');
 
 async function updateBlogs() {
   try {
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/astrology');
+    if (!process.env.MONGODB_URI) {
+      throw new Error("MONGODB_URI is required");
+    }
+    await mongoose.connect(process.env.MONGODB_URI);
     console.log('Connected to MongoDB');
     
     // Using strict: false and timestamps: false to ensure we can update createdAt

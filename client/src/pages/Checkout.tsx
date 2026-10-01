@@ -161,7 +161,16 @@ const Checkout = () => {
       const orderResponse = await api.post('/orders/create', {
         shippingAddress: fullAddress,
         notes: formData.notes,
-        items: items.map(i => ({ productId: i.product.id || (i.product as any)._id, quantity: i.quantity, size: (i as any).size }))
+        items: items.map(i => ({ productId: i.product.id || (i.product as any)._id, quantity: i.quantity, size: (i as any).size })),
+        customerName: `${formData.firstName} ${formData.lastName}`.trim(),
+        mobile: formData.phone,
+        addressData: {
+          addressLine1: formData.address,
+          city: formData.city,
+          state: formData.state,
+          pincode: formData.postalCode,
+          country: formData.country
+        }
       });
 
       if (!orderResponse.data.success) {

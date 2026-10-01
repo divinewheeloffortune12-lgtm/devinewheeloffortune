@@ -34,13 +34,33 @@ exports.createOrder = async (req, res, next) => {
   session.startTransaction();
   
   try {
-    const { shippingAddress, items } = req.body;
+    const { shippingAddress, items, customerName, mobile, addressData } = req.body;
     if (!shippingAddress || typeof shippingAddress !== 'string' || shippingAddress.trim().length < 5) {
       throw Object.assign(new Error('A valid shipping address is required'), { statusCode: 400 });
     }
 
     if (!Array.isArray(items) || items.length === 0 || items.length > 50) {
       throw Object.assign(new Error('Cart must have between 1 and 50 items'), { statusCode: 400 });
+    }
+
+    // Auto-update user profile with checkout details
+    const User = require('../models/User');
+    const updateData = {};
+    if (customerName) updateData.name = customerName;
+    if (mobile) updateData.mobile = mobile;
+    if (addressData) {
+      const currentUser = await User.findById(req.user._id).session(session);
+      updateData.address = {
+        ...(currentUser.address || {}),
+        addressLine1: addressData.addressLine1 || (currentUser.address?.addressLine1 || ''),
+        city: addressData.city || (currentUser.address?.city || ''),
+        state: addressData.state || (currentUser.address?.state || ''),
+        pincode: addressData.pincode || (currentUser.address?.pincode || ''),
+        country: addressData.country || (currentUser.address?.country || 'India')
+      };
+    }
+    if (Object.keys(updateData).length > 0) {
+      await User.findByIdAndUpdate(req.user._id, { $set: updateData }, { session });
     }
 
     // Securely calculate total from DB — ignoring any frontend prices

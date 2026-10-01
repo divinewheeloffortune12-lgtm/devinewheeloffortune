@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -49,6 +49,8 @@ const Services = () => {
   const [formData, setFormData] = useState({ name: "", mobile: "", email: "", address: "", notes: "" });
   const [isProcessing, setIsProcessing] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const isLoggedIn = !!localStorage.getItem("token");
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -80,6 +82,11 @@ const Services = () => {
   }, [services, location.state]);
 
   const handleBookClick = (service: Service) => {
+    if (!isLoggedIn) {
+      toast.error("Please login or signup to book a service");
+      navigate('/login', { state: { from: '/services', preselectService: service.name } });
+      return;
+    }
     setSelectedService(service);
     setIsModalOpen(true);
   };

@@ -51,6 +51,25 @@ exports.createBookingOrder = async (req, res, next) => {
 
     const amount = service.price;
 
+    // Auto-update user profile with checkout details
+    if (req.user) {
+      const User = require('../models/User');
+      const updateData = {};
+      if (customerName) updateData.name = customerName.trim();
+      if (mobile) updateData.mobile = mobile.trim();
+      
+      if (address) {
+        const currentUser = await User.findById(req.user._id);
+        updateData.address = {
+          ...(currentUser.address || {}),
+          addressLine1: address.trim()
+        };
+      }
+      if (Object.keys(updateData).length > 0) {
+        await User.findByIdAndUpdate(req.user._id, { $set: updateData });
+      }
+    }
+
     // 2. Create Razorpay Order
     const razorpayOptions = {
       amount: Math.round(amount * 100), // in paise

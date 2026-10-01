@@ -104,6 +104,16 @@ router.get('/sales', async (req, res, next) => {
     }
     
     if (req.query.user) filter.user = req.query.user;
+    
+    if (req.query.search) {
+      filter.$or = [
+        { orderNumber: { $regex: req.query.search, $options: 'i' } },
+        { razorpayOrderId: { $regex: req.query.search, $options: 'i' } },
+        { customerName: { $regex: req.query.search, $options: 'i' } },
+        { email: { $regex: req.query.search, $options: 'i' } },
+        { mobile: { $regex: req.query.search, $options: 'i' } }
+      ];
+    }
 
     const ServiceBooking = require('../models/ServiceBooking');
 

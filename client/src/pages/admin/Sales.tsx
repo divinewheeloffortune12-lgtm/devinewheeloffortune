@@ -20,15 +20,16 @@ export const AdminSales = () => {
 
   const [statusFilter, setStatusFilter] = useState('all');
   const [dateRange, setDateRange] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     fetchSales(page);
-  }, [page, statusFilter, dateRange]);
+  }, [page, statusFilter, dateRange, searchQuery]);
 
   const fetchSales = async (pageNum: number) => {
     setIsLoading(true);
     try {
-      const { data } = await api.get(`/admin/sales?page=${pageNum}&limit=10&status=${statusFilter}&dateRange=${dateRange}`);
+      const { data } = await api.get(`/admin/sales?page=${pageNum}&limit=25&status=${statusFilter}&dateRange=${dateRange}&search=${searchQuery}`);
       setSales(data.data.sales || data.data || []);
       setTotalPages(data.data.pages || data.pagination?.totalPages || 1);
       setTotalOrders(data.data.total || data.pagination?.total || 0);
@@ -57,7 +58,9 @@ export const AdminSales = () => {
   const handleStatusUpdate = async (orderId: string, newStatus: string) => {
     setIsUpdating(true);
     try {
-      await api.put(`/admin/sales/${orderId}/status`, { status: newStatus });
+      const order = sales.find(s => s._id === orderId);
+      const endpoint = order?.type === 'Booking' ? `/admin/bookings/${orderId}/status` : `/admin/sales/${orderId}/status`;
+      await api.put(endpoint, { status: newStatus });
       toast({ title: "Status updated successfully" });
       setSales(sales.map(s => s._id === orderId ? { ...s, status: newStatus } : s));
       if (selectedOrder && selectedOrder._id === orderId) {
@@ -303,6 +306,16 @@ export const AdminSales = () => {
               <SelectItem value="thismonth">This Month</SelectItem>
             </SelectContent>
           </Select>
+          <input 
+            type="text" 
+            placeholder="Search by ID, Name..." 
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setPage(1);
+            }}
+            className="h-10 px-3 py-2 rounded-lg border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+          />
         </div>
       </div>
 
@@ -425,7 +438,7 @@ export const AdminSales = () => {
         <DialogContent className="sm:max-w-xl">
           <DialogHeader>
             <DialogTitle className="font-serif text-2xl flex items-center gap-3">
-              Order #{selectedOrder?.orderNumber || selectedOrder?._id.slice(-6).toUpperCase()}
+              {selectedOrder?.type === 'Booking' ? 'Booking Details' : `Order #${selectedOrder?.orderNumber || selectedOrder?._id.slice(-6).toUpperCase()}`}
               <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
                 selectedOrder?.paymentStatus === 'PAID' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
               }`}>
@@ -433,7 +446,7 @@ export const AdminSales = () => {
               </span>
             </DialogTitle>
             <DialogDescription className="hidden">
-              Order Details
+              {selectedOrder?.type === 'Booking' ? 'Booking Details' : 'Order Details'}
             </DialogDescription>
           </DialogHeader>
           
@@ -492,19 +505,33 @@ export const AdminSales = () => {
               <div>
                 <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-2 border-b border-slate-100 pb-2">Order Items</p>
                 <div className="space-y-3">
-                  {selectedOrder.products?.map((item: any, idx: number) => (
-                    <div key={idx} className="flex justify-between items-center text-sm">
+                  {selectedOrder?.type === 'Booking' && selectedOrder.service ? (
+                    <div className="flex justify-between items-center text-sm">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-slate-100 rounded overflow-hidden">
-                          {item.product?.images?.[0] ? <img src={item.product.images[0]} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-slate-400"><Package className="w-5 h-5" /></div>}
+                          {selectedOrder.service.image ? <img src={selectedOrder.service.image} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-slate-400"><Package className="w-5 h-5" /></div>}
                         </div>
                         <div>
-                          <p className="font-medium text-slate-800">{item.product?.name || "Unknown Product"}</p>
-                          <p className="text-xs text-slate-500">Qty: {item.quantity}</p>
+                          <p className="font-medium text-slate-800">{selectedOrder.service.name || "Unknown Service"}</p>
+                          <p className="text-xs text-slate-500">Booking</p>
                         </div>
                       </div>
                     </div>
-                  ))}
+                  ) : (
+                    selectedOrder.products?.map((item: any, idx: number) => (
+                      <div key={idx} className="flex justify-between items-center text-sm">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-slate-100 rounded overflow-hidden">
+                            {item.product?.images?.[0] ? <img src={item.product.images[0]} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-slate-400"><Package className="w-5 h-5" /></div>}
+                          </div>
+                          <div>
+                            <p className="font-medium text-slate-800">{item.product?.name || "Unknown Product"}</p>
+                            <p className="text-xs text-slate-500">Qty: {item.quantity}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  )}
                 </div>
                 <div className="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center text-sm">
                   <span className="font-medium text-slate-600">Shipping</span>
@@ -512,7 +539,7 @@ export const AdminSales = () => {
                 </div>
                 <div className="mt-2 pt-2 border-t border-slate-100 flex justify-between items-center">
                   <span className="font-medium text-slate-600">Total Amount</span>
-                  <span className="text-lg font-bold text-slate-900">₹{selectedOrder.totalAmount?.toLocaleString("en-IN")}</span>
+                  <span className="text-lg font-bold text-slate-900">₹{(selectedOrder.totalAmount || selectedOrder.amount)?.toLocaleString("en-IN")}</span>
                 </div>
               </div>
 
@@ -531,11 +558,15 @@ export const AdminSales = () => {
                       <SelectItem value={selectedOrder.status || 'PENDING'}>
                         Current: {selectedOrder.status || 'PENDING'}
                       </SelectItem>
-                      {['PENDING', 'CANCELLED', 'REFUNDED', 'DELIVERED'].filter(s => s !== (selectedOrder.status || 'PENDING')).map(status => (
-                        <SelectItem key={status} value={status}>
-                          {status}
-                        </SelectItem>
-                      ))}
+                      {selectedOrder.type === 'Booking' ? (
+                        ['PENDING_PAYMENT', 'CONFIRMED', 'COMPLETED', 'CANCELLED'].filter(s => s !== (selectedOrder.status || 'PENDING_PAYMENT')).map(status => (
+                          <SelectItem key={status} value={status}>{status}</SelectItem>
+                        ))
+                      ) : (
+                        ['PENDING', 'CANCELLED', 'REFUNDED', 'DELIVERED'].filter(s => s !== (selectedOrder.status || 'PENDING')).map(status => (
+                          <SelectItem key={status} value={status}>{status}</SelectItem>
+                        ))
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
@@ -543,12 +574,24 @@ export const AdminSales = () => {
               </div>
 
               <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
-                {selectedOrder.status === 'PENDING' && (
-                  <Button variant="outline" onClick={() => handleStatusUpdate(selectedOrder._id, 'DELIVERED')} className="text-emerald-600 border-emerald-200 hover:bg-emerald-50" disabled={isUpdating}>
-                    Deliver
-                  </Button>
+                {selectedOrder.type === 'Booking' ? (
+                  <>
+                    {(selectedOrder.status === 'PENDING_PAYMENT' || selectedOrder.status === 'CONFIRMED') && (
+                      <Button variant="outline" onClick={() => handleStatusUpdate(selectedOrder._id, 'COMPLETED')} className="text-emerald-600 border-emerald-200 hover:bg-emerald-50" disabled={isUpdating}>
+                        Complete
+                      </Button>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    {selectedOrder.status === 'PENDING' && (
+                      <Button variant="outline" onClick={() => handleStatusUpdate(selectedOrder._id, 'DELIVERED')} className="text-emerald-600 border-emerald-200 hover:bg-emerald-50" disabled={isUpdating}>
+                        Deliver
+                      </Button>
+                    )}
+                  </>
                 )}
-                {selectedOrder.status === 'PENDING' && (
+                {(selectedOrder.status === 'PENDING' || selectedOrder.status === 'PENDING_PAYMENT' || selectedOrder.status === 'CONFIRMED') && (
                   <Button variant="outline" onClick={() => handleStatusUpdate(selectedOrder._id, 'CANCELLED')} className="text-red-600 border-red-200 hover:bg-red-50" disabled={isUpdating}>
                     Cancel
                   </Button>

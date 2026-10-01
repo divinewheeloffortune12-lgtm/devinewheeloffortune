@@ -58,7 +58,6 @@ const orderSchema = new mongoose.Schema({
     changedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'AdminUser' },
     reason: { type: String },
   }],
-  }
 }, { timestamps: true });
 
 // Performance indexes

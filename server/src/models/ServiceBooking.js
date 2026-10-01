@@ -25,7 +25,6 @@ const serviceBookingSchema = new mongoose.Schema({
   razorpayOrderId: { type: String, unique: true, sparse: true },
   razorpayPaymentId: { type: String, unique: true, sparse: true },
   
-  }
 }, { timestamps: true });
 
 

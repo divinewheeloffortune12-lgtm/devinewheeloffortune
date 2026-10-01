@@ -277,11 +277,11 @@ export const AdminSales = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Statuses</SelectItem>
-              <SelectItem value="PENDING_PAYMENT">Pending Payment</SelectItem>
+              <SelectItem value="PENDING">Pending (All)</SelectItem>
               <SelectItem value="CONFIRMED">Confirmed</SelectItem>
               <SelectItem value="PROCESSING">Processing</SelectItem>
               <SelectItem value="SHIPPED">Shipped</SelectItem>
-              <SelectItem value="DELIVERED">Delivered</SelectItem>
+              <SelectItem value="DELIVERED">Delivered / Completed</SelectItem>
               <SelectItem value="CANCELLED">Cancelled</SelectItem>
             </SelectContent>
           </Select>

@@ -94,9 +94,47 @@ router.get('/sales', async (req, res, next) => {
 
     const filter = {};
     if (req.query.status && req.query.status !== 'all') {
-      filter.status = req.query.status;
+      // Map PENDING and PENDING_PAYMENT to find both types of unprocessed orders
+      if (req.query.status === 'PENDING' || req.query.status === 'PENDING_PAYMENT') {
+        filter.status = { $in: ['PENDING', 'PENDING_PAYMENT'] };
+      } else if (req.query.status === 'COMPLETED' || req.query.status === 'DELIVERED') {
+        filter.status = { $in: ['COMPLETED', 'DELIVERED'] };
+      } else {
+        filter.status = req.query.status;
+      }
     }
     
+    if (req.query.dateRange && req.query.dateRange !== 'all') {
+      const now = new Date();
+      let startDate, endDate;
+      
+      switch (req.query.dateRange) {
+        case 'today':
+          startDate = new Date(now.setHours(0, 0, 0, 0));
+          break;
+        case 'yesterday':
+          startDate = new Date(new Date().setDate(now.getDate() - 1));
+          startDate.setHours(0, 0, 0, 0);
+          endDate = new Date(now.setHours(0, 0, 0, 0));
+          break;
+        case 'last7days':
+          startDate = new Date(new Date().setDate(now.getDate() - 7));
+          break;
+        case 'last30days':
+          startDate = new Date(new Date().setDate(now.getDate() - 30));
+          break;
+        case 'thismonth':
+          startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+          break;
+      }
+      
+      if (startDate) {
+        filter.createdAt = { $gte: startDate };
+        if (endDate) {
+          filter.createdAt.$lt = endDate;
+        }
+      }
+    }
     if (req.query.paymentStatus) {
       if (req.query.paymentStatus !== 'all') {
         filter.paymentStatus = req.query.paymentStatus;
@@ -105,15 +143,7 @@ router.get('/sales', async (req, res, next) => {
     
     if (req.query.user) filter.user = req.query.user;
     
-    if (req.query.search) {
-      filter.$or = [
-        { orderNumber: { $regex: req.query.search, $options: 'i' } },
-        { razorpayOrderId: { $regex: req.query.search, $options: 'i' } },
-        { customerName: { $regex: req.query.search, $options: 'i' } },
-        { email: { $regex: req.query.search, $options: 'i' } },
-        { mobile: { $regex: req.query.search, $options: 'i' } }
-      ];
-    }
+    const searchQuery = req.query.search ? req.query.search.toLowerCase() : '';
 
     const ServiceBooking = require('../models/ServiceBooking');
 
@@ -136,15 +166,40 @@ router.get('/sales', async (req, res, next) => {
       b.orderNumber = b._id.toString(); 
     });
 
-    const combined = [...orders, ...bookings].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    let combined = [...orders, ...bookings].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     
+    // In-memory search for populated fields
+    if (searchQuery) {
+      combined = combined.filter(item => {
+        const orderNum = (item.orderNumber || '').toLowerCase();
+        const rzp = (item.razorpayOrderId || '').toLowerCase();
+        const cName = (item.customerName || item.user?.name || '').toLowerCase();
+        const email = (item.email || item.user?.email || '').toLowerCase();
+        const mobile = (item.mobile || item.user?.mobile || '').toLowerCase();
+        return orderNum.includes(searchQuery) || 
+               rzp.includes(searchQuery) || 
+               cName.includes(searchQuery) || 
+               email.includes(searchQuery) || 
+               mobile.includes(searchQuery);
+      });
+    }
+
     const total = combined.length;
+    
+    let totalRevenue = 0;
+    combined.forEach(item => {
+      const amt = Number(item.totalAmount || item.amount || 0);
+      if (!isNaN(amt)) {
+        totalRevenue += amt;
+      }
+    });
+
     const paginatedData = combined.slice((page - 1) * limit, page * limit);
 
     res.json({
       success: true,
       data: paginatedData,
-      pagination: { page, limit, total, totalPages: Math.ceil(total / limit) }
+      pagination: { page, limit, total, totalPages: Math.ceil(total / limit), totalRevenue }
     });
   } catch (error) {
     next(error);

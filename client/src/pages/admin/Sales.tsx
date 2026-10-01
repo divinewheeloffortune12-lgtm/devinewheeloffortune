@@ -33,10 +33,9 @@ export const AdminSales = () => {
       setSales(data.data.sales || data.data || []);
       setTotalPages(data.data.pages || data.pagination?.totalPages || 1);
       setTotalOrders(data.data.total || data.pagination?.total || 0);
-      
-      // We might need a separate call for total revenue, or just use what we have.
-      // Assuming backend sends total revenue or we calculate it.
-      // For now, let's fetch stats for the revenue if needed.
+      if (data.pagination?.totalRevenue !== undefined) {
+        setTotalRevenue(data.pagination.totalRevenue);
+      }
     } catch (error) {
       toast({
         variant: "destructive",
@@ -46,14 +45,6 @@ export const AdminSales = () => {
       setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    // Fetch total revenue separately for the dashboard card
-    api.get("/admin/stats").then(({ data }) => {
-      setTotalRevenue(data.data.totals?.revenue || 0);
-      setTotalOrders((data.data.totals?.sales || 0) + (data.data.totals?.bookings || 0));
-    }).catch(() => undefined);
-  }, []);
 
   const handleStatusUpdate = async (orderId: string, newStatus: string) => {
     setIsUpdating(true);
@@ -77,10 +68,13 @@ export const AdminSales = () => {
     }
   };
 
-  const getStatusIcon = (status: string) => {
+  const getStatusIcon = (status: string, paymentStatus?: string) => {
+    if (paymentStatus === 'PENDING') return <XCircle className="w-4 h-4 text-slate-400" />;
     switch (status) {
-      case 'PENDING': return <Package className="w-4 h-4 text-amber-500" />;
-      case 'DELIVERED': return <CheckCircle2 className="w-4 h-4 text-emerald-500" />;
+      case 'PENDING': 
+      case 'PENDING_PAYMENT': return <Package className="w-4 h-4 text-amber-500" />;
+      case 'DELIVERED': 
+      case 'COMPLETED': return <CheckCircle2 className="w-4 h-4 text-emerald-500" />;
       case 'CANCELLED': 
       case 'REFUNDED': return <XCircle className="w-4 h-4 text-red-500" />;
       default: return <Package className="w-4 h-4 text-slate-500" />;
@@ -365,8 +359,8 @@ export const AdminSales = () => {
                   <tr key={s._id} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50 transition-colors">
                     <td className="p-4 font-medium text-slate-800">#{s.orderNumber || s._id.slice(-6).toUpperCase()}</td>
                     <td className="p-4">
-                      <div className="font-medium text-slate-800">{s.user?.name || s.customerName || "Unknown"}</div>
-                      <div className="text-xs text-slate-500">{s.user?.email || s.email || ""}</div>
+                      <div className="font-medium text-slate-800">{s.user?.name || s.customerName || "Deleted User"}</div>
+                      <div className="text-xs text-slate-500">{s.user?.email || s.email || "No Email"}</div>
                       {(s.user?.mobile || s.mobile) && <div className="text-xs text-slate-500">{s.user?.mobile || s.mobile}</div>}
                     </td>
                     <td className="p-4">
@@ -394,21 +388,23 @@ export const AdminSales = () => {
                     <td className="p-4 font-medium text-slate-800">₹{(s.totalAmount || s.amount)?.toLocaleString("en-IN")}</td>
                     <td className="p-4">
                       <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
-                        s.paymentStatus === 'PAID' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
+                        s.paymentStatus === 'PAID' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-600'
                       }`}>
-                        {s.paymentStatus || 'PENDING'}
+                        {s.paymentStatus === 'PAID' ? 'SUCCESSFUL' : 'CANCELLED'}
                       </span>
                     </td>
                     <td className="p-4">
                       <div className="flex items-center gap-2">
-                        {getStatusIcon(s.status || 'PENDING')}
-                        <span className="text-xs font-semibold uppercase tracking-wider">{s.status || 'PENDING'}</span>
+                        {getStatusIcon(s.status || 'PENDING', s.paymentStatus)}
+                        <span className={`text-xs font-semibold uppercase tracking-wider ${s.paymentStatus !== 'PAID' ? 'text-slate-400' : ''}`}>
+                          {s.paymentStatus !== 'PAID' ? 'NO PAYMENT' : (s.status || 'PENDING')}
+                        </span>
                       </div>
                     </td>
                     <td className="p-4 text-slate-500">{new Date(s.createdAt).toLocaleDateString()}</td>
                     <td className="p-4 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <Button variant="outline" size="sm" onClick={() => setSelectedUser(s.user)} disabled={!s.user} className="h-8 text-blue-600 border-blue-200 hover:bg-blue-50">
+                        <Button variant="outline" size="sm" onClick={() => setSelectedUser(s.user || { name: s.customerName, email: s.email, mobile: s.mobile })} disabled={!s.user && !s.customerName} className="h-8 text-blue-600 border-blue-200 hover:bg-blue-50">
                           View User
                         </Button>
                         <Button variant="ghost" size="sm" onClick={() => setSelectedOrder(s)} className="h-8 text-primary hover:text-primary hover:bg-primary/10">
@@ -440,9 +436,9 @@ export const AdminSales = () => {
             <DialogTitle className="font-serif text-2xl flex items-center gap-3">
               {selectedOrder?.type === 'Booking' ? 'Booking Details' : `Order #${selectedOrder?.orderNumber || selectedOrder?._id.slice(-6).toUpperCase()}`}
               <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
-                selectedOrder?.paymentStatus === 'PAID' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
+                selectedOrder?.paymentStatus === 'PAID' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-600'
               }`}>
-                {selectedOrder?.paymentStatus || 'PENDING_PAYMENT'}
+                {selectedOrder?.paymentStatus === 'PAID' ? 'SUCCESSFUL' : 'CANCELLED (NO PAYMENT)'}
               </span>
             </DialogTitle>
             <DialogDescription className="hidden">
@@ -455,16 +451,16 @@ export const AdminSales = () => {
               <div className="grid grid-cols-2 gap-6 bg-slate-50 p-4 rounded-xl border border-slate-100">
                 <div>
                   <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1">Customer Details</p>
-                  <p className="font-medium text-slate-800">{selectedOrder.user?.name || "Unknown User"}</p>
+                  <p className="font-medium text-slate-800">{selectedOrder.user?.name || selectedOrder.customerName || "Deleted User"}</p>
                   <div className="mt-2 space-y-1">
-                    {selectedOrder.user?.email && (
+                    {(selectedOrder.user?.email || selectedOrder.email) && (
                       <p className="text-sm text-slate-600 flex items-center gap-2">
-                        <span className="font-medium text-slate-500">Email:</span> {selectedOrder.user.email}
+                        <span className="font-medium text-slate-500">Email:</span> {selectedOrder.user?.email || selectedOrder.email}
                       </p>
                     )}
-                    {selectedOrder.user?.mobile && (
+                    {(selectedOrder.user?.mobile || selectedOrder.mobile) && (
                       <p className="text-sm text-slate-600 flex items-center gap-2">
-                        <span className="font-medium text-slate-500">Mobile:</span> {selectedOrder.user.mobile}
+                        <span className="font-medium text-slate-500">Mobile:</span> {selectedOrder.user?.mobile || selectedOrder.mobile}
                       </p>
                     )}
                   </div>
@@ -545,56 +541,68 @@ export const AdminSales = () => {
 
               <div className="bg-primary/5 p-4 rounded-xl border border-primary/10">
                 <p className="text-xs font-semibold text-primary uppercase tracking-widest mb-3">Update Order Status</p>
-                <div className="flex gap-3">
-                  <Select 
-                    value={selectedOrder.status || 'PENDING'} 
-                    onValueChange={(val) => handleStatusUpdate(selectedOrder._id, val)}
-                    disabled={isUpdating}
-                  >
-                    <SelectTrigger className="w-full bg-white">
-                      <SelectValue placeholder="Select status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value={selectedOrder.status || 'PENDING'}>
-                        Current: {selectedOrder.status || 'PENDING'}
-                      </SelectItem>
-                      {selectedOrder.type === 'Booking' ? (
-                        ['PENDING_PAYMENT', 'CONFIRMED', 'COMPLETED', 'CANCELLED'].filter(s => s !== (selectedOrder.status || 'PENDING_PAYMENT')).map(status => (
-                          <SelectItem key={status} value={status}>{status}</SelectItem>
-                        ))
-                      ) : (
-                        ['PENDING', 'CANCELLED', 'REFUNDED', 'DELIVERED'].filter(s => s !== (selectedOrder.status || 'PENDING')).map(status => (
-                          <SelectItem key={status} value={status}>{status}</SelectItem>
-                        ))
-                      )}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <p className="text-[10px] text-muted-foreground mt-2">Updating the status will immediately reflect on the user's profile.</p>
+                {selectedOrder.paymentStatus !== 'PAID' ? (
+                  <div className="text-sm text-slate-500 p-3 bg-white rounded-lg border border-slate-200">
+                    Payment was cancelled or failed. Status updates are locked.
+                  </div>
+                ) : (
+                  <>
+                    <div className="flex gap-3">
+                      <Select 
+                        value={selectedOrder.status || 'PENDING'} 
+                        onValueChange={(val) => handleStatusUpdate(selectedOrder._id, val)}
+                        disabled={isUpdating}
+                      >
+                        <SelectTrigger className="w-full bg-white">
+                          <SelectValue placeholder="Select status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value={selectedOrder.status || 'PENDING'}>
+                            Current: {selectedOrder.status || 'PENDING'}
+                          </SelectItem>
+                          {selectedOrder.type === 'Booking' ? (
+                            ['PENDING_PAYMENT', 'CONFIRMED', 'COMPLETED', 'CANCELLED'].filter(s => s !== (selectedOrder.status || 'PENDING_PAYMENT')).map(status => (
+                              <SelectItem key={status} value={status}>{status}</SelectItem>
+                            ))
+                          ) : (
+                            ['PENDING', 'CANCELLED', 'REFUNDED', 'DELIVERED'].filter(s => s !== (selectedOrder.status || 'PENDING')).map(status => (
+                              <SelectItem key={status} value={status}>{status}</SelectItem>
+                            ))
+                          )}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <p className="text-[10px] text-muted-foreground mt-2">Updating the status will immediately reflect on the user's profile.</p>
+                  </>
+                )}
               </div>
 
               <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
-                {selectedOrder.type === 'Booking' ? (
+                {selectedOrder.paymentStatus === 'PAID' && (
                   <>
-                    {(selectedOrder.status === 'PENDING_PAYMENT' || selectedOrder.status === 'CONFIRMED') && (
-                      <Button variant="outline" onClick={() => handleStatusUpdate(selectedOrder._id, 'COMPLETED')} className="text-emerald-600 border-emerald-200 hover:bg-emerald-50" disabled={isUpdating}>
-                        Complete
+                    {selectedOrder.type === 'Booking' ? (
+                      <>
+                        {(selectedOrder.status === 'PENDING_PAYMENT' || selectedOrder.status === 'CONFIRMED') && (
+                          <Button variant="outline" onClick={() => handleStatusUpdate(selectedOrder._id, 'COMPLETED')} className="text-emerald-600 border-emerald-200 hover:bg-emerald-50" disabled={isUpdating}>
+                            Complete
+                          </Button>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        {selectedOrder.status === 'PENDING' && (
+                          <Button variant="outline" onClick={() => handleStatusUpdate(selectedOrder._id, 'DELIVERED')} className="text-emerald-600 border-emerald-200 hover:bg-emerald-50" disabled={isUpdating}>
+                            Deliver
+                          </Button>
+                        )}
+                      </>
+                    )}
+                    {(selectedOrder.status === 'PENDING' || selectedOrder.status === 'PENDING_PAYMENT' || selectedOrder.status === 'CONFIRMED') && (
+                      <Button variant="outline" onClick={() => handleStatusUpdate(selectedOrder._id, 'CANCELLED')} className="text-red-600 border-red-200 hover:bg-red-50" disabled={isUpdating}>
+                        Cancel
                       </Button>
                     )}
                   </>
-                ) : (
-                  <>
-                    {selectedOrder.status === 'PENDING' && (
-                      <Button variant="outline" onClick={() => handleStatusUpdate(selectedOrder._id, 'DELIVERED')} className="text-emerald-600 border-emerald-200 hover:bg-emerald-50" disabled={isUpdating}>
-                        Deliver
-                      </Button>
-                    )}
-                  </>
-                )}
-                {(selectedOrder.status === 'PENDING' || selectedOrder.status === 'PENDING_PAYMENT' || selectedOrder.status === 'CONFIRMED') && (
-                  <Button variant="outline" onClick={() => handleStatusUpdate(selectedOrder._id, 'CANCELLED')} className="text-red-600 border-red-200 hover:bg-red-50" disabled={isUpdating}>
-                    Cancel
-                  </Button>
                 )}
                 <Button variant="outline" onClick={() => setSelectedOrder(null)}>
                   Close

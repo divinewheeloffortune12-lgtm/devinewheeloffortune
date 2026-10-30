@@ -7,7 +7,7 @@ import { QuantitySelector } from "@/components/QuantitySelector";
 import { useCart } from "@/hooks/useCart";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api";
-import { optimizeImage } from "@/lib/utils";
+import { optimizeImage, DEFAULT_FALLBACK_IMAGE } from "@/lib/utils";
 
 const Cart = () => {
   const { items, updateQuantity, removeItem, getSubtotal, syncCart } = useCart();
@@ -111,6 +111,11 @@ const Cart = () => {
                         src={optimizeImage(item.product.images[0], { width: 250 })}
                         alt={item.product.name}
                         loading="lazy"
+                        decoding="async"
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = DEFAULT_FALLBACK_IMAGE;
+                        }}
                         className="w-full h-full object-contain p-2 sm:p-4 mix-blend-multiply transition-transform duration-500 group-hover:scale-110"
                       />
                     </Link>

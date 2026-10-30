@@ -5,31 +5,34 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export const DEFAULT_FALLBACK_IMAGE = "/images/placeholder.png";
+
 /**
  * Optimizes a Cloudinary image URL by injecting transformation parameters.
  *
- * This adds:
- * - f_auto: automatic format selection (WebP/AVIF for supported browsers)
- * - q_auto: automatic quality optimization
- * - c_limit: crop mode that only downsizes, never upscales
- * - w_<width>: optional width constraint
- *
- * This approach generates derived assets on-demand via Cloudinary's URL-based
- * transformation system — no extra storage cost for the original, and Cloudinary
- * caches transformed results at its CDN edge.
- *
- * NOTE: Cloudinary already converts originals to webp on upload (see adminProduct.controller.js),
- * but f_auto on delivery still allows format negotiation per-browser.
+ * NOTE: Cloudinary account has strict transformation security enabled for
+ * certain formats (.png, .jpg), which causes 401 Transformation not allowed.
+ * We only apply transformations to .webp Cloudinary URLs where transformations
+ * are authorized, and return the clean untouched URL for .png/.jpg or others.
  *
  * @param url      - The original Cloudinary secure_url from the database.
  * @param options  - Optional transformation parameters.
- * @returns        - The optimized URL, or the original if not a Cloudinary URL.
+ * @returns        - The optimized URL, or the original if not safe to transform.
  */
 export function optimizeImage(
   url: string,
   options: { width?: number; quality?: string; height?: number } = {}
 ): string {
-  if (!url || !url.includes("cloudinary.com")) return url;
+  if (!url || typeof url !== "string") return DEFAULT_FALLBACK_IMAGE;
+  if (!url.includes("cloudinary.com")) return url;
+
+  // If the Cloudinary asset is not a .webp, return the original URL directly
+  // to avoid Cloudinary Strict Transformation 401 errors.
+  const lowerUrl = url.toLowerCase();
+  const isWebp = lowerUrl.endsWith(".webp") || lowerUrl.includes(".webp?");
+  if (!isWebp) {
+    return url;
+  }
 
   const widthStr = options.width ? `w_${options.width},` : "";
   const heightStr = options.height ? `h_${options.height},` : "";
@@ -39,8 +42,7 @@ export function optimizeImage(
   const parts = url.split("/upload/");
   if (parts.length !== 2) return url;
 
-  // Build transformation string: remove any existing transformations to avoid conflicts
-  // by inserting ours just after /upload/
+  // Insert transformations safely
   const transformations = `c_limit,${widthStr}${heightStr}${qualityStr}${formatStr}`;
   return `${parts[0]}/upload/${transformations}${parts[1]}`;
 }

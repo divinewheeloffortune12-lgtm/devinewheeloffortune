@@ -3,8 +3,7 @@ import { Heart } from "lucide-react";
 import { motion } from "framer-motion";
 import { Product, collections } from "@/data/products";
 import { useWishlist } from "@/hooks/useWishlist";
-import { cn } from "@/lib/utils";
-import { optimizeImage } from "@/lib/utils";
+import { cn, optimizeImage, DEFAULT_FALLBACK_IMAGE } from "@/lib/utils";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, EffectFade } from "swiper/modules";
 import "swiper/css";
@@ -51,31 +50,40 @@ export const ProductCard = ({ product, index = 0, variant = "default" }: Product
             "aspect-[4/3]"
           )}
         >
-          {hasSecondImage ? (
-            <Swiper
-              modules={[Pagination, EffectFade]}
-              effect="fade"
-              pagination={{ clickable: true }}
-              className="w-full h-full [&_.swiper-pagination-bullet]:bg-white [&_.swiper-pagination-bullet-active]:bg-white"
-            >
-              {(product.images || []).map((img, i) => (
-                <SwiperSlide key={i}>
-                  <img
-                    src={optimizeImage(img, { width: 500 })}
-                    alt={`${product.name} - view ${i + 1}`}
-                    loading="lazy"
-                    className="w-full h-full object-contain p-6 mix-blend-multiply drop-shadow-sm transition-transform duration-700 ease-out group-hover:scale-105"
-                  />
-                </SwiperSlide>
-              ))}
-            </Swiper>
+          {(product.images || []).length > 0 ? (
+            <div className="relative w-full h-full">
+              <img
+                src={optimizeImage(product.images[0], { width: 500 })}
+                alt={product.name}
+                loading="lazy"
+                decoding="async"
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = DEFAULT_FALLBACK_IMAGE;
+                }}
+                className={cn(
+                  "w-full h-full object-contain p-6 mix-blend-multiply drop-shadow-sm transition-all duration-700 ease-out",
+                  product.images[1] ? "group-hover:opacity-0" : "group-hover:scale-105"
+                )}
+              />
+              {product.images[1] && (
+                <img
+                  src={optimizeImage(product.images[1], { width: 500 })}
+                  alt={`${product.name} alternate view`}
+                  loading="lazy"
+                  decoding="async"
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = DEFAULT_FALLBACK_IMAGE;
+                  }}
+                  className="absolute inset-0 w-full h-full object-contain p-6 mix-blend-multiply drop-shadow-sm opacity-0 transition-all duration-700 ease-out group-hover:opacity-100 group-hover:scale-105"
+                />
+              )}
+            </div>
           ) : (
-            <img
-              src={optimizeImage((product.images || [])[0], { width: 500 })}
-              alt={product.name}
-              loading="lazy"
-              className="w-full h-full object-contain p-6 mix-blend-multiply drop-shadow-sm transition-transform duration-700 ease-out group-hover:scale-105"
-            />
+            <div className="w-full h-full flex items-center justify-center text-xs text-muted-foreground">
+              No image
+            </div>
           )}
 
           {/* Gradient Overlay on Hover */}

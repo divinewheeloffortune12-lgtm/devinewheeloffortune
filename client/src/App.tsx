@@ -42,10 +42,20 @@ const BlogPost = lazy(() => import("./pages/BlogPost"));
 const About = lazy(() => import("./pages/About"));
 const Announcements = lazy(() => import("./pages/Announcements"));
 const Services = lazy(() => import("./pages/Services"));
+const ServiceDetail = lazy(() => import("./pages/ServiceDetail"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Policies = lazy(() => import("./pages/Policies"));
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes fresh in cache
+      gcTime: 30 * 60 * 1000,    // Retain in cache for 30 minutes
+      refetchOnWindowFocus: false, // Prevent re-fetching every time tab is focused
+      retry: 1,
+    },
+  },
+});
 
 // Use environment variable for Google Client ID, with a safe fallback
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || "137685527535-nuhj8v6mppnip76k0i69chnv6eeibn3g.apps.googleusercontent.com";
@@ -78,6 +88,8 @@ const App = () => (
               <Route path="/blog/:slug" element={<BlogPost />} />
               <Route path="/announcements" element={<Announcements />} />
               <Route path="/services" element={<Services />} />
+              <Route path="/services/:slug" element={<ServiceDetail />} />
+              <Route path="/service/:slug" element={<ServiceDetail />} />
               <Route path="/policies" element={<Policies />} />
               
               <Route path="/admin/login" element={<AdminLogin />} />

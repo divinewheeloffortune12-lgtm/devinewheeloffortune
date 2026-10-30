@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Loader2, ShieldCheck, ShoppingBag, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Loader2, ShieldCheck, ShoppingBag, ChevronLeft, ChevronRight, Share2, Check } from 'lucide-react';
 import { Layout } from '@/components/Layout';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { api, getErrorMessage } from '@/lib/api';
 import { useToast } from '@/components/ui/use-toast';
 import { useCart } from '@/hooks/useCart';
+import { optimizeImage, thumbnailImage } from '@/lib/utils';
 
 type Product = { 
   _id: string; 
@@ -28,8 +29,39 @@ export default function ProductPage() {
   const [authPrompt, setAuthPrompt] = useState(false); 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
   const { toast } = useToast();
   const { addItem } = useCart();
+
+  const handleShare = async () => {
+    if (!product) return;
+    const shareUrl = window.location.href;
+    const shareData = {
+      title: `${product.name} | Divine Wheel of Fortune`,
+      text: product.description
+        ? `${product.name} - ${product.description.slice(0, 90)}... Available at Divine Wheel of Fortune.`
+        : `Check out ${product.name} at Divine Wheel of Fortune.`,
+      url: shareUrl,
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+        return;
+      } catch (err: any) {
+        if (err.name === 'AbortError') return;
+      }
+    }
+
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopied(true);
+      toast({ title: 'Link copied to clipboard!' });
+      setTimeout(() => setCopied(false), 2500);
+    } catch {
+      toast({ title: 'Failed to copy link', variant: 'destructive' });
+    }
+  };
 
   useEffect(() => { 
     let live = true; 
@@ -87,9 +119,10 @@ export default function ProductPage() {
             {images.length > 0 ? (
               <div className="aspect-[4/5] md:aspect-square relative flex items-center justify-center">
                 <img 
-                  src={images[currentImageIndex]} 
+                  src={optimizeImage(images[currentImageIndex], { width: 900 })} 
                   alt={`${product.name} - View ${currentImageIndex + 1}`} 
                   className="w-full h-full object-cover transition-opacity duration-300"
+                  loading="eager"
                 />
                 
                 {images.length > 1 && (
@@ -129,7 +162,18 @@ export default function ProductPage() {
 
           {/* Product Details */}
           <section className="lg:pt-10 lg:sticky lg:top-24 lg:self-start">
-            <p className="text-xs uppercase tracking-[.25em] text-primary">{product.category?.name || 'Spiritual collection'}</p>
+            <div className="flex items-center justify-between gap-4">
+              <p className="text-xs uppercase tracking-[.25em] text-primary">{product.category?.name || 'Spiritual collection'}</p>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleShare}
+                className="rounded-full gap-1.5 h-8 text-xs border-slate-200 text-slate-700 hover:text-primary hover:border-primary/40"
+              >
+                {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Share2 className="w-3.5 h-3.5" />}
+                <span>{copied ? 'Copied' : 'Share'}</span>
+              </Button>
+            </div>
             <h1 className="font-serif text-4xl md:text-6xl mt-4">{product.name}</h1>
             
             <div className="mt-6 flex items-baseline gap-3">

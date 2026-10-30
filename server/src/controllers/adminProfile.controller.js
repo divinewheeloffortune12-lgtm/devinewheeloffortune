@@ -1,6 +1,23 @@
 const Admin = require('../models/Admin');
 const cloudinary = require('../config/cloudinary');
 
+/**
+ * Extract a Cloudinary public_id from a secure URL.
+ * Returns null if it cannot be determined.
+ */
+const getPublicIdFromUrl = (url) => {
+  if (!url || !url.includes('cloudinary.com')) return null;
+  try {
+    const parts = url.split('/upload/');
+    if (parts.length < 2) return null;
+    let path = parts[1].replace(/^v\d+\//, '');
+    path = path.replace(/\.[^/.]+$/, '');
+    return path;
+  } catch {
+    return null;
+  }
+};
+
 exports.getProfile = async (req, res, next) => {
   try {
     const admin = await Admin.findById(req.admin._id).select('-passwordHash');
@@ -32,12 +49,22 @@ exports.updateProfile = async (req, res, next) => {
 
     if (req.file) {
       try {
+        const oldImageUrl = admin.profileImage;
         const stream = cloudinary.uploader.upload_stream(
           { folder: 'astrology_ecommerce/admins', resource_type: 'image' },
           async (error, result) => {
             if (error) return next(error);
             admin.profileImage = result.secure_url;
             await admin.save();
+            // FIX: Delete old profile image from Cloudinary after successful upload
+            if (oldImageUrl) {
+              const oldPublicId = getPublicIdFromUrl(oldImageUrl);
+              if (oldPublicId) {
+                cloudinary.uploader.destroy(oldPublicId).catch((err) =>
+                  console.error(`[Cloudinary] Failed to delete old admin profile image ${oldPublicId}:`, err)
+                );
+              }
+            }
             res.json({ success: true, data: { name: admin.name, email: admin.email, profileImage: admin.profileImage } });
           }
         );

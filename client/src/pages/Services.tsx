@@ -1,21 +1,25 @@
 import { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Sparkles, Loader2, Search } from "lucide-react";
+import { Sparkles, Loader2, Search, Share2, Check } from "lucide-react";
 import { motion } from "framer-motion";
 import Aurora from "@/components/ui/Aurora";
 import { toast } from "sonner";
 import api from "@/lib/api";
+import { optimizeImage } from "@/lib/utils";
 
 type Service = {
   _id: string;
   name: string;
+  slug?: string;
   price: number;
   duration?: string;
+  description?: string;
+  image?: string;
 };
 
 // Ensure Razorpay type is defined
@@ -88,10 +92,43 @@ const Services = () => {
     }
   }, [services, location.state, isLoggedIn, navigate]);
 
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  const handleShareService = async (service: Service, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const serviceSlug = service.slug || service._id;
+    const shareUrl = `${window.location.origin}/service/${encodeURIComponent(serviceSlug)}`;
+    const shareData = {
+      title: `${service.name} | Divine Wheel of Fortune`,
+      text: service.description
+        ? `${service.name} - ${service.description.slice(0, 90)}... Book online with Nattasha Sharrma.`
+        : `Book ${service.name} online with Divine Wheel of Fortune.`,
+      url: shareUrl,
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+        return;
+      } catch (err: any) {
+        if (err.name === "AbortError") return;
+      }
+    }
+
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopiedId(service._id);
+      toast.success(`Link for "${service.name}" copied to clipboard!`);
+      setTimeout(() => setCopiedId(null), 2500);
+    } catch {
+      toast.error("Failed to copy link.");
+    }
+  };
+
   const handleBookClick = (service: Service) => {
     if (!isLoggedIn) {
       toast.error("Please login or signup to book a service");
-      navigate('/login', { state: { from: '/services', preselectService: service.name } });
+      navigate('/login', { state: { from: `/service/${service.slug || service._id}`, preselectService: service.name } });
       return;
     }
     setSelectedService(service);
@@ -232,18 +269,42 @@ const Services = () => {
                   className="group flex flex-col bg-white rounded-3xl shadow-sm border border-black/5 overflow-hidden hover:shadow-xl transition-all duration-300"
                 >
                   <div className="relative aspect-[4/3] bg-gradient-to-br from-purple-100 to-indigo-50 flex items-center justify-center overflow-hidden">
-                    {service.image ? (
-                      <img src={service.image} alt={service.name} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 z-0" />
-                    ) : (
-                      <>
-                        <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors duration-500 z-10" />
-                        <Sparkles className="w-16 h-16 text-primary/30 group-hover:scale-110 group-hover:text-primary/50 transition-transform duration-500 z-0" />
-                      </>
-                    )}
+                    <Link to={`/service/${service.slug || service._id}`} className="absolute inset-0 z-0">
+                      {service.image ? (
+                        <img 
+                          src={optimizeImage(service.image, { width: 600 })} 
+                          alt={service.name} 
+                          loading="lazy"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <Sparkles className="w-16 h-16 text-primary/30 group-hover:scale-110 group-hover:text-primary/50 transition-transform duration-500" />
+                        </div>
+                      )}
+                    </Link>
+
+                    {/* Share Button top right */}
+                    <button
+                      type="button"
+                      onClick={(e) => handleShareService(service, e)}
+                      title="Share this service"
+                      className="absolute top-3 right-3 z-20 w-9 h-9 rounded-full bg-white/90 hover:bg-white text-slate-700 hover:text-primary shadow-md flex items-center justify-center transition-all duration-200 hover:scale-110 backdrop-blur-sm"
+                    >
+                      {copiedId === service._id ? (
+                        <Check className="w-4 h-4 text-emerald-600" />
+                      ) : (
+                        <Share2 className="w-4 h-4" />
+                      )}
+                    </button>
                   </div>
                   <div className="p-6 flex flex-col flex-grow justify-between">
                     <div>
-                      <h3 className="font-serif text-xl font-medium leading-tight mb-2 group-hover:text-primary transition-colors">{service.name}</h3>
+                      <Link to={`/service/${service.slug || service._id}`}>
+                        <h3 className="font-serif text-xl font-medium leading-tight mb-2 group-hover:text-primary transition-colors line-clamp-2">
+                          {service.name}
+                        </h3>
+                      </Link>
                       <p className="text-sm text-muted-foreground mb-4 font-medium text-primary">
                         ₹{service.price} {service.duration && <span className="text-xs opacity-75 ml-1">({service.duration})</span>}
                       </p>
@@ -253,13 +314,29 @@ const Services = () => {
                         </p>
                       )}
                     </div>
-                    <Button 
-                      className="w-full rounded-full mt-auto group-hover:bg-primary transition-colors" 
-                      variant="outline"
-                      onClick={() => handleBookClick(service)}
-                    >
-                      Book Now
-                    </Button>
+                    <div className="flex gap-2 mt-auto">
+                      <Button 
+                        className="flex-1 rounded-full group-hover:bg-primary transition-colors" 
+                        variant="outline"
+                        onClick={() => handleBookClick(service)}
+                      >
+                        Book Now
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        onClick={(e) => handleShareService(service, e)}
+                        title="Share service"
+                        className="rounded-full w-10 h-10 shrink-0 text-slate-600 hover:text-primary hover:border-primary/40"
+                      >
+                        {copiedId === service._id ? (
+                          <Check className="w-4 h-4 text-emerald-600" />
+                        ) : (
+                          <Share2 className="w-4 h-4" />
+                        )}
+                      </Button>
+                    </div>
                   </div>
                 </motion.div>
               ))}
@@ -297,6 +374,11 @@ const Services = () => {
               <Label htmlFor="notes">Notes / Purpose (Optional)</Label>
               <Input id="notes" value={formData.notes} onChange={e => setFormData({...formData, notes: e.target.value})} placeholder="Any specific requirements?" disabled={isProcessing} />
             </div>
+
+            <div className="rounded-lg bg-amber-50 border border-amber-200 p-3 text-xs text-amber-900 leading-relaxed">
+              <strong>Notice:</strong> All service bookings are final and strictly non-refundable. Appointment slots cannot be cancelled for a refund once booked.
+            </div>
+
             <Button type="submit" className="w-full mt-2" disabled={isProcessing}>
               {isProcessing ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
               Proceed to Payment

@@ -14,10 +14,45 @@ const razorpay = new Razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
+const slugify = (value) => (value || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+
 exports.getAllServices = async (req, res, next) => {
   try {
-    const services = await Service.find({ isActive: true }).lean();
-    res.json({ success: true, data: services });
+    const services = await Service.find({ isActive: true }).sort({ createdAt: -1 }).lean();
+    // Ensure every service has a computed slug for unique routing/sharing
+    const withSlugs = services.map(s => ({
+      ...s,
+      slug: s.slug || slugify(s.name) || s._id.toString()
+    }));
+    res.json({ success: true, data: withSlugs });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.getServiceBySlug = async (req, res, next) => {
+  try {
+    const { slug } = req.params;
+    let service = null;
+    if (mongoose.isValidObjectId(slug)) {
+      service = await Service.findOne({ _id: slug, isActive: true }).lean();
+    }
+    if (!service) {
+      service = await Service.findOne({ slug: slug, isActive: true }).lean();
+    }
+    if (!service) {
+      // Fallback matching by name slugification
+      const all = await Service.find({ isActive: true }).lean();
+      service = all.find(s => slugify(s.name) === slug);
+    }
+    if (!service) {
+      return res.status(404).json({ success: false, message: 'Service not found' });
+    }
+    const withSlug = {
+      ...service,
+      slug: service.slug || slugify(service.name) || service._id.toString()
+    };
+    res.json({ success: true, data: withSlug });
   } catch (error) {
     next(error);
   }
@@ -36,15 +71,25 @@ exports.createBookingOrder = async (req, res, next) => {
     if (!email || typeof email !== 'string' || !email.includes('@')) {
       throw Object.assign(new Error('A valid email address is required'), { statusCode: 400 });
     }
-    if (!serviceId || !mongoose.isValidObjectId(serviceId)) {
+    if (!serviceId) {
       throw Object.assign(new Error('A valid service must be selected'), { statusCode: 400 });
     }
     if (!address || typeof address !== 'string' || address.trim().length < 5) {
       throw Object.assign(new Error('A valid address is required'), { statusCode: 400 });
     }
 
-    // 1. Verify service exists and get price from backend
-    const service = await Service.findById(serviceId);
+    // 1. Verify service exists and get price from backend (lookup by _id or slug)
+    let service = null;
+    if (mongoose.isValidObjectId(serviceId)) {
+      service = await Service.findById(serviceId);
+    }
+    if (!service) {
+      service = await Service.findOne({ slug: serviceId, isActive: true });
+    }
+    if (!service) {
+      const all = await Service.find({ isActive: true });
+      service = all.find(s => slugify(s.name) === serviceId);
+    }
     if (!service || !service.isActive) {
       throw Object.assign(new Error('Selected service is invalid or unavailable'), { statusCode: 400 });
     }

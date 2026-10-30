@@ -7,6 +7,8 @@
     "start": "node src/app.js",
     "dev": "node --watch src/app.js",
     "admin:create": "node src/scripts/create-admin.js",
+    "cloudinary:audit": "node scripts/cloudinary-cleanup.js",
+    "cloudinary:cleanup": "node scripts/cloudinary-cleanup.js --execute",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

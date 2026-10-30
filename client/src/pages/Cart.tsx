@@ -7,6 +7,7 @@ import { QuantitySelector } from "@/components/QuantitySelector";
 import { useCart } from "@/hooks/useCart";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api";
+import { optimizeImage } from "@/lib/utils";
 
 const Cart = () => {
   const { items, updateQuantity, removeItem, getSubtotal, syncCart } = useCart();
@@ -107,8 +108,9 @@ const Cart = () => {
                       className="w-24 h-32 md:w-36 md:h-44 flex-shrink-0 overflow-hidden bg-slate-50 border border-slate-100 rounded-xl group"
                     >
                       <img
-                        src={item.product.images[0]}
+                        src={optimizeImage(item.product.images[0], { width: 250 })}
                         alt={item.product.name}
+                        loading="lazy"
                         className="w-full h-full object-contain p-2 sm:p-4 mix-blend-multiply transition-transform duration-500 group-hover:scale-110"
                       />
                     </Link>
@@ -250,7 +252,7 @@ const Cart = () => {
                       Returns
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      14-day policy
+                      Non-refundable (All sales final)
                     </p>
                   </div>
                 </div>

@@ -3,9 +3,11 @@ import { motion, useScroll, useTransform } from 'framer-motion'
 import { ArrowDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Link } from "react-router-dom"
+import { optimizeImage } from "@/lib/utils"
 
 export interface ParallaxSection {
     id: number | string;
+    slug?: string;
     title: string;
     description: string;
     imageUrl: string;
@@ -20,6 +22,8 @@ interface ParallaxScrollFeatureSectionProps {
 }
 
 const SectionItem = ({ section }: { section: ParallaxSection }) => {
+    const serviceRoute = section.slug ? `/service/${encodeURIComponent(section.slug)}` : '/services';
+
     return (
         <div 
             className={`min-h-[80vh] flex flex-col md:flex-row items-center justify-center md:gap-32 gap-16 py-12 ${section.reverse ? 'md:flex-row-reverse' : ''}`}
@@ -36,9 +40,12 @@ const SectionItem = ({ section }: { section: ParallaxSection }) => {
                 <p className="text-muted-foreground text-lg leading-relaxed max-w-md">
                     {section.description}
                 </p>
-                <div className="mt-8">
+                <div className="mt-8 flex flex-wrap gap-3">
+                    <Button asChild size="lg" className="rounded-none btn-premium">
+                        <Link to={serviceRoute}>Explore & Book</Link>
+                    </Button>
                     <Button asChild size="lg" variant="outline" className="rounded-none border-primary text-primary hover:bg-primary hover:text-primary-foreground">
-                        <Link to="/services" state={{ preselectService: section.title }}>Book Now</Link>
+                        <Link to="/services" state={{ preselectService: section.title }}>Quick Book</Link>
                     </Button>
                 </div>
             </motion.div>
@@ -52,7 +59,8 @@ const SectionItem = ({ section }: { section: ParallaxSection }) => {
                 <div className="relative w-full max-w-[400px] aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl">
                     <div className="absolute inset-0 bg-black/20 z-10 hover:bg-black/10 transition-colors duration-500" />
                     <img 
-                        src={section.imageUrl} 
+                        src={optimizeImage(section.imageUrl, { width: 600 })} 
+                        loading="lazy"
                         className="w-full h-full object-cover transition-transform duration-700 hover:scale-105" 
                         alt={section.title}
                     />

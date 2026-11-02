@@ -21,7 +21,7 @@ import { Pagination, EffectFade } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/effect-fade";
-import { optimizeImage, DEFAULT_FALLBACK_IMAGE } from "@/lib/utils";
+import { optimizeImage } from "@/lib/utils";
 
 type Category = { _id: string; name: string; slug?: string; image?: string; note?: string };
 type Product = {
@@ -215,35 +215,34 @@ export default function Shop() {
                   >
                     <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors z-10 pointer-events-none" />
                     
-                    {product.images && product.images.length > 0 ? (
-                      <Link to={`/product/${product.slug}`} className="block w-full h-full relative">
+                    {product.images.length > 1 ? (
+                      <Swiper
+                        modules={[Pagination, EffectFade]}
+                        effect="fade"
+                        pagination={{ clickable: true }}
+                        className="w-full h-full [&_.swiper-pagination-bullet]:bg-white [&_.swiper-pagination-bullet-active]:bg-white"
+                      >
+                        {product.images.map((img, i) => (
+                          <SwiperSlide key={i}>
+                            <Link to={`/product/${product.slug}`} className="block w-full h-full">
+                              <img
+                                src={optimizeImage(img, { width: 500 })}
+                                alt={`${product.name} - view ${i + 1}`}
+                                loading="lazy"
+                                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                              />
+                            </Link>
+                          </SwiperSlide>
+                        ))}
+                      </Swiper>
+                    ) : product.images[0] ? (
+                      <Link to={`/product/${product.slug}`} className="block w-full h-full">
                         <img
                           src={optimizeImage(product.images[0], { width: 500 })}
                           alt={product.name}
                           loading="lazy"
-                          decoding="async"
-                          onError={(e) => {
-                            e.currentTarget.onerror = null;
-                            e.currentTarget.src = DEFAULT_FALLBACK_IMAGE;
-                          }}
-                          className={cn(
-                            "h-full w-full object-cover transition-all duration-700",
-                            product.images[1] ? "group-hover:opacity-0" : "group-hover:scale-105"
-                          )}
+                          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                         />
-                        {product.images[1] && (
-                          <img
-                            src={optimizeImage(product.images[1], { width: 500 })}
-                            alt={`${product.name} alternate view`}
-                            loading="lazy"
-                            decoding="async"
-                            onError={(e) => {
-                              e.currentTarget.onerror = null;
-                              e.currentTarget.src = DEFAULT_FALLBACK_IMAGE;
-                            }}
-                            className="absolute inset-0 h-full w-full object-cover opacity-0 transition-all duration-700 group-hover:opacity-100 group-hover:scale-105"
-                          />
-                        )}
                       </Link>
                     ) : (
                       <Link to={`/product/${product.slug}`} className="block w-full h-full">

@@ -10,5 +10,7 @@ const serviceSchema = new mongoose.Schema({
   isActive: { type: Boolean, default: true }
 }, { timestamps: true });
 
+serviceSchema.index({ slug: 1 });
+
 module.exports = mongoose.model('Service', serviceSchema);
 

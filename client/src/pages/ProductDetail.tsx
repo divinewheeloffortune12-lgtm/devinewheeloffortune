@@ -10,7 +10,8 @@ import { useWishlist } from "@/hooks/useWishlist";
 import { useCart } from "@/hooks/useCart";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { cn, optimizeImage, DEFAULT_FALLBACK_IMAGE } from "@/lib/utils";
+import { cn } from "@/lib/utils";
+import { optimizeImage } from "@/lib/utils";
 
 const ProductDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -130,10 +131,6 @@ const ProductDetail = () => {
                     src={optimizeImage(product.images[currentImageIndex], { width: 900 })}
                     alt={product.name}
                     loading="eager"
-                    onError={(e) => {
-                      (e.currentTarget as HTMLImageElement).onerror = null;
-                      (e.currentTarget as HTMLImageElement).src = DEFAULT_FALLBACK_IMAGE;
-                    }}
                     initial={{ opacity: 0, scale: 1.02 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.98 }}

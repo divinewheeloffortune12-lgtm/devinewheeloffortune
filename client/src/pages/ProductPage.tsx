@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { api, getErrorMessage } from '@/lib/api';
 import { useToast } from '@/components/ui/use-toast';
 import { useCart } from '@/hooks/useCart';
-import { optimizeImage, thumbnailImage, DEFAULT_FALLBACK_IMAGE } from '@/lib/utils';
+import { optimizeImage, thumbnailImage } from '@/lib/utils';
 
 type Product = { 
   _id: string; 
@@ -123,10 +123,6 @@ export default function ProductPage() {
                   alt={`${product.name} - View ${currentImageIndex + 1}`} 
                   className="w-full h-full object-cover transition-opacity duration-300"
                   loading="eager"
-                  onError={(e) => {
-                    e.currentTarget.onerror = null;
-                    e.currentTarget.src = DEFAULT_FALLBACK_IMAGE;
-                  }}
                 />
                 
                 {images.length > 1 && (

@@ -5,7 +5,7 @@ import { Layout } from "@/components/Layout";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { SectionHeader } from "@/components/ui/SectionHeader";
-import { optimizeImage, DEFAULT_FALLBACK_IMAGE } from "@/lib/utils";
+import { optimizeImage } from "@/lib/utils";
 
 export default function Blog() { 
   const { data: blogs = localBlogs, isLoading } = useQuery({
@@ -64,11 +64,6 @@ export default function Blog() {
                     src={optimizeImage(article.image || "https://images.unsplash.com/photo-1532968961962-8a0cb3a2d4f5?auto=format&fit=crop&q=80&w=800", { width: 800 })} 
                     alt={article.title} 
                     loading="lazy"
-                    decoding="async"
-                    onError={(e) => {
-                      e.currentTarget.onerror = null;
-                      e.currentTarget.src = DEFAULT_FALLBACK_IMAGE;
-                    }}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
                   />
                 </div>

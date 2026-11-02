@@ -10,7 +10,7 @@ import { motion } from "framer-motion";
 import Aurora from "@/components/ui/Aurora";
 import { toast } from "sonner";
 import api from "@/lib/api";
-import { optimizeImage, DEFAULT_FALLBACK_IMAGE } from "@/lib/utils";
+import { optimizeImage } from "@/lib/utils";
 
 type Service = {
   _id: string;
@@ -275,11 +275,6 @@ const Services = () => {
                           src={optimizeImage(service.image, { width: 600 })} 
                           alt={service.name} 
                           loading="lazy"
-                          decoding="async"
-                          onError={(e) => {
-                            e.currentTarget.onerror = null;
-                            e.currentTarget.src = DEFAULT_FALLBACK_IMAGE;
-                          }}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
                         />
                       ) : (

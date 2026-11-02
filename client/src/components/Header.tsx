@@ -6,7 +6,7 @@ import { CartIcon } from "@/components/CartIcon";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { optimizeImage, DEFAULT_FALLBACK_IMAGE } from "@/lib/utils";
+import { optimizeImage } from "@/lib/utils";
 
 export const Header = () => {
   const [open, setOpen] = useState(false);
@@ -131,14 +131,9 @@ export const Header = () => {
                       categories.slice(0, 8).map(cat => (
                         <Link key={cat._id} to={`/products?category=${cat.slug}`} className="group/item flex items-center gap-4 hover:bg-slate-50 p-3 rounded-xl transition-colors">
                           <img 
-                            src={optimizeImage(cat.image || DEFAULT_FALLBACK_IMAGE, { width: 120 })} 
+                            src={optimizeImage(cat.image || 'https://placehold.co/150x150', { width: 120 })} 
                             alt={cat.name} 
                             loading="lazy"
-                            decoding="async"
-                            onError={(e) => {
-                              e.currentTarget.onerror = null;
-                              e.currentTarget.src = DEFAULT_FALLBACK_IMAGE;
-                            }}
                             className="w-16 h-16 rounded-lg object-cover shadow-sm border border-slate-100" 
                           />
                           <div>

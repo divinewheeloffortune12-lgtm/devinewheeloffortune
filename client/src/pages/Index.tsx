@@ -14,7 +14,7 @@ import Aurora from "@/components/ui/Aurora";
 import FoldText from "@/components/ui/FoldText";
 import ClickSpark from "@/components/ui/ClickSpark";
 import { FeaturedProducts } from "@/components/FeaturedProducts";
-import { optimizeImage, DEFAULT_FALLBACK_IMAGE } from "@/lib/utils";
+import { optimizeImage } from "@/lib/utils";
 
 // Removing hardcoded services array; will fetch dynamically.
 
@@ -292,11 +292,6 @@ const Index = () => {
                     src={optimizeImage(item.image || '', { width: 600 })} 
                     alt={item.name}
                     loading="lazy"
-                    decoding="async"
-                    onError={(e) => {
-                      e.currentTarget.onerror = null;
-                      e.currentTarget.src = DEFAULT_FALLBACK_IMAGE;
-                    }}
                     className="absolute inset-0 w-full h-full object-cover contrast-[1.15] saturate-110 brightness-[1.05] transition-transform duration-700 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 p-8 z-20 flex flex-col justify-end">

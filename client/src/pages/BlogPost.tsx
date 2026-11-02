@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useEffect } from "react";
 import { SectionHeader } from "@/components/ui/SectionHeader";
-import { optimizeImage, DEFAULT_FALLBACK_IMAGE } from "@/lib/utils";
+import { optimizeImage } from "@/lib/utils";
 
 export default function BlogPost() {
   const { slug } = useParams();
@@ -86,10 +86,6 @@ export default function BlogPost() {
                 src={optimizeImage(post.image, { width: 1200 })} 
                 alt={post.title} 
                 decoding="async"
-                onError={(e) => {
-                  e.currentTarget.onerror = null;
-                  e.currentTarget.src = DEFAULT_FALLBACK_IMAGE;
-                }}
                 className="w-full h-full object-cover" 
               />
             </div>

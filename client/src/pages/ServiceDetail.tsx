@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import api from "@/lib/api";
-import { optimizeImage, DEFAULT_FALLBACK_IMAGE } from "@/lib/utils";
+import { optimizeImage } from "@/lib/utils";
 import { loadRazorpayScript } from "./Services";
 
 type Service = {
@@ -277,11 +277,6 @@ export default function ServiceDetail() {
                 <img
                   src={optimizeImage(service.image, { width: 900 })}
                   alt={service.name}
-                  decoding="async"
-                  onError={(e) => {
-                    e.currentTarget.onerror = null;
-                    e.currentTarget.src = DEFAULT_FALLBACK_IMAGE;
-                  }}
                   className="w-full h-full object-cover"
                 />
               ) : (

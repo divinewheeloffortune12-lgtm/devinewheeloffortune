@@ -14,7 +14,7 @@ import Aurora from "@/components/ui/Aurora";
 import FoldText from "@/components/ui/FoldText";
 import ClickSpark from "@/components/ui/ClickSpark";
 import { FeaturedProducts } from "@/components/FeaturedProducts";
-import { optimizeImage } from "@/lib/utils";
+import { optimizeImage, getServiceImageUrl } from "@/lib/utils";
 
 // Removing hardcoded services array; will fetch dynamically.
 
@@ -90,7 +90,7 @@ const Index = () => {
     title: service.name,
     description: service.description || "A transformative spiritual session tailored for your healing journey.",
     symbol: ["✦", "∞", "☼", "◈", "◌", "Ⅸ", "❋", "☾"][index % 8],
-    imageUrl: service.image || `/images/placeholder.png`,
+    imageUrl: getServiceImageUrl(service.image),
     reverse: index % 2 !== 0
   }));
 

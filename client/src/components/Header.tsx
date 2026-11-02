@@ -5,7 +5,7 @@ import { Menu, Sparkles, X, ChevronDown, UserRound, Bell, CalendarClock, Home, G
 import { CartIcon } from "@/components/CartIcon";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api";
-import { handleImageError } from "@/lib/utils";
+import { handleImageError, getCategoryImageUrl } from "@/lib/utils";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const Header = () => {
@@ -131,7 +131,7 @@ export const Header = () => {
                       categories.slice(0, 8).map(cat => (
                         <Link key={cat._id} to={`/products?category=${cat.slug}`} className="group/item flex items-center gap-4 hover:bg-slate-50 p-3 rounded-xl transition-colors">
                           <img 
-                            src={cat.image || '/images/placeholder.png'} 
+                            src={getCategoryImageUrl(cat.image)} 
                             alt={cat.name} 
                             loading="lazy"
                             decoding="async"

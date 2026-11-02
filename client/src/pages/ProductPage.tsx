@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { api, getErrorMessage } from '@/lib/api';
 import { useToast } from '@/components/ui/use-toast';
 import { useCart } from '@/hooks/useCart';
-import { handleImageError } from '@/lib/utils';
+import { handleImageError, getProductImageUrl } from '@/lib/utils';
 
 type Product = { 
   _id: string; 
@@ -73,7 +73,7 @@ export default function ProductPage() {
   
   if (!product) return <Layout><div className="container py-36 text-center"><h1 className="font-serif text-4xl">Product unavailable</h1><p className="mt-3 text-muted-foreground">It may no longer be in our collection.</p><Button asChild className="mt-8 rounded-full"><Link to="/products">Return to shop</Link></Button></div></Layout>;
   
-  const images = product.images || [];
+  const images = (product.images || []).map(getProductImageUrl);
 
   return (
     <Layout>

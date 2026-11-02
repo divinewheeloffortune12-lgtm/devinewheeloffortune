@@ -14,7 +14,7 @@ import Aurora from "@/components/ui/Aurora";
 import FoldText from "@/components/ui/FoldText";
 import ClickSpark from "@/components/ui/ClickSpark";
 import { FeaturedProducts } from "@/components/FeaturedProducts";
-import { optimizeImage, getServiceImageUrl, handleImageError } from "@/lib/utils";
+import { optimizeImage, getServiceImageUrl, getCategoryImageUrl, getProductImageUrl, handleImageError } from "@/lib/utils";
 
 // Removing hardcoded services array; will fetch dynamically.
 
@@ -255,7 +255,7 @@ const Index = () => {
           </div>
         ) : shopCategories.length > 0 ? (
           <Carousel_003 
-            images={shopCategories.length >= 3 ? [...shopCategories, ...shopCategories].map((c: Category) => ({ src: optimizeImage(c.image || '', { width: 800 }), alt: c.name, name: c.name, note: c.note, link: `/products?category=${c._id}` })) : shopCategories.map((c: Category) => ({ src: optimizeImage(c.image || '', { width: 800 }), alt: c.name, name: c.name, note: c.note, link: `/products?category=${c._id}` }))} 
+            images={shopCategories.length >= 3 ? [...shopCategories, ...shopCategories].map((c: Category) => ({ src: getCategoryImageUrl(c.image), alt: c.name, name: c.name, note: c.note, link: `/products?category=${c._id}` })) : shopCategories.map((c: Category) => ({ src: getCategoryImageUrl(c.image), alt: c.name, name: c.name, note: c.note, link: `/products?category=${c._id}` }))} 
             showNavigation 
             showPagination 
             loop={shopCategories.length >= 2} 
@@ -291,7 +291,7 @@ const Index = () => {
                   <div className="absolute inset-0 bg-slate-900/10 group-hover:bg-slate-900/5 transition-colors duration-500 z-10" />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/30 to-transparent z-10" />
                   <img 
-                    src={optimizeImage(item.image || '', { width: 600 })} 
+                    src={getCategoryImageUrl(item.image)} 
                     alt={item.name}
                     loading="lazy"
                     decoding="async"

@@ -21,7 +21,7 @@ import { Pagination, EffectFade } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/effect-fade";
-import { optimizeImage, handleImageError } from "@/lib/utils";
+import { optimizeImage, handleImageError, getProductImageUrl, getCategoryImageUrl } from "@/lib/utils";
 
 type Category = { _id: string; name: string; slug?: string; image?: string; note?: string };
 type Product = {
@@ -226,7 +226,7 @@ export default function Shop() {
                           <SwiperSlide key={i}>
                             <Link to={`/product/${product.slug}`} className="block w-full h-full">
                               <img
-                                src={optimizeImage(img, { width: 500 })}
+                                src={getProductImageUrl(img)}
                                 alt={`${product.name} - view ${i + 1}`}
                                 loading="lazy"
                                 decoding="async"
@@ -240,7 +240,7 @@ export default function Shop() {
                     ) : product.images[0] ? (
                       <Link to={`/product/${product.slug}`} className="block w-full h-full">
                         <img
-                          src={optimizeImage(product.images[0], { width: 500 })}
+                          src={getProductImageUrl(product.images[0])}
                           alt={product.name}
                           loading="lazy"
                           decoding="async"

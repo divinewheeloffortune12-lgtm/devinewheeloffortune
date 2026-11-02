@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { Link } from "react-router-dom";
 import { ArrowRight, ShoppingBag } from "lucide-react";
-import { optimizeImage, handleImageError } from "@/lib/utils";
+import { optimizeImage, getProductImageUrl, handleImageError } from "@/lib/utils";
 
 type Product = { 
   _id: string; 
@@ -54,7 +54,7 @@ export const FeaturedProducts = () => {
           <div className="aspect-[4/5] bg-slate-50 border-b border-slate-100 relative overflow-hidden">
             {product.images && product.images[0] ? (
               <img 
-                src={optimizeImage(product.images[0], { width: 400 })} 
+                src={getProductImageUrl(product.images[0])} 
                 alt={product.name} 
                 loading="lazy" 
                 decoding="async"

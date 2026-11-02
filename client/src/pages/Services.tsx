@@ -233,7 +233,7 @@ const Services = () => {
                 >
                   <div className="relative aspect-[4/3] bg-gradient-to-br from-purple-100 to-indigo-50 flex items-center justify-center overflow-hidden">
                     {service.image ? (
-                      <img src={service.image} alt={service.name} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 z-0" />
+                      <img src={service.image} alt={service.name} loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 z-0" />
                     ) : (
                       <>
                         <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors duration-500 z-10" />

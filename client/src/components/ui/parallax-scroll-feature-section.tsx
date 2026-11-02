@@ -53,6 +53,8 @@ const SectionItem = ({ section }: { section: ParallaxSection }) => {
                     <div className="absolute inset-0 bg-black/20 z-10 hover:bg-black/10 transition-colors duration-500" />
                     <img 
                         src={section.imageUrl} 
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover transition-transform duration-700 hover:scale-105" 
                         alt={section.title}
                     />

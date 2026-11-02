@@ -89,6 +89,8 @@ export default function ProductPage() {
                 <img 
                   src={images[currentImageIndex]} 
                   alt={`${product.name} - View ${currentImageIndex + 1}`} 
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover transition-opacity duration-300"
                 />
                 

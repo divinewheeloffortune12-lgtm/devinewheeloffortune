@@ -62,6 +62,8 @@ export const ProductCard = ({ product, index = 0, variant = "default" }: Product
                   <img
                     src={img}
                     alt={`${product.name} - view ${i + 1}`}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-contain p-6 mix-blend-multiply drop-shadow-sm transition-transform duration-700 ease-out group-hover:scale-105"
                   />
                 </SwiperSlide>
@@ -71,6 +73,8 @@ export const ProductCard = ({ product, index = 0, variant = "default" }: Product
             <img
               src={(product.images || [])[0]}
               alt={product.name}
+              loading="lazy"
+              decoding="async"
               className="w-full h-full object-contain p-6 mix-blend-multiply drop-shadow-sm transition-transform duration-700 ease-out group-hover:scale-105"
             />
           )}

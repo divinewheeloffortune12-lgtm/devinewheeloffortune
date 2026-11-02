@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { cn } from "@/lib/utils";
+import { cn, handleImageError } from "@/lib/utils";
 
 type SortOption = "featured" | "newest" | "price-asc" | "price-desc" | "name-asc";
 
@@ -165,6 +165,9 @@ const Products = () => {
           <img
             src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1920&q=80"
             alt="Interior lifestyle"
+            loading="lazy"
+            decoding="async"
+            onError={handleImageError}
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-charcoal/50" />

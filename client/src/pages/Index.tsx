@@ -14,7 +14,7 @@ import Aurora from "@/components/ui/Aurora";
 import FoldText from "@/components/ui/FoldText";
 import ClickSpark from "@/components/ui/ClickSpark";
 import { FeaturedProducts } from "@/components/FeaturedProducts";
-import { optimizeImage, getServiceImageUrl } from "@/lib/utils";
+import { optimizeImage, getServiceImageUrl, handleImageError } from "@/lib/utils";
 
 // Removing hardcoded services array; will fetch dynamically.
 
@@ -201,6 +201,9 @@ const Index = () => {
               <img 
                 src="/about-image.png" 
                 alt="Nattasha Sharrma" 
+                loading="lazy"
+                decoding="async"
+                onError={handleImageError}
                 className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-700"
               />
             </motion.div>
@@ -291,6 +294,8 @@ const Index = () => {
                     src={optimizeImage(item.image || '', { width: 600 })} 
                     alt={item.name}
                     loading="lazy"
+                    decoding="async"
+                    onError={handleImageError}
                     className="absolute inset-0 w-full h-full object-cover contrast-[1.15] saturate-110 brightness-[1.05] transition-transform duration-700 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 p-8 z-20 flex flex-col justify-end">
@@ -397,7 +402,14 @@ const Index = () => {
         <div className="container-full">
           <div className="max-w-4xl mx-auto text-center">
             <div className="relative mx-auto w-full max-w-lg mb-8 rounded-3xl overflow-hidden border-4 border-white shadow-[0_0_40px_rgba(168,85,247,0.3)] bg-white transform transition-transform hover:scale-[1.02] duration-500">
-              <img src="/momdad.png" alt="Mom and Dad" className="w-full h-auto object-cover" />
+              <img 
+                src="/momdad.png" 
+                alt="Mom and Dad" 
+                loading="lazy" 
+                decoding="async" 
+                onError={handleImageError} 
+                className="w-full h-auto object-cover" 
+              />
             </div>
             <h3 className="text-2xl md:text-3xl font-serif text-slate-800 mb-4">A Foundation of Love and Support</h3>
             <p className="text-slate-600 leading-relaxed max-w-2xl mx-auto text-lg mb-12">

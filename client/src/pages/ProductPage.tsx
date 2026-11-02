@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { api, getErrorMessage } from '@/lib/api';
 import { useToast } from '@/components/ui/use-toast';
 import { useCart } from '@/hooks/useCart';
+import { handleImageError } from '@/lib/utils';
 
 type Product = { 
   _id: string; 
@@ -89,6 +90,9 @@ export default function ProductPage() {
                 <img 
                   src={images[currentImageIndex]} 
                   alt={`${product.name} - View ${currentImageIndex + 1}`} 
+                  loading="lazy"
+                  decoding="async"
+                  onError={handleImageError}
                   className="w-full h-full object-cover transition-opacity duration-300"
                 />
                 

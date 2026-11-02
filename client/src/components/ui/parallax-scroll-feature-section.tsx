@@ -3,6 +3,7 @@ import { motion, useScroll, useTransform } from 'framer-motion'
 import { ArrowDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Link } from "react-router-dom"
+import { handleImageError } from "@/lib/utils"
 
 export interface ParallaxSection {
     id: number | string;
@@ -55,6 +56,9 @@ const SectionItem = ({ section }: { section: ParallaxSection }) => {
                         src={section.imageUrl} 
                         className="w-full h-full object-cover transition-transform duration-700 hover:scale-105" 
                         alt={section.title}
+                        loading="lazy"
+                        decoding="async"
+                        onError={handleImageError}
                     />
                 </div>
             </motion.div>

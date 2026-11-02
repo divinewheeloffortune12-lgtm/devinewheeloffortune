@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/form";
 import { Layout } from "@/components/Layout";
 import { api, getErrorMessage } from "@/lib/api";
+import { handleImageError } from "@/lib/utils";
 
 type Order = { _id: string; orderNumber: string; totalAmount: number; status: string; paymentStatus: string; createdAt: string; statusHistory?: { status: string; changedAt: string }[]; products: { quantity: number; product: { name: string } | null }[] };
 
@@ -445,7 +446,14 @@ export const Profile = () => {
                 <div key={product._id} className="border border-slate-100 rounded-xl overflow-hidden group">
                   <div className="aspect-[4/5] bg-slate-50 relative">
                     {product.images && product.images[0] && (
-                      <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+                      <img 
+                        src={product.images[0]} 
+                        alt={product.name} 
+                        loading="lazy"
+                        decoding="async"
+                        onError={handleImageError}
+                        className="w-full h-full object-cover transition-transform group-hover:scale-105" 
+                      />
                     )}
                   </div>
                   <div className="p-3">

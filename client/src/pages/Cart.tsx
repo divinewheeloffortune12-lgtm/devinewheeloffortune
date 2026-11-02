@@ -7,6 +7,7 @@ import { QuantitySelector } from "@/components/QuantitySelector";
 import { useCart } from "@/hooks/useCart";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api";
+import { handleImageError } from "@/lib/utils";
 
 const Cart = () => {
   const { items, updateQuantity, removeItem, getSubtotal, syncCart } = useCart();
@@ -109,6 +110,9 @@ const Cart = () => {
                       <img
                         src={item.product.images[0]}
                         alt={item.product.name}
+                        loading="lazy"
+                        decoding="async"
+                        onError={handleImageError}
                         className="w-full h-full object-contain p-2 sm:p-4 mix-blend-multiply transition-transform duration-500 group-hover:scale-110"
                       />
                     </Link>

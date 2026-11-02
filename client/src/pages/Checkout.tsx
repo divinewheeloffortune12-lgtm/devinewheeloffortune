@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import api from "@/lib/api";
 import { loadRazorpayScript } from "./Services";
+import { handleImageError } from "@/lib/utils";
 const Checkout = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -491,6 +492,9 @@ const Checkout = () => {
                         <img
                           src={item.product.images[0]}
                           alt={item.product.name}
+                          loading="lazy"
+                          decoding="async"
+                          onError={handleImageError}
                           className="w-full h-full object-cover"
                         />
                       </div>

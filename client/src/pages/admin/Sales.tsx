@@ -269,8 +269,8 @@ export const AdminSales = () => {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap gap-4 items-center bg-white p-4 rounded-xl border border-slate-100 shadow-sm">
-        <div className="w-full sm:w-48">
+      <div className="flex gap-4 items-center bg-white p-4 rounded-xl border border-slate-100 shadow-sm">
+        <div className="w-48">
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger>
               <SelectValue placeholder="Status" />
@@ -286,7 +286,7 @@ export const AdminSales = () => {
             </SelectContent>
           </Select>
         </div>
-        <div className="w-full sm:w-48">
+        <div className="w-48">
           <Select value={dateRange} onValueChange={setDateRange}>
             <SelectTrigger>
               <SelectValue placeholder="Date Range" />
@@ -300,8 +300,6 @@ export const AdminSales = () => {
               <SelectItem value="thismonth">This Month</SelectItem>
             </SelectContent>
           </Select>
-        </div>
-        <div className="flex-1 min-w-[200px]">
           <input 
             type="text" 
             placeholder="Search by ID, Name..." 
@@ -310,7 +308,7 @@ export const AdminSales = () => {
               setSearchQuery(e.target.value);
               setPage(1);
             }}
-            className="w-full h-10 px-3 py-2 rounded-lg border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+            className="h-10 px-3 py-2 rounded-lg border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
           />
         </div>
       </div>
@@ -342,186 +340,83 @@ export const AdminSales = () => {
         {sales.length === 0 ? (
           <div className="p-10 text-center text-slate-500">No sales records found.</div>
         ) : (
-          <>
-            {/* Desktop Table View */}
-            <div className="hidden md:block overflow-x-auto">
-              <table className="w-full text-left text-sm text-slate-600 min-w-[1000px]">
-                <thead className="bg-slate-50/50 text-slate-800 border-b border-slate-100">
-                  <tr>
-                    <th className="p-4 font-semibold whitespace-nowrap">Order ID</th>
-                    <th className="p-4 font-semibold whitespace-nowrap">Customer</th>
-                    <th className="p-4 font-semibold whitespace-nowrap">Products</th>
-                    <th className="p-4 font-semibold whitespace-nowrap">Amount</th>
-                    <th className="p-4 font-semibold whitespace-nowrap">Payment</th>
-                    <th className="p-4 font-semibold whitespace-nowrap">Status</th>
-                    <th className="p-4 font-semibold whitespace-nowrap">Date</th>
-                    <th className="p-4 font-semibold whitespace-nowrap text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {sales.map((s: any) => (
-                    <tr key={s._id} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50 transition-colors">
-                      <td className="p-4 font-medium text-slate-800">#{s.orderNumber || s._id.slice(-6).toUpperCase()}</td>
-                      <td className="p-4">
-                        <div className="font-medium text-slate-800">{s.user?.name || s.customerName || "Deleted User"}</div>
-                        <div className="text-xs text-slate-500">{s.user?.email || s.email || "No Email"}</div>
-                        {(s.user?.mobile || s.mobile) && <div className="text-xs text-slate-500">{s.user?.mobile || s.mobile}</div>}
-                      </td>
-                      <td className="p-4">
-                        {s.products && s.products.map((p: any, idx: number) => (
-                          <div key={idx} className="flex items-center gap-2 mb-2 last:mb-0">
-                            {p.product?.images?.[0] ? (
-                              <img src={p.product.images[0]} alt={p.product.name} className="w-8 h-8 rounded object-cover" />
-                            ) : (
-                              <div className="w-8 h-8 rounded bg-slate-100 flex items-center justify-center text-[10px] text-slate-400">No Img</div>
-                            )}
-                            <span className="text-xs font-medium text-slate-700 truncate max-w-[120px]" title={p.product?.name}>{p.product?.name || "Unknown"} x {p.quantity}</span>
-                          </div>
-                        ))}
-                        {s.type === 'Booking' && s.service && (
-                          <div className="flex items-center gap-2 mb-2 last:mb-0">
-                            {s.service.image ? (
-                              <img src={s.service.image} alt={s.service.name} className="w-8 h-8 rounded object-cover" />
-                            ) : (
-                              <div className="w-8 h-8 rounded bg-slate-100 flex items-center justify-center text-[10px] text-slate-400">Svc</div>
-                            )}
-                            <span className="text-xs font-medium text-slate-700 truncate max-w-[120px]" title={s.service.name}>{s.service.name} (Booking)</span>
-                          </div>
-                        )}
-                      </td>
-                      <td className="p-4 font-medium text-slate-800">₹{(s.totalAmount || s.amount)?.toLocaleString("en-IN")}</td>
-                      <td className="p-4">
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
-                          s.paymentStatus === 'PAID' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-600'
-                        }`}>
-                          {s.paymentStatus === 'PAID' ? 'SUCCESSFUL' : 'CANCELLED'}
-                        </span>
-                      </td>
-                      <td className="p-4">
-                        <div className="flex items-center gap-2">
-                          {getStatusIcon(s.status || 'PENDING', s.paymentStatus)}
-                          <span className={`text-xs font-semibold uppercase tracking-wider ${s.paymentStatus !== 'PAID' ? 'text-slate-400' : ''}`}>
-                            {s.paymentStatus !== 'PAID' ? 'NO PAYMENT' : (s.status || 'PENDING')}
-                          </span>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm text-slate-600 min-w-[1000px]">
+              <thead className="bg-slate-50/50 text-slate-800 border-b border-slate-100">
+                <tr>
+                  <th className="p-4 font-semibold whitespace-nowrap">Order ID</th>
+                  <th className="p-4 font-semibold whitespace-nowrap">Customer</th>
+                  <th className="p-4 font-semibold whitespace-nowrap">Products</th>
+                  <th className="p-4 font-semibold whitespace-nowrap">Amount</th>
+                  <th className="p-4 font-semibold whitespace-nowrap">Payment</th>
+                  <th className="p-4 font-semibold whitespace-nowrap">Status</th>
+                  <th className="p-4 font-semibold whitespace-nowrap">Date</th>
+                  <th className="p-4 font-semibold whitespace-nowrap text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sales.map((s: any) => (
+                  <tr key={s._id} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50 transition-colors">
+                    <td className="p-4 font-medium text-slate-800">#{s.orderNumber || s._id.slice(-6).toUpperCase()}</td>
+                    <td className="p-4">
+                      <div className="font-medium text-slate-800">{s.user?.name || s.customerName || "Deleted User"}</div>
+                      <div className="text-xs text-slate-500">{s.user?.email || s.email || "No Email"}</div>
+                      {(s.user?.mobile || s.mobile) && <div className="text-xs text-slate-500">{s.user?.mobile || s.mobile}</div>}
+                    </td>
+                    <td className="p-4">
+                      {s.products && s.products.map((p: any, idx: number) => (
+                        <div key={idx} className="flex items-center gap-2 mb-2 last:mb-0">
+                          {p.product?.images?.[0] ? (
+                            <img src={p.product.images[0]} alt={p.product.name} className="w-8 h-8 rounded object-cover" />
+                          ) : (
+                            <div className="w-8 h-8 rounded bg-slate-100 flex items-center justify-center text-[10px] text-slate-400">No Img</div>
+                          )}
+                          <span className="text-xs font-medium text-slate-700 truncate max-w-[120px]" title={p.product?.name}>{p.product?.name || "Unknown"} x {p.quantity}</span>
                         </div>
-                      </td>
-                      <td className="p-4 text-slate-500">{new Date(s.createdAt).toLocaleDateString()}</td>
-                      <td className="p-4 text-right">
-                        <div className="flex items-center justify-end gap-2 whitespace-nowrap">
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            onClick={() => setSelectedUser(s.user || { name: s.customerName, email: s.email, mobile: s.mobile })} 
-                            disabled={!s.user && !s.customerName} 
-                            className="h-8 text-blue-600 border-blue-200 hover:bg-blue-50"
-                          >
-                            View User
-                          </Button>
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            onClick={() => setSelectedOrder(s)} 
-                            className="h-8 text-primary border-primary/30 hover:bg-primary/5 hover:text-primary font-medium"
-                          >
-                            Details
-                          </Button>
+                      ))}
+                      {s.type === 'Booking' && s.service && (
+                        <div className="flex items-center gap-2 mb-2 last:mb-0">
+                          {s.service.image ? (
+                            <img src={s.service.image} alt={s.service.name} className="w-8 h-8 rounded object-cover" />
+                          ) : (
+                            <div className="w-8 h-8 rounded bg-slate-100 flex items-center justify-center text-[10px] text-slate-400">Svc</div>
+                          )}
+                          <span className="text-xs font-medium text-slate-700 truncate max-w-[120px]" title={s.service.name}>{s.service.name} (Booking)</span>
                         </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Mobile / Tablet Card View */}
-            <div className="block md:hidden divide-y divide-slate-100">
-              {sales.map((s: any) => (
-                <div key={s._id} className="p-4 space-y-3 bg-white">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <span className="font-semibold text-slate-900 text-sm">#{s.orderNumber || s._id.slice(-6).toUpperCase()}</span>
-                      <span className="text-xs text-slate-400 ml-2">{new Date(s.createdAt).toLocaleDateString()}</span>
-                    </div>
-                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
-                      s.paymentStatus === 'PAID' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-600'
-                    }`}>
-                      {s.paymentStatus === 'PAID' ? 'SUCCESSFUL' : 'CANCELLED'}
-                    </span>
-                  </div>
-
-                  {/* Customer info */}
-                  <div className="text-sm">
-                    <div className="font-medium text-slate-800">{s.user?.name || s.customerName || "Deleted User"}</div>
-                    <div className="text-xs text-slate-500">{s.user?.email || s.email || "No Email"}</div>
-                    {(s.user?.mobile || s.mobile) && <div className="text-xs text-slate-500">{s.user?.mobile || s.mobile}</div>}
-                  </div>
-
-                  {/* Products / Service preview */}
-                  <div className="bg-slate-50/70 rounded-lg p-2.5 space-y-2">
-                    {s.products && s.products.map((p: any, idx: number) => (
-                      <div key={idx} className="flex items-center gap-2">
-                        {p.product?.images?.[0] ? (
-                          <img src={p.product.images[0]} alt={p.product.name} className="w-7 h-7 rounded object-cover shrink-0" />
-                        ) : (
-                          <div className="w-7 h-7 rounded bg-slate-200 flex items-center justify-center text-[9px] text-slate-400 shrink-0">No Img</div>
-                        )}
-                        <span className="text-xs text-slate-700 truncate flex-1" title={p.product?.name}>
-                          {p.product?.name || "Unknown"} <span className="text-slate-400">× {p.quantity}</span>
-                        </span>
-                      </div>
-                    ))}
-                    {s.type === 'Booking' && s.service && (
-                      <div className="flex items-center gap-2">
-                        {s.service.image ? (
-                          <img src={s.service.image} alt={s.service.name} className="w-7 h-7 rounded object-cover shrink-0" />
-                        ) : (
-                          <div className="w-7 h-7 rounded bg-slate-200 flex items-center justify-center text-[9px] text-slate-400 shrink-0">Svc</div>
-                        )}
-                        <span className="text-xs text-slate-700 truncate flex-1" title={s.service.name}>
-                          {s.service.name} <span className="text-slate-400">(Booking)</span>
-                        </span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Amount and Status row */}
-                  <div className="flex items-center justify-between pt-1">
-                    <div>
-                      <span className="text-xs text-slate-500">Amount: </span>
-                      <span className="text-sm font-bold text-slate-900">₹{(s.totalAmount || s.amount)?.toLocaleString("en-IN")}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      {getStatusIcon(s.status || 'PENDING', s.paymentStatus)}
-                      <span className={`text-xs font-semibold uppercase tracking-wider ${s.paymentStatus !== 'PAID' ? 'text-slate-400' : 'text-slate-700'}`}>
-                        {s.paymentStatus !== 'PAID' ? 'NO PAYMENT' : (s.status || 'PENDING')}
+                      )}
+                    </td>
+                    <td className="p-4 font-medium text-slate-800">₹{(s.totalAmount || s.amount)?.toLocaleString("en-IN")}</td>
+                    <td className="p-4">
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
+                        s.paymentStatus === 'PAID' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-600'
+                      }`}>
+                        {s.paymentStatus === 'PAID' ? 'SUCCESSFUL' : 'CANCELLED'}
                       </span>
-                    </div>
-                  </div>
-
-                  {/* Action buttons side-by-side */}
-                  <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100">
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={() => setSelectedUser(s.user || { name: s.customerName, email: s.email, mobile: s.mobile })} 
-                      disabled={!s.user && !s.customerName} 
-                      className="h-8 text-blue-600 border-blue-200 hover:bg-blue-50 text-xs font-medium w-full"
-                    >
-                      View User
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={() => setSelectedOrder(s)} 
-                      className="h-8 text-primary border-primary/30 hover:bg-primary/5 hover:text-primary font-medium text-xs w-full"
-                    >
-                      Details
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </>
+                    </td>
+                    <td className="p-4">
+                      <div className="flex items-center gap-2">
+                        {getStatusIcon(s.status || 'PENDING', s.paymentStatus)}
+                        <span className={`text-xs font-semibold uppercase tracking-wider ${s.paymentStatus !== 'PAID' ? 'text-slate-400' : ''}`}>
+                          {s.paymentStatus !== 'PAID' ? 'NO PAYMENT' : (s.status || 'PENDING')}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="p-4 text-slate-500">{new Date(s.createdAt).toLocaleDateString()}</td>
+                    <td className="p-4 text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <Button variant="outline" size="sm" onClick={() => setSelectedUser(s.user || { name: s.customerName, email: s.email, mobile: s.mobile })} disabled={!s.user && !s.customerName} className="h-8 text-blue-600 border-blue-200 hover:bg-blue-50">
+                          View User
+                        </Button>
+                        <Button variant="ghost" size="sm" onClick={() => setSelectedOrder(s)} className="h-8 text-primary hover:text-primary hover:bg-primary/10">
+                          Details
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
         
         {totalPages > 1 && (

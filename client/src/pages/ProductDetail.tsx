@@ -11,7 +11,6 @@ import { useCart } from "@/hooks/useCart";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
-import { optimizeImage } from "@/lib/utils";
 
 const ProductDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -128,9 +127,8 @@ const ProductDetail = () => {
                 <AnimatePresence mode="wait">
                   <motion.img
                     key={currentImageIndex}
-                    src={optimizeImage(product.images[currentImageIndex], { width: 900 })}
+                    src={product.images[currentImageIndex]}
                     alt={product.name}
-                    loading="eager"
                     initial={{ opacity: 0, scale: 1.02 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.98 }}
@@ -197,10 +195,9 @@ const ProductDetail = () => {
                       )}
                     >
                       <img
-                        src={optimizeImage(image, { width: 200 })}
+                        src={image}
                         alt={`${product.name} view ${index + 1}`}
                         className="w-full h-full object-cover contrast-[1.15] saturate-110 brightness-[1.05]"
-                        loading="lazy"
                       />
                     </button>
                   ))}
@@ -327,7 +324,7 @@ const ProductDetail = () => {
                     Returns
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    Non-refundable (All sales final)
+                    14-day return policy
                   </p>
                 </div>
               </div>

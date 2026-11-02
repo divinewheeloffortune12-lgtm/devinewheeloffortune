@@ -34,13 +34,10 @@ export default function Policies() {
           <h2 className="font-serif text-3xl md:text-4xl text-slate-800 mb-6">Cancellation & Refund Policy</h2>
           <div className="space-y-4 text-slate-600 leading-relaxed text-lg">
             <p>
-              <strong>Strict No Refund Policy:</strong> At Divine Wheel of Fortune, all purchases of services and spiritual products are final. <strong>We do not offer any refunds or cancellations on any of our services, consultations, healing sessions, or products under any circumstances.</strong>
+              <strong>Session Cancellations:</strong> We require at least 24 hours notice if you need to reschedule or cancel a booked session. Cancellations made within 24 hours of the appointment time are non-refundable.
             </p>
             <p>
-              <strong>Services & Consultations:</strong> Once booked, appointment slots and time reserved for readings, spiritual guidance, and energy work are non-refundable and cannot be cancelled for a refund. Please ensure your schedule allows attendance before completing your booking.
-            </p>
-            <p>
-              <strong>Products:</strong> Due to the sacred, consecrated, and energetic nature of our items (including crystals, malas, rudraksha, and spiritual artifacts), all sales are final and non-refundable. Each item is cleansed and energized specifically for the seeker. If an item arrives physically damaged in transit, please notify us within 48 hours of delivery with unboxing video/photographic proof for a replacement.
+              <strong>Product Returns:</strong> Due to the sacred and energetic nature of our products (crystals, malas, rudraksha), we do not accept returns once a product has been shipped, ensuring that each item you receive holds only pure energy. If an item arrives damaged during transit, please contact us within 48 hours of delivery with photographic proof for a replacement.
             </p>
           </div>
         </div>

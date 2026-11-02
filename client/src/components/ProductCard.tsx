@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import { Product, collections } from "@/data/products";
 import { useWishlist } from "@/hooks/useWishlist";
 import { cn } from "@/lib/utils";
-import { optimizeImage } from "@/lib/utils";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, EffectFade } from "swiper/modules";
 import "swiper/css";
@@ -61,9 +60,8 @@ export const ProductCard = ({ product, index = 0, variant = "default" }: Product
               {(product.images || []).map((img, i) => (
                 <SwiperSlide key={i}>
                   <img
-                    src={optimizeImage(img, { width: 500 })}
+                    src={img}
                     alt={`${product.name} - view ${i + 1}`}
-                    loading="lazy"
                     className="w-full h-full object-contain p-6 mix-blend-multiply drop-shadow-sm transition-transform duration-700 ease-out group-hover:scale-105"
                   />
                 </SwiperSlide>
@@ -71,9 +69,8 @@ export const ProductCard = ({ product, index = 0, variant = "default" }: Product
             </Swiper>
           ) : (
             <img
-              src={optimizeImage((product.images || [])[0], { width: 500 })}
+              src={(product.images || [])[0]}
               alt={product.name}
-              loading="lazy"
               className="w-full h-full object-contain p-6 mix-blend-multiply drop-shadow-sm transition-transform duration-700 ease-out group-hover:scale-105"
             />
           )}

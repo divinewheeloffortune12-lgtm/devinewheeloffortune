@@ -96,23 +96,8 @@ const adminRoutes = require('./routes/admin.routes');
 const profileRoutes = require('./routes/profile.routes');
 const orderRoutes = require('./routes/order.routes');
 
-/**
- * Simple in-memory cache for read-heavy public GET endpoints.
- *
- * Design notes:
- * - Cache is keyed by full URL (path + query string).
- * - Cache is only populated for successful (2xx) JSON responses.
- * - The cache is intentionally short-lived (2–5 min) to limit stale-data exposure.
- * - Admin mutations bypass the cache entirely (admin routes don't use cacheMiddleware).
- * - The exported `invalidateCache` function allows admin write operations to
- *   proactively clear relevant cache keys (future enhancement).
- *
- * Limitation: This is a single-instance in-process cache. It is NOT shared across
- * multiple server processes or Render instances. For multi-instance deployments,
- * replace with Redis or a similar shared cache.
- */
+// Simple in-memory cache for high traffic
 const cache = new Map();
-
 const cacheMiddleware = (durationSecs) => (req, res, next) => {
   if (req.method !== 'GET') return next();
   const key = req.originalUrl;
@@ -123,29 +108,11 @@ const cacheMiddleware = (durationSecs) => (req, res, next) => {
 
   const originalJson = res.json.bind(res);
   res.json = (body) => {
-    // Only cache successful responses to avoid caching errors
-    if (res.statusCode >= 200 && res.statusCode < 300 && body?.success !== false) {
-      cache.set(key, { data: body, expiry: Date.now() + durationSecs * 1000 });
-    }
+    cache.set(key, { data: body, expiry: Date.now() + durationSecs * 1000 });
     originalJson(body);
   };
   next();
 };
-
-/**
- * Invalidate all cache entries whose keys start with a given prefix.
- * Call this from admin write handlers to immediately surface changes.
- * Example: invalidateCache('/api/products') after creating/updating a product.
- */
-const invalidateCache = (prefix) => {
-  for (const key of cache.keys()) {
-    if (key.startsWith(prefix)) cache.delete(key);
-  }
-};
-
-// Export for use in controllers and routes
-app.locals.invalidateCache = invalidateCache;
-app.locals.cacheMiddleware = cacheMiddleware;
 
 // Routes
 app.use('/api/auth', authRoutes);

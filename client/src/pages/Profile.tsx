@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
-import { optimizeImage } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Loader2, ShieldCheck, MapPin, User, Lock, Package, CreditCard, Receipt, Download, LogOut, Heart, CalendarClock } from "lucide-react";
 import {
@@ -446,12 +445,7 @@ export const Profile = () => {
                 <div key={product._id} className="border border-slate-100 rounded-xl overflow-hidden group">
                   <div className="aspect-[4/5] bg-slate-50 relative">
                     {product.images && product.images[0] && (
-                      <img 
-                        src={optimizeImage(product.images[0], { width: 350 })} 
-                        alt={product.name} 
-                        loading="lazy"
-                        className="w-full h-full object-cover transition-transform group-hover:scale-105" 
-                      />
+                      <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
                     )}
                   </div>
                   <div className="p-3">

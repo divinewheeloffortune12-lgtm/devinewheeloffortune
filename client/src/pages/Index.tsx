@@ -87,7 +87,6 @@ const Index = () => {
   
   const parallaxServices = (servicesData || []).map((service: any, index: number) => ({
     id: service._id || (index + 1),
-    slug: service.slug || service._id,
     title: service.name,
     description: service.description || "A transformative spiritual session tailored for your healing journey.",
     symbol: ["✦", "∞", "☼", "◈", "◌", "Ⅸ", "❋", "☾"][index % 8],

@@ -10,7 +10,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import api from "@/lib/api";
 import { loadRazorpayScript } from "./Services";
-import { optimizeImage } from "@/lib/utils";
 const Checkout = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -456,19 +455,6 @@ const Checkout = () => {
                   />
                 </div>
 
-                {/* Important Refund Policy Notice */}
-                <div className="rounded-xl border border-amber-200 bg-amber-50/80 p-4 flex gap-3 text-amber-900 shadow-sm">
-                  <AlertCircle className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
-                  <div className="text-xs leading-relaxed">
-                    <p className="font-semibold text-amber-950 uppercase tracking-wider mb-1">
-                      Important Notice & Refund Policy
-                    </p>
-                    <p>
-                      All sales are final. <strong>No refunds or cancellations</strong> are provided on any spiritual services, consultations, or physical products once payment is completed. By clicking &ldquo;Pay Securely&rdquo;, you acknowledge and agree to this policy.
-                    </p>
-                  </div>
-                </div>
-
                 <Button
                   type="submit"
                   size="lg"
@@ -503,9 +489,8 @@ const Checkout = () => {
                     <div key={item.product.id} className="flex gap-4">
                       <div className="w-16 h-20 bg-muted/30 overflow-hidden flex-shrink-0">
                         <img
-                          src={optimizeImage(item.product.images[0], { width: 160 })}
+                          src={item.product.images[0]}
                           alt={item.product.name}
-                          loading="lazy"
                           className="w-full h-full object-cover"
                         />
                       </div>
@@ -575,15 +560,6 @@ const Checkout = () => {
                     <span>Total</span>
                     <span>₹{total.toLocaleString('en-IN')}</span>
                   </div>
-                </div>
-
-                <div className="mt-4 pt-4 border-t border-dashed border-border/80">
-                  <p className="text-[11px] text-muted-foreground leading-normal">
-                    <span className="font-semibold text-slate-700">Policy:</span> Strictly no refund or return on services or products. View our{" "}
-                    <Link to="/policies" target="_blank" className="text-primary underline hover:text-primary/80">
-                      Cancellation & Refund Policy
-                    </Link>.
-                  </p>
                 </div>
 
                 {/* Contact Info */}

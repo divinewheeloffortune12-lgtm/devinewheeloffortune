@@ -1,25 +1,6 @@
 const Service = require('../models/Service');
 const cloudinary = require('../config/cloudinary');
 
-/**
- * Extract a Cloudinary public_id from a secure URL.
- * Returns null if it cannot be determined.
- */
-const getPublicIdFromUrl = (url) => {
-  if (!url || !url.includes('cloudinary.com')) return null;
-  try {
-    const parts = url.split('/upload/');
-    if (parts.length < 2) return null;
-    // Remove version segment (v1234567890/) if present
-    let path = parts[1].replace(/^v\d+\//, '');
-    // Remove file extension
-    path = path.replace(/\.[^/.]+$/, '');
-    return path;
-  } catch {
-    return null;
-  }
-};
-
 const uploadImage = (buffer) => new Promise((resolve, reject) => {
   const stream = cloudinary.uploader.upload_stream(
     { folder: 'astrology/services', resource_type: 'image', format: 'webp', transformation: [{ width: 1200, crop: 'limit', quality: 'auto' }] },
@@ -28,11 +9,9 @@ const uploadImage = (buffer) => new Promise((resolve, reject) => {
   stream.end(buffer);
 });
 
-const slugify = (value) => (value || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-
 exports.createService = async (req, res, next) => {
   try {
-    const { name, description, price, duration, isActive, slug } = req.body;
+    const { name, description, price, duration, isActive } = req.body;
     let image = req.body.image;
 
     if (req.file) {
@@ -40,21 +19,14 @@ exports.createService = async (req, res, next) => {
       image = result.secure_url;
     }
 
-    const finalSlug = slugify(slug || name) || undefined;
-
     const service = await Service.create({
       name,
-      slug: finalSlug,
       description,
       image,
       price,
       duration,
       isActive: isActive === 'true' || isActive === true
     });
-
-    if (req.app?.locals?.invalidateCache) {
-      req.app.locals.invalidateCache('/api/bookings/services');
-    }
 
     res.status(201).json({ success: true, data: service });
   } catch (error) {
@@ -64,7 +36,7 @@ exports.createService = async (req, res, next) => {
 
 exports.updateService = async (req, res, next) => {
   try {
-    const { name, description, price, duration, isActive, slug } = req.body;
+    const { name, description, price, duration, isActive } = req.body;
     const service = await Service.findById(req.params.id);
     
     if (!service) {
@@ -72,41 +44,19 @@ exports.updateService = async (req, res, next) => {
     }
 
     if (req.file) {
-      // FIX: Delete old Cloudinary image when replacing a service image
-      const oldImageUrl = service.image;
       const result = await uploadImage(req.file.buffer);
       service.image = result.secure_url;
-      // Async cleanup of old image
-      if (oldImageUrl) {
-        const oldPublicId = getPublicIdFromUrl(oldImageUrl);
-        if (oldPublicId) {
-          cloudinary.uploader.destroy(oldPublicId).catch((err) =>
-            console.error(`[Cloudinary] Failed to delete old service image ${oldPublicId}:`, err)
-          );
-        }
-      }
     } else if (req.body.image) {
       service.image = req.body.image;
     }
 
-    if (name) {
-      service.name = name;
-      if (!service.slug || slug) {
-        service.slug = slugify(slug || name);
-      }
-    } else if (slug) {
-      service.slug = slugify(slug);
-    }
+    if (name) service.name = name;
     if (description !== undefined) service.description = description;
     if (price) service.price = price;
     if (duration !== undefined) service.duration = duration;
     if (isActive !== undefined) service.isActive = isActive === 'true' || isActive === true;
 
     await service.save();
-
-    if (req.app?.locals?.invalidateCache) {
-      req.app.locals.invalidateCache('/api/bookings/services');
-    }
 
     res.json({ success: true, data: service });
   } catch (error) {
@@ -120,20 +70,6 @@ exports.deleteService = async (req, res, next) => {
     if (!service) {
       return res.status(404).json({ success: false, message: 'Service not found' });
     }
-    // FIX: Clean up the service's Cloudinary image on deletion
-    if (service.image) {
-      const publicId = getPublicIdFromUrl(service.image);
-      if (publicId) {
-        cloudinary.uploader.destroy(publicId).catch((err) =>
-          console.error(`[Cloudinary] Failed to delete service image ${publicId}:`, err)
-        );
-      }
-    }
-
-    if (req.app?.locals?.invalidateCache) {
-      req.app.locals.invalidateCache('/api/bookings/services');
-    }
-
     res.json({ success: true, message: 'Service deleted successfully' });
   } catch (error) {
     next(error);

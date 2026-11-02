@@ -3,27 +3,6 @@ const Category = require('../models/Category');
 const cloudinary = require('../config/cloudinary');
 const slugify = (value) => value.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
-/**
- * Extract a Cloudinary public_id from a secure URL.
- * Returns null if it cannot be determined.
- * Example: https://res.cloudinary.com/demo/image/upload/v123/folder/file.jpg
- *   => folder/file  (without version, without extension)
- */
-const getPublicIdFromUrl = (url) => {
-  if (!url || !url.includes('cloudinary.com')) return null;
-  try {
-    const parts = url.split('/upload/');
-    if (parts.length < 2) return null;
-    // Remove version segment (v1234567890/) if present
-    let path = parts[1].replace(/^v\d+\//, '');
-    // Remove file extension
-    path = path.replace(/\.[^/.]+$/, '');
-    return path;
-  } catch {
-    return null;
-  }
-};
-
 const uploadImage = (buffer) => new Promise((resolve, reject) => {
   const stream = cloudinary.uploader.upload_stream(
     { folder: 'astrology_ecommerce/categories', resource_type: 'image', format: 'webp', transformation: [{ width: 1200, crop: 'limit', quality: 'auto' }] },
@@ -97,21 +76,9 @@ exports.update = async (req, res, next) => {
     }); 
     
     if (req.file) {
-      // FIX: Delete the old Cloudinary image when replacing a category image
-      // to prevent orphaned assets from accumulating storage costs.
-      const oldImageUrl = category.image;
       try {
         const uploadResult = await uploadImage(req.file.buffer);
         category.image = uploadResult.secure_url;
-        // Attempt to delete old image asynchronously after successful upload
-        if (oldImageUrl) {
-          const oldPublicId = getPublicIdFromUrl(oldImageUrl);
-          if (oldPublicId) {
-            cloudinary.uploader.destroy(oldPublicId).catch((err) =>
-              console.error(`[Cloudinary] Failed to delete old category image ${oldPublicId}:`, err)
-            );
-          }
-        }
       } catch (uploadError) {
         return next(uploadError);
       }
@@ -149,23 +116,14 @@ exports.archive = async (req, res, next) => {
     const Product = require('../models/Product');
     // Hard delete all products in this category
     const productsToDelete = await Product.find({ category: category._id });
+    const productIds = productsToDelete.map(p => p._id);
     
-    // Cleanup product images from Cloudinary (async, non-blocking)
+    // Cleanup product images from cloudinary
     productsToDelete.forEach(product => {
       if (product.imagePublicIds && product.imagePublicIds.length > 0) {
         Promise.allSettled(product.imagePublicIds.map(id => cloudinary.uploader.destroy(id))).catch(console.error);
       }
     });
-
-    // Also delete the category's own Cloudinary image
-    if (category.image) {
-      const categoryPublicId = getPublicIdFromUrl(category.image);
-      if (categoryPublicId) {
-        cloudinary.uploader.destroy(categoryPublicId).catch((err) =>
-          console.error(`[Cloudinary] Failed to delete category image ${categoryPublicId}:`, err)
-        );
-      }
-    }
 
     await Product.deleteMany({ category: category._id });
     

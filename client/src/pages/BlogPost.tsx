@@ -6,7 +6,6 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useEffect } from "react";
 import { SectionHeader } from "@/components/ui/SectionHeader";
-import { optimizeImage } from "@/lib/utils";
 
 export default function BlogPost() {
   const { slug } = useParams();
@@ -82,12 +81,7 @@ export default function BlogPost() {
         <div className="container-narrow mt-16">
           {post.image && (
             <div className="aspect-[21/9] rounded-3xl overflow-hidden mb-16 shadow-xl">
-              <img 
-                src={optimizeImage(post.image, { width: 1200 })} 
-                alt={post.title} 
-                decoding="async"
-                className="w-full h-full object-cover" 
-              />
+              <img src={post.image} alt={post.title} className="w-full h-full object-cover" />
             </div>
           )}
 
